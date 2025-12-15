@@ -1,0 +1,106 @@
+<div class="page">
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Scheduler</p>
+      <h1>Plan your next week</h1>
+      <p class="subtitle">Enter available time slots; they will list on the left with total hours tallied automatically.</p>
+    </div>
+
+    <form class="slot-form" #slotForm="ngForm" (ngSubmit)="saveSlot(slotForm)">
+      <label class="field">
+        <span>Slot name</span>
+        <input
+          type="text"
+          name="name"
+          [(ngModel)]="newSlot.name"
+          required
+          placeholder="e.g., Deep work"
+        />
+      </label>
+
+      <label class="field">
+        <span>Day</span>
+        <select name="day" [(ngModel)]="newSlot.day" required>
+          <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Start time</span>
+        <input
+          type="time"
+          name="start"
+          [(ngModel)]="newSlot.start"
+          required
+        />
+      </label>
+
+      <label class="field">
+        <span>End time</span>
+        <input
+          type="time"
+          name="end"
+          [(ngModel)]="newSlot.end"
+          required
+        />
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="slotForm.invalid || derivedHours === null">
+          {{ editingIndex === null ? 'Add slot' : 'Save changes' }}
+        </button>
+        <button
+          type="button"
+          class="ghost"
+          *ngIf="editingIndex !== null"
+          (click)="cancelEdit(slotForm)"
+        >
+          Cancel
+        </button>
+      </div>
+      <p class="form-note" *ngIf="derivedHours !== null">
+        Duration: {{ derivedHours }} hours
+      </p>
+      <p class="form-note error" *ngIf="derivedHours === null">
+        Choose a start time earlier than the end time.
+      </p>
+      <p class="form-note" *ngIf="editingIndex !== null">
+        Editing: {{ slots[editingIndex]?.name || 'slot' }}
+      </p>
+    </form>
+  </header>
+
+  <main class="grid">
+    <section class="panel slot-panel">
+      <div class="panel-header">
+        <h2>Available slots</h2>
+        <span class="badge">{{ totalHours | number: '1.0-2' }} hrs</span>
+      </div>
+
+      <ul class="slot-list" *ngIf="slots.length; else emptySlots">
+        <li *ngFor="let slot of slots; let i = index">
+          <div class="slot-main">
+            <div class="slot-name">{{ slot.name }}</div>
+            <div class="slot-meta">
+              <span class="pill">{{ slot.day }}</span>
+              <span class="hours">{{ slot.start }} - {{ slot.end }} ({{ slot.hours }}h)</span>
+            </div>
+          </div>
+          <div class="slot-actions">
+            <button type="button" class="link-button" (click)="duplicateSlot(i)">Duplicate</button>
+            <button type="button" class="link-button" (click)="startEdit(i)">Edit</button>
+          </div>
+        </li>
+      </ul>
+
+      <ng-template #emptySlots>
+        <p class="empty">No slots yet. Add your first slot above.</p>
+      </ng-template>
+    </section>
+
+    <section class="panel">
+      <h2>Right section</h2>
+      <p>Use this area for meeting requests, notes, or additional context.</p>
+    </section>
+  </main>
+</div>

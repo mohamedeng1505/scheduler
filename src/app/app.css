@@ -1,0 +1,269 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f4f6fb;
+  color: #111827;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hero {
+  background: linear-gradient(120deg, #0f172a, #1d4ed8);
+  color: #f8fafc;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-text h1 {
+  margin: 4px 0 0;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.75);
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  max-width: 760px;
+  color: rgba(248, 250, 252, 0.85);
+}
+
+.slot-form {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.field span {
+  color: rgba(248, 250, 252, 0.85);
+}
+
+input,
+select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 1px;
+  background: #ffffff;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-note {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  color: rgba(248, 250, 252, 0.9);
+  font-size: 0.9rem;
+}
+
+.form-note.error {
+  color: #fecdd3;
+}
+
+button[type="submit"] {
+  border: none;
+  border-radius: 10px;
+  background: #0ea5e9;
+  color: #f8fafc;
+  font-weight: 600;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button[type="submit"]:not(:disabled):hover {
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+}
+
+button[type="submit"]:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+button.ghost {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #f8fafc;
+  padding: 11px 13px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slot-panel {
+  gap: 8px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+
+.badge {
+  background: #0ea5e9;
+  color: #f8fafc;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.slot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slot-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.slot-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slot-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.slot-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slot-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #0ea5e9;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.hours {
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.empty {
+  margin: 0;
+  color: #6b7280;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    padding: 32px 16px;
+  }
+
+  .hero {
+    padding: 20px;
+  }
+}
