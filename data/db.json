@@ -187,9 +187,9 @@
     {
       "id": "task-ipthrx4",
       "name": "Safety project",
-      "duration": 17,
+      "duration": 16,
       "assignedSlotId": null,
-      "postponed": true
+      "postponed": false
     },
     {
       "id": "task-6dvxka5",
@@ -230,7 +230,7 @@
       "id": "task-zlov6p1",
       "name": "Safety project",
       "duration": 1.5,
-      "assignedSlotId": null,
+      "assignedSlotId": "slot-co15nxv",
       "postponed": false
     },
     {
@@ -238,6 +238,13 @@
       "name": "Safety project",
       "duration": 1.5,
       "assignedSlotId": null,
+      "postponed": false
+    },
+    {
+      "id": "task-ahanvdp",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-6qe38bz",
       "postponed": false
     }
   ],

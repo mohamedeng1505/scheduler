@@ -514,6 +514,10 @@ button.ghost {
   padding: 4px 6px;
 }
 
+.link-button.postpone-toggle.postponed {
+  color: #b45309;
+}
+
 .link-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

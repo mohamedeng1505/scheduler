@@ -294,7 +294,8 @@
               </button>
               <button
                 type="button"
-                class="link-button"
+                class="link-button postpone-toggle"
+                [class.postponed]="task.postponed"
                 (click)="toggleTaskPostpone(task.id)"
               >
                 {{ task.postponed ? 'Postponed' : 'Postpone' }}
