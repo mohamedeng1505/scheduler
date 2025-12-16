@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { OnInit } from '@angular/core';
 
@@ -20,6 +20,7 @@ interface Task {
 }
 
 type SlotDraft = Pick<Slot, 'day' | 'start' | 'end'>;
+type SavedSlotList = { id: string; name: string; slots: Slot[] };
 
 @Component({
   selector: 'app-root',
@@ -43,6 +44,7 @@ export class App implements OnInit {
 
   protected slots: Slot[] = [];
   protected tasks: Task[] = [];
+  protected savedSlotLists: SavedSlotList[] = [];
 
   protected newSlot: SlotDraft = { day: this.days[0], start: '09:00', end: '10:00' };
   protected newTask: { name: string; duration: number } = { name: '', duration: 1 };
@@ -52,11 +54,14 @@ export class App implements OnInit {
   protected editingTaskDraft: { name: string; duration: number } = { name: '', duration: 1 };
   protected draggingTaskId: string | null = null;
   protected selectedSlotIds: Set<string> = new Set<string>();
+  protected selectedSlotListId: string | null = null;
+  protected slotListMenuOpen = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private host: ElementRef) {}
 
   ngOnInit(): void {
     this.loadData();
+    this.loadSavedSlotLists();
   }
 
   protected get sortedSlots(): Slot[] {
@@ -69,6 +74,19 @@ export class App implements OnInit {
 
   protected get totalHours(): number {
     return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
+  }
+
+  protected get totalTaskHours(): number {
+    return this.tasks.reduce((sum, task) => sum + task.duration, 0);
+  }
+
+  protected get selectedSlotListLabel(): string {
+    const selected = this.savedSlotLists.find((l) => l.id === this.selectedSlotListId);
+    if (selected) {
+      const count = selected.slots.length;
+      return `${selected.name} (${count} slot${count === 1 ? '' : 's'})`;
+    }
+    return 'Saved lists';
   }
 
   protected get derivedHours(): number | null {
@@ -250,6 +268,55 @@ export class App implements OnInit {
     this.persistState();
   }
 
+  protected saveSlotList(): void {
+    if (!this.slots.length) {
+      window.alert('Add at least one slot before saving a list.');
+      return;
+    }
+
+    const name = window.prompt('Name this slot list:');
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed) {
+      window.alert('A name is required to save this slot list.');
+      return;
+    }
+
+    this.http
+      .post<SavedSlotList>(`${this.apiBase}/slot-lists`, { name: trimmed, slots: this.slots })
+      .subscribe({
+        next: (list) => {
+          this.savedSlotLists = [...this.savedSlotLists, list];
+          this.selectedSlotListId = list.id;
+          window.alert(`Saved "${list.name}".`);
+        },
+        error: (err) => {
+          console.error('Failed to save slot list', err);
+          window.alert('Failed to save slot list. Please try again.');
+        }
+      });
+  }
+
+  protected loadSlotList(): void {
+    if (!this.savedSlotLists.length || !this.selectedSlotListId) {
+      return;
+    }
+
+    const selected = this.savedSlotLists.find((list) => list.id === this.selectedSlotListId);
+    if (!selected) return;
+
+    this.slots = selected.slots;
+    this.editingSlotIndex = null;
+    this.clearSlotSelection();
+
+    const validSlotIds = new Set(this.slots.map((s) => s.id));
+    this.tasks = this.tasks.map((t) =>
+      t.assignedSlotId && !validSlotIds.has(t.assignedSlotId) ? { ...t, assignedSlotId: null } : t
+    );
+
+    this.persistState();
+  }
+
   protected deleteTask(taskId: string): void {
     this.tasks = this.tasks.filter((t) => t.id !== taskId);
     if (this.draggingTaskId === taskId) {
@@ -261,6 +328,17 @@ export class App implements OnInit {
   protected startEditTask(task: Task): void {
     this.editingTaskId = task.id;
     this.editingTaskDraft = { name: task.name, duration: task.duration };
+  }
+
+  protected duplicateTask(task: Task): void {
+    if (!task) return;
+    const copy: Task = {
+      ...task,
+      id: this.generateId('task'),
+      assignedSlotId: null
+    };
+    this.tasks = [...this.tasks, copy];
+    this.persistState();
   }
 
   protected cancelEditTask(form: NgForm): void {
@@ -360,6 +438,62 @@ export class App implements OnInit {
           console.error('Failed to load saved data', err);
         }
       });
+  }
+
+  private loadSavedSlotLists(): void {
+    this.http
+      .get<{ savedSlotLists: SavedSlotList[] }>(`${this.apiBase}/slot-lists`)
+      .subscribe({
+        next: (data) => {
+          this.savedSlotLists = data.savedSlotLists ?? [];
+          if (!this.selectedSlotListId && this.savedSlotLists.length) {
+            this.selectedSlotListId = this.savedSlotLists[this.savedSlotLists.length - 1].id;
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load saved slot lists', err);
+        }
+      });
+  }
+
+  protected toggleSlotListMenu(): void {
+    if (!this.savedSlotLists.length) return;
+    this.slotListMenuOpen = !this.slotListMenuOpen;
+  }
+
+  protected selectSlotList(id: string): void {
+    this.selectedSlotListId = id;
+    this.slotListMenuOpen = false;
+  }
+
+  protected deleteSlotList(id: string): void {
+    if (!id) return;
+    this.http.delete<{ status: string; id: string }>(`${this.apiBase}/slot-lists/${id}`).subscribe({
+      next: () => {
+        this.savedSlotLists = this.savedSlotLists.filter((list) => list.id !== id);
+        if (this.selectedSlotListId === id) {
+          this.selectedSlotListId = this.savedSlotLists.length
+            ? this.savedSlotLists[this.savedSlotLists.length - 1].id
+            : null;
+        }
+        if (!this.savedSlotLists.length) {
+          this.slotListMenuOpen = false;
+        }
+      },
+      error: (err) => {
+        console.error('Failed to delete slot list', err);
+      }
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected handleOutsideClick(event: MouseEvent): void {
+    if (!this.slotListMenuOpen) return;
+    const target = event.target as Node | null;
+    const dropdown = this.host.nativeElement.querySelector('.slot-list-dropdown') as HTMLElement | null;
+    if (dropdown && target && !dropdown.contains(target)) {
+      this.slotListMenuOpen = false;
+    }
   }
 
   private persistState(): void {

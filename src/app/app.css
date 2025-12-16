@@ -11,7 +11,7 @@
 }
 
 .page {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 48px 24px;
   display: flex;
@@ -45,8 +45,8 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -55,7 +55,7 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  flex: 1 1 260px;
+  /* flex: 1 1 260px; */
 }
 
 .bulk-actions {
@@ -65,6 +65,92 @@
   flex-shrink: 0;
 }
 
+.bulk-right {
+  margin-left: auto;
+  gap: 8px;
+}
+
+.slot-bulk-bar .link-button {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  background: #0ea5e9;
+}
+
+.slot-bulk-bar .link-button.danger {
+  background: #dc2626;
+;
+}
+
+.slot-bulk-bar .link-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.slot-list-dropdown {
+  position: relative;
+}
+
+.slot-list-toggle {
+  min-width: 180px;
+  text-align: left;
+}
+
+.slot-list-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 220px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  z-index: 5;
+}
+
+.slot-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+.slot-list-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.slot-list-item-button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #f8fafc;
+  text-align: left;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+.slot-list-delete {
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-list-delete:hover {
+  background: rgba(220, 38, 38, 0.95);
+}
 .hero-text h1 {
   margin: 4px 0 0;
   font-size: 2rem;
@@ -94,7 +180,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px;
-  align-items: end;
+  align-items: start;
   min-width: 0;
   height: 100%;
 }
@@ -256,6 +342,11 @@ button.ghost {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
+}
+
+.panel-header div {
+  display: flex;
   gap: 10px;
 }
 
