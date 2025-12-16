@@ -187,44 +187,64 @@
     {
       "id": "task-ipthrx4",
       "name": "Safety project",
-      "duration": 20,
-      "assignedSlotId": null
+      "duration": 17,
+      "assignedSlotId": null,
+      "postponed": true
     },
     {
       "id": "task-6dvxka5",
       "name": "Weekly Review",
       "duration": 2,
-      "assignedSlotId": null
+      "assignedSlotId": null,
+      "postponed": false
     },
     {
       "id": "task-fz99ld5",
       "name": "Enfa3Nafsak",
       "duration": 6,
-      "assignedSlotId": null
+      "assignedSlotId": null,
+      "postponed": false
     },
     {
       "id": "task-i85tyog",
       "name": "DonezyAI",
       "duration": 3,
-      "assignedSlotId": null
+      "assignedSlotId": null,
+      "postponed": false
     },
     {
       "id": "task-7v18h45",
       "name": "Kids out",
       "duration": 4.5,
-      "assignedSlotId": null
+      "assignedSlotId": null,
+      "postponed": false
     },
     {
       "id": "task-x262z5v",
       "name": "Haircut",
       "duration": 1,
-      "assignedSlotId": null
+      "assignedSlotId": null,
+      "postponed": false
+    },
+    {
+      "id": "task-zlov6p1",
+      "name": "Safety project",
+      "duration": 1.5,
+      "assignedSlotId": null,
+      "postponed": false
+    },
+    {
+      "id": "task-uab23gt",
+      "name": "Safety project",
+      "duration": 1.5,
+      "assignedSlotId": null,
+      "postponed": false
     }
   ],
   "savedSlotLists": [
     {
-      "id": "slotlist-mj8wyr0f-4ois",
-      "name": "list2",
+      "id": "slotlist-mj8yty5u-eqk0",
+      "name": "List-1",
       "slots": [
         {
           "id": "slot-s8ryv88",

@@ -133,6 +133,29 @@
   cursor: pointer;
 }
 
+.slot-list-edit {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #f8fafc;
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.slot-list-edit svg {
+  width: 14px;
+  height: 14px;
+}
+
+.slot-list-edit:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
 .slot-list-delete {
   background: rgba(239, 68, 68, 0.9);
   border: none;

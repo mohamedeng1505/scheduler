@@ -150,6 +150,25 @@
               </button>
               <button
                 type="button"
+                class="slot-list-edit"
+                (click)="renameSlotList(list, $event)"
+                aria-label="Edit saved list name"
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path
+                    d="M11.8 2.2a1 1 0 0 1 1.4 1.4l-7 7-2.5.5.5-2.5z"
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M3 13h10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
                 class="slot-list-delete"
                 (click)="deleteSlotList(list.id); $event.stopPropagation();"
                 aria-label="Delete saved list"
@@ -204,7 +223,14 @@
               <span class="hours">{{ slot.start }} - {{ slot.end }} ({{ slot.hours }}h)</span>
             </div>
             <div class="slot-tasks" *ngIf="tasksForSlot(slot.id).length; else emptySlot">
-              <div class="task-chip" *ngFor="let task of tasksForSlot(slot.id)">
+              <div
+                class="task-chip"
+                *ngFor="let task of tasksForSlot(slot.id)"
+                [attr.data-task-id]="task.id"
+                [draggable]="editingTaskId !== task.id"
+                (dragstart)="handleTaskDragStart(task.id)"
+                (dragend)="handleTaskDragEnd()"
+              >
                 <span class="task-chip-text">{{ task.name }} - {{ task.duration }}h</span>
                 <button type="button" class="chip-action" (click)="deleteTask(task.id)">Delete</button>
               </div>
@@ -226,7 +252,11 @@
       </ng-template>
     </section>
 
-    <section class="panel task-panel">
+    <section
+      class="panel task-panel"
+      (dragover)="allowTaskReturnDrop($event)"
+      (drop)="handleTaskReturnDrop($event)"
+    >
       <div class="panel-header">
         <h2>Required tasks</h2>
         <div>
@@ -238,7 +268,7 @@
 
       <ul class="task-list" *ngIf="tasks.length; else emptyTasks">
         <li
-          *ngFor="let task of tasks"
+          *ngFor="let task of sortedTasks"
           [attr.data-task-id]="task.id"
           [draggable]="editingTaskId !== task.id"
           [class.editing]="editingTaskId === task.id"
@@ -261,6 +291,13 @@
               </button>
               <button type="button" class="link-button" (click)="duplicateTask(task)">
                 Duplicate
+              </button>
+              <button
+                type="button"
+                class="link-button"
+                (click)="toggleTaskPostpone(task.id)"
+              >
+                {{ task.postponed ? 'Postponed' : 'Postpone' }}
               </button>
               <button type="button" class="link-button" (click)="startEditTask(task)">
                 Edit

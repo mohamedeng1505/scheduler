@@ -17,6 +17,7 @@ interface Task {
   name: string;
   duration: number;
   assignedSlotId: string | null;
+  postponed?: boolean;
 }
 
 type SlotDraft = Pick<Slot, 'day' | 'start' | 'end'>;
@@ -77,7 +78,19 @@ export class App implements OnInit {
   }
 
   protected get totalTaskHours(): number {
-    return this.tasks.reduce((sum, task) => sum + task.duration, 0);
+    return this.tasks
+      .filter((task) => !task.postponed)
+      .reduce((sum, task) => sum + task.duration, 0);
+  }
+
+  protected get sortedTasks(): Task[] {
+    return [...this.tasks].sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return b.duration - a.duration;
+    });
   }
 
   protected get selectedSlotListLabel(): string {
@@ -169,7 +182,8 @@ export class App implements OnInit {
       id: this.generateId('task'),
       name: trimmedName,
       duration: Math.round(duration * 100) / 100,
-      assignedSlotId: null
+      assignedSlotId: null,
+      postponed: false
     };
 
     this.tasks = [...this.tasks, task];
@@ -190,6 +204,31 @@ export class App implements OnInit {
     event.preventDefault();
   }
 
+  protected allowTaskReturnDrop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  protected handleTaskReturnDrop(event: DragEvent): void {
+    event.preventDefault();
+    const taskId = this.draggingTaskId;
+    if (!taskId) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    const task = this.tasks.find((t) => t.id === taskId);
+    if (!task) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    this.tasks = this.tasks.map((t) =>
+      t.id === taskId ? { ...t, assignedSlotId: null } : t
+    );
+    this.handleTaskDragEnd();
+    this.persistState();
+  }
+
   protected dropTaskOnSlot(event: DragEvent, slotId: string): void {
     event.preventDefault();
     const taskId = this.draggingTaskId;
@@ -201,14 +240,38 @@ export class App implements OnInit {
     }
 
     const remaining = this.remainingHoursForSlot(slotId, taskId);
-    if (task.duration > remaining) {
-      this.handleTaskDragEnd();
-      return;
+    const available = this.roundHours(remaining);
+
+    if (task.duration <= available) {
+      this.tasks = this.tasks.map((t) =>
+        t.id === taskId ? { ...t, assignedSlotId: slotId } : t
+      );
+    } else {
+      if (available <= 0) {
+        this.handleTaskDragEnd();
+        return;
+      }
+
+      const splitDuration = available;
+      const remainder = this.roundHours(task.duration - splitDuration);
+
+      const newTask: Task = {
+        ...task,
+        id: this.generateId('task'),
+        duration: splitDuration,
+        assignedSlotId: slotId,
+        postponed: false
+      };
+
+      const updatedTasks = remainder > 0
+        ? this.tasks.map((t) =>
+            t.id === taskId ? { ...t, duration: remainder, assignedSlotId: null } : t
+          )
+        : this.tasks.filter((t) => t.id !== taskId);
+
+      this.tasks = [...updatedTasks, newTask];
     }
 
-    this.tasks = this.tasks.map((t) =>
-      t.id === taskId ? { ...t, assignedSlotId: slotId } : t
-    );
     this.handleTaskDragEnd();
     this.persistState();
   }
@@ -335,7 +398,8 @@ export class App implements OnInit {
     const copy: Task = {
       ...task,
       id: this.generateId('task'),
-      assignedSlotId: null
+      assignedSlotId: null,
+      postponed: false
     };
     this.tasks = [...this.tasks, copy];
     this.persistState();
@@ -392,6 +456,13 @@ export class App implements OnInit {
     return duration > available;
   }
 
+  protected toggleTaskPostpone(taskId: string): void {
+    this.tasks = this.tasks.map((t) =>
+      t.id === taskId ? { ...t, postponed: !t.postponed } : t
+    );
+    this.persistState();
+  }
+
   private slotSortValue(slot: Slot): number {
     const dayIndex = this.days.indexOf(slot.day);
     const startMin = this.toMinutes(slot.start) ?? 0;
@@ -431,7 +502,7 @@ export class App implements OnInit {
       .subscribe({
         next: (data) => {
           this.slots = data.slots ?? [];
-          this.tasks = data.tasks ?? [];
+          this.tasks = (data.tasks ?? []).map((t) => ({ ...t, postponed: !!t.postponed }));
           this.clearSlotSelection();
         },
         error: (err) => {
@@ -464,6 +535,30 @@ export class App implements OnInit {
   protected selectSlotList(id: string): void {
     this.selectedSlotListId = id;
     this.slotListMenuOpen = false;
+  }
+
+  protected renameSlotList(list: SavedSlotList, event?: Event): void {
+    event?.stopPropagation();
+    const proposed = window.prompt('Edit list name:', list.name);
+    if (proposed === null) return;
+    const trimmed = proposed.trim();
+    if (!trimmed || trimmed === list.name) {
+      return;
+    }
+
+    this.http
+      .patch<SavedSlotList>(`${this.apiBase}/slot-lists/${list.id}`, { name: trimmed })
+      .subscribe({
+        next: (updated) => {
+          this.savedSlotLists = this.savedSlotLists.map((l) =>
+            l.id === updated.id ? { ...l, name: updated.name } : l
+          );
+        },
+        error: (err) => {
+          console.error('Failed to rename slot list', err);
+          window.alert('Failed to rename slot list. Please try again.');
+        }
+      });
   }
 
   protected deleteSlotList(id: string): void {
@@ -541,5 +636,9 @@ export class App implements OnInit {
 
     const diffHours = (endMin - startMin) / 60;
     return Math.round(diffHours * 100) / 100;
+  }
+
+  private roundHours(value: number): number {
+    return Math.round(value * 100) / 100;
   }
 }
