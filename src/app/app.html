@@ -3,92 +3,179 @@
     <div class="hero-text">
       <p class="eyebrow">Scheduler</p>
       <h1>Plan your next week</h1>
-      <p class="subtitle">Enter available time slots; they will list on the left with total hours tallied automatically.</p>
+      <p class="subtitle">Add available time slots, add required tasks, then drag tasks into the slots that fit them.</p>
     </div>
 
-    <form class="slot-form" #slotForm="ngForm" (ngSubmit)="saveSlot(slotForm)">
-      <label class="field">
-        <span>Slot name</span>
-        <input
-          type="text"
-          name="name"
-          [(ngModel)]="newSlot.name"
-          required
-          placeholder="e.g., Deep work"
-        />
-      </label>
+    <div class="hero-forms">
+      <form class="slot-form available-form" #slotForm="ngForm" (ngSubmit)="saveSlot(slotForm)">
+        <div class="form-title">
+          <p>Available time</p>
+          <small>Day, start and end times; duration is auto-calculated.</small>
+        </div>
 
-      <label class="field">
-        <span>Day</span>
-        <select name="day" [(ngModel)]="newSlot.day" required>
-          <option *ngFor="let day of days" [value]="day">{{ day }}</option>
-        </select>
-      </label>
+        <label class="field start-field">
+          <span>Start time</span>
+          <input
+            type="time"
+            name="start"
+            [(ngModel)]="newSlot.start"
+            required
+          />
+        </label>
 
-      <label class="field">
-        <span>Start time</span>
-        <input
-          type="time"
-          name="start"
-          [(ngModel)]="newSlot.start"
-          required
-        />
-      </label>
+        <label class="field end-field">
+          <span>End time</span>
+          <input
+            type="time"
+            name="end"
+            [(ngModel)]="newSlot.end"
+            required
+          />
+        </label>
 
-      <label class="field">
-        <span>End time</span>
-        <input
-          type="time"
-          name="end"
-          [(ngModel)]="newSlot.end"
-          required
-        />
-      </label>
+        <label class="field day-field">
+          <span>Day</span>
+          <select name="day" [(ngModel)]="newSlot.day" required>
+            <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+          </select>
+        </label>
 
-      <div class="form-actions">
-        <button type="submit" [disabled]="slotForm.invalid || derivedHours === null">
-          {{ editingIndex === null ? 'Add slot' : 'Save changes' }}
+        <div class="form-actions actions-row">
+          <button type="submit" [disabled]="slotForm.invalid || derivedHours === null">
+            {{ editingSlotIndex === null ? 'Add slot' : 'Save changes' }}
+          </button>
+          <button
+            type="button"
+            class="ghost"
+            *ngIf="editingSlotIndex !== null"
+            (click)="cancelEdit(slotForm)"
+          >
+            Cancel
+          </button>
+        </div>
+        <p class="form-note" *ngIf="derivedHours !== null">
+          Duration: {{ derivedHours }} hours
+        </p>
+        <p class="form-note error" *ngIf="derivedHours === null">
+          Choose a start time earlier than the end time.
+        </p>
+      </form>
+
+      <form class="slot-form task-form" #taskForm="ngForm" (ngSubmit)="addTask(taskForm)">
+        <div class="form-title">
+          <p>Required task</p>
+          <small>Set the task and its duration in hours.</small>
+        </div>
+        <label class="field">
+          <span>Task name</span>
+          <input
+            type="text"
+            name="taskName"
+            [(ngModel)]="newTask.name"
+            required
+            placeholder="e.g., Write report"
+          />
+        </label>
+        <label class="field">
+          <span>Duration (hours)</span>
+          <input
+            type="number"
+            name="taskDuration"
+            [(ngModel)]="newTask.duration"
+            min="0.25"
+            step="0.25"
+            required
+          />
+        </label>
+        <div class="form-actions">
+          <button type="submit" [disabled]="taskForm.invalid">
+            Add task
+          </button>
+        </div>
+        <p class="form-note">
+          Drag created tasks from the right column onto any slot.
+        </p>
+      </form>
+    </div>
+
+    <div class="slot-bulk-bar">
+      <div class="bulk-left">
+        <label class="select-all">
+          <input
+            type="checkbox"
+            [checked]="slots.length > 0 && selectedSlotCount === slots.length"
+            (change)="selectedSlotCount === slots.length ? clearSlotSelection() : selectAllSlots()"
+          />
+          <span>Select all slots</span>
+        </label>
+        <span class="selection-count" *ngIf="selectedSlotCount">
+          {{ selectedSlotCount }} selected
+        </span>
+      </div>
+      <div class="bulk-actions">
+        <button
+          type="button"
+          class="link-button"
+          [disabled]="!selectedSlotCount"
+          (click)="bulkDuplicateSelectedSlots()"
+        >
+          Duplicate
         </button>
         <button
           type="button"
-          class="ghost"
-          *ngIf="editingIndex !== null"
-          (click)="cancelEdit(slotForm)"
+          class="link-button danger"
+          [disabled]="!selectedSlotCount"
+          (click)="bulkDeleteSelectedSlots()"
         >
-          Cancel
+          Delete
         </button>
       </div>
-      <p class="form-note" *ngIf="derivedHours !== null">
-        Duration: {{ derivedHours }} hours
-      </p>
-      <p class="form-note error" *ngIf="derivedHours === null">
-        Choose a start time earlier than the end time.
-      </p>
-      <p class="form-note" *ngIf="editingIndex !== null">
-        Editing: {{ slots[editingIndex]?.name || 'slot' }}
-      </p>
-    </form>
+    </div>
   </header>
 
   <main class="grid">
     <section class="panel slot-panel">
       <div class="panel-header">
-        <h2>Available slots</h2>
-        <span class="badge">{{ totalHours | number: '1.0-2' }} hrs</span>
+        <div class="panel-title">
+          <h2>Available slots</h2>
+          <span class="badge">{{ totalHours | number: '1.0-2' }} hrs</span>
+        </div>
       </div>
 
       <ul class="slot-list" *ngIf="slots.length; else emptySlots">
-        <li *ngFor="let slot of slots; let i = index">
+        <li
+          *ngFor="let slot of sortedSlots; let i = index"
+          class="slot-card"
+          (dragover)="allowSlotDrop($event)"
+          (drop)="dropTaskOnSlot($event, slot.id)"
+        >
+          <div class="slot-select">
+            <input
+              type="checkbox"
+              [checked]="isSlotSelected(slot.id)"
+              (change)="toggleSlotSelection(slot.id)"
+              [attr.aria-label]="'Select slot ' + slot.day + ' ' + slot.start + '-' + slot.end"
+            />
+          </div>
           <div class="slot-main">
-            <div class="slot-name">{{ slot.name }}</div>
             <div class="slot-meta">
               <span class="pill">{{ slot.day }}</span>
               <span class="hours">{{ slot.start }} - {{ slot.end }} ({{ slot.hours }}h)</span>
             </div>
+            <div class="slot-tasks" *ngIf="tasksForSlot(slot.id).length; else emptySlot">
+              <div class="task-chip" *ngFor="let task of tasksForSlot(slot.id)">
+                <span class="task-chip-text">{{ task.name }} - {{ task.duration }}h</span>
+                <button type="button" class="chip-action" (click)="deleteTask(task.id)">Delete</button>
+              </div>
+            </div>
+            <ng-template #emptySlot>
+              <p class="slot-empty">Drag a task here</p>
+            </ng-template>
           </div>
           <div class="slot-actions">
-            <button type="button" class="link-button" (click)="duplicateSlot(i)">Duplicate</button>
-            <button type="button" class="link-button" (click)="startEdit(i)">Edit</button>
+            <button type="button" class="link-button" (click)="duplicateSlot(slotIndex(slot.id))">Duplicate</button>
+            <button type="button" class="link-button" (click)="startEdit(slotIndex(slot.id))">Edit</button>
+            <button type="button" class="link-button danger" (click)="deleteSlot(slot.id)">Delete</button>
           </div>
         </li>
       </ul>
@@ -98,9 +185,91 @@
       </ng-template>
     </section>
 
-    <section class="panel">
-      <h2>Right section</h2>
-      <p>Use this area for meeting requests, notes, or additional context.</p>
+    <section class="panel task-panel">
+      <div class="panel-header">
+        <h2>Required tasks</h2>
+        <span class="badge badge-soft">{{ tasks.length }} task{{ tasks.length === 1 ? '' : 's' }}</span>
+      </div>
+      <p class="panel-subtitle">Drag a task onto any available slot on the left (the duration must fit inside the slot).</p>
+
+      <ul class="task-list" *ngIf="tasks.length; else emptyTasks">
+        <li
+          *ngFor="let task of tasks"
+          [attr.data-task-id]="task.id"
+          [draggable]="editingTaskId !== task.id"
+          [class.editing]="editingTaskId === task.id"
+          (dragstart)="handleTaskDragStart(task.id)"
+          (dragend)="handleTaskDragEnd()"
+        >
+          <ng-container *ngIf="editingTaskId !== task.id; else editTaskForm">
+            <div class="task-main">
+              <div class="task-name">{{ task.name }}</div>
+              <div class="task-meta">
+                <span class="pill pill-soft">{{ task.duration }}h</span>
+                <span class="task-status" [class.assigned]="task.assignedSlotId">
+                  {{ task.assignedSlotId ? 'Assigned to a slot' : 'Unassigned' }}
+                </span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <button type="button" class="link-button" *ngIf="task.assignedSlotId" (click)="unassignTask(task.id)">
+                Unassign
+              </button>
+              <button type="button" class="link-button" (click)="startEditTask(task)">
+                Edit
+              </button>
+              <button type="button" class="link-button danger" (click)="deleteTask(task.id)">
+                Delete
+              </button>
+            </div>
+          </ng-container>
+
+          <ng-template #editTaskForm>
+            <form class="task-edit-form" #taskEditForm="ngForm" (ngSubmit)="saveTaskEdit(task.id, taskEditForm)">
+              <div class="task-edit-fields">
+                <label class="field">
+                  <span>Task name</span>
+                  <input
+                    type="text"
+                    name="editName"
+                    [(ngModel)]="editingTaskDraft.name"
+                    required
+                  />
+                </label>
+                <label class="field">
+                  <span>Duration (hours)</span>
+                  <input
+                    type="number"
+                    name="editDuration"
+                    [(ngModel)]="editingTaskDraft.duration"
+                    min="0.25"
+                    step="0.25"
+                    required
+                  />
+                </label>
+              </div>
+              <p class="task-edit-note" *ngIf="task.assignedSlotId">
+                Max for this slot: {{ availableHoursForTask(task) | number: '1.0-2' }}h
+              </p>
+              <p class="task-edit-note error" *ngIf="editExceedsSlot(task)">
+                Duration exceeds available time in this slot.
+              </p>
+              <div class="task-edit-actions">
+                <button type="submit" [disabled]="taskEditForm.invalid || editExceedsSlot(task)">
+                  Save
+                </button>
+                <button type="button" class="link-button" (click)="cancelEditTask(taskEditForm)">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </ng-template>
+        </li>
+      </ul>
+
+      <ng-template #emptyTasks>
+        <p class="empty">No tasks yet. Add a task above.</p>
+      </ng-template>
     </section>
   </main>
 </div>

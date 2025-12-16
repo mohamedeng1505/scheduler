@@ -6,6 +6,10 @@
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .page {
   max-width: 1100px;
   margin: 0 auto;
@@ -24,6 +28,41 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.hero-forms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.slot-bulk-bar {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bulk-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1 1 260px;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .hero-text h1 {
@@ -56,6 +95,42 @@
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px;
   align-items: end;
+  min-width: 0;
+  height: 100%;
+}
+
+.slot-form > * {
+  min-width: 0;
+}
+
+.available-form {
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+}
+
+.available-form .start-field {
+  grid-column: 1;
+}
+
+.available-form .end-field {
+  grid-column: 2;
+}
+
+.available-form .day-field {
+  grid-column: 1;
+}
+
+.available-form .actions-row {
+  grid-column: 2;
+  justify-content: flex-start;
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  padding-top: 22px; /* space to visually align with the day label */
+}
+
+.task-form {
+  background: rgba(15, 23, 42, 0.25);
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
 }
 
 .field {
@@ -78,6 +153,7 @@ select {
   background: rgba(255, 255, 255, 0.14);
   color: #0f172a;
   font-size: 1rem;
+  min-width: 0;
 }
 
 input:focus,
@@ -85,6 +161,21 @@ select:focus {
   outline: 2px solid #a5b4fc;
   outline-offset: 1px;
   background: #ffffff;
+}
+
+.form-title {
+  grid-column: 1 / -1;
+  color: rgba(248, 250, 252, 0.9);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.form-title small {
+  font-weight: 400;
+  color: rgba(248, 250, 252, 0.75);
 }
 
 .form-actions {
@@ -168,6 +259,12 @@ button.ghost {
   gap: 10px;
 }
 
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .panel h2 {
   margin: 0;
   font-size: 1.2rem;
@@ -183,6 +280,11 @@ button.ghost {
   font-size: 0.95rem;
 }
 
+.badge-soft {
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+
 .slot-list {
   list-style: none;
   margin: 0;
@@ -192,21 +294,33 @@ button.ghost {
   gap: 12px;
 }
 
-.slot-list li {
+.slot-list li,
+.slot-card {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   background: #f9fafb;
+  position: relative;
+}
+
+.slot-card {
+  cursor: grab;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.slot-card:hover {
+  border-color: #cbd5e1;
 }
 
 .slot-main {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
 }
 
 .slot-name {
@@ -220,10 +334,61 @@ button.ghost {
   gap: 8px;
 }
 
+.slot-tasks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.task-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.task-chip-text {
+  display: inline-block;
+}
+
+.chip-action {
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.chip-action:hover {
+  text-decoration: underline;
+}
+
+.slot-empty {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
 .slot-actions {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.slot-select {
+  padding-top: 4px;
+}
+
+.slot-select input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
 }
 
 .link-button {
@@ -235,6 +400,29 @@ button.ghost {
   padding: 4px 6px;
 }
 
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.link-button.danger {
+  color: #dc2626;
+}
+
+.select-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  /* color: #0f172a; */
+  white-space: nowrap;
+}
+
+.selection-count {
+  color: #6b7280;
+  font-weight: 600;
+}
+
 .pill {
   padding: 6px 10px;
   border-radius: 999px;
@@ -244,14 +432,114 @@ button.ghost {
   font-size: 0.9rem;
 }
 
+.pill-soft {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
 .hours {
   font-weight: 600;
   color: #1d4ed8;
 }
 
+.panel-subtitle {
+  margin: 0;
+  color: #6b7280;
+}
+
 .empty {
   margin: 0;
   color: #6b7280;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: grab;
+  position: relative;
+}
+
+.task-list li.editing {
+  border-style: solid;
+  border-color: #c7d2fe;
+  background: #eef2ff;
+  cursor: default;
+}
+
+.task-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.task-status {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.task-status.assigned {
+  color: #16a34a;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.task-edit-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.task-edit-note {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.task-edit-note.error {
+  color: #dc2626;
+}
+
+.task-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-edit-actions button[type="submit"] {
+  padding: 10px 12px;
 }
 
 @media (max-width: 800px) {
@@ -265,5 +553,13 @@ button.ghost {
 
   .hero {
     padding: 20px;
+  }
+
+  .available-form {
+    grid-template-columns: 1fr;
+  }
+
+  .task-form {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,36 +1,71 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { OnInit } from '@angular/core';
 
 interface Slot {
-  name: string;
+  id: string;
   day: string;
   start: string; // HH:mm
-  end: string;   // HH:mm
+  end: string; // HH:mm
   hours: number;
 }
+
+interface Task {
+  id: string;
+  name: string;
+  duration: number;
+  assignedSlotId: string | null;
+}
+
+type SlotDraft = Pick<Slot, 'day' | 'start' | 'end'>;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
+  private readonly apiBase = 'http://localhost:4000/api';
+
   protected readonly days = [
+    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
     'Friday',
-    'Saturday',
-    'Sunday'
+    'Saturday'
   ];
 
   protected slots: Slot[] = [];
-  protected newSlot: Slot = { name: '', day: this.days[0], start: '09:00', end: '10:00', hours: 1 };
-  protected editingIndex: number | null = null;
+  protected tasks: Task[] = [];
+
+  protected newSlot: SlotDraft = { day: this.days[0], start: '09:00', end: '10:00' };
+  protected newTask: { name: string; duration: number } = { name: '', duration: 1 };
+
+  protected editingSlotIndex: number | null = null;
+  protected editingTaskId: string | null = null;
+  protected editingTaskDraft: { name: string; duration: number } = { name: '', duration: 1 };
+  protected draggingTaskId: string | null = null;
+  protected selectedSlotIds: Set<string> = new Set<string>();
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadData();
+  }
+
+  protected get sortedSlots(): Slot[] {
+    return [...this.slots].sort((a, b) => this.slotSortValue(a) - this.slotSortValue(b));
+  }
+
+  protected get selectedSlotCount(): number {
+    return this.selectedSlotIds.size;
+  }
 
   protected get totalHours(): number {
     return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
@@ -41,73 +76,336 @@ export class App {
   }
 
   protected saveSlot(form: NgForm): void {
-    const trimmedName = this.newSlot.name.trim();
     const hours = this.computeHours(this.newSlot.start, this.newSlot.end);
 
-    if (!trimmedName || !this.newSlot.day || hours === null) {
+    if (!this.newSlot.day || hours === null) {
       return;
     }
 
     const slot: Slot = {
-      name: trimmedName,
+      id:
+        this.editingSlotIndex === null
+          ? this.generateId('slot')
+          : this.slots[this.editingSlotIndex]?.id ?? this.generateId('slot'),
       day: this.newSlot.day,
       start: this.newSlot.start,
       end: this.newSlot.end,
       hours
     };
 
-    if (this.editingIndex === null) {
+    if (this.editingSlotIndex === null) {
       this.slots = [...this.slots, slot];
     } else {
       const updated = [...this.slots];
-      updated[this.editingIndex] = slot;
+      updated[this.editingSlotIndex] = slot;
       this.slots = updated;
     }
+    this.persistState();
 
     const keepDay = slot.day;
-    this.newSlot = { name: '', day: keepDay, start: '09:00', end: '10:00', hours: 1 };
-    form.resetForm({ name: '', day: keepDay, start: '09:00', end: '10:00', hours: 1 });
-    this.editingIndex = null;
+    this.newSlot = { day: keepDay, start: '09:00', end: '10:00' };
+    form.resetForm({ day: keepDay, start: '09:00', end: '10:00' });
+    this.editingSlotIndex = null;
   }
 
   protected startEdit(index: number): void {
+    if (index < 0) return;
     const slot = this.slots[index];
     if (!slot) return;
 
-    this.editingIndex = index;
-    this.newSlot = { ...slot };
+    this.editingSlotIndex = index;
+    this.newSlot = { day: slot.day, start: slot.start, end: slot.end };
   }
 
   protected cancelEdit(form: NgForm): void {
-    this.editingIndex = null;
-    this.newSlot = { name: '', day: this.days[0], start: '09:00', end: '10:00', hours: 1 };
-    form.resetForm({ name: '', day: this.days[0], start: '09:00', end: '10:00', hours: 1 });
+    this.editingSlotIndex = null;
+    this.newSlot = { day: this.days[0], start: '09:00', end: '10:00' };
+    form.resetForm({ day: this.days[0], start: '09:00', end: '10:00' });
   }
 
   protected duplicateSlot(index: number): void {
+    if (index < 0) return;
     const slot = this.slots[index];
     if (!slot) return;
 
-    const copy: Slot = { ...slot, name: `${slot.name} (copy)` };
+    const copy: Slot = { ...slot, id: this.generateId('slot') };
     this.slots = [...this.slots, copy];
+    this.persistState();
+  }
+
+  protected deleteSlot(slotId: string): void {
+    const removed = this.removeSlotsByIds([slotId]);
+    if (removed) {
+      this.persistState();
+    }
+  }
+
+  protected addTask(taskForm: NgForm): void {
+    const trimmedName = this.newTask.name.trim();
+    const duration = Number(this.newTask.duration);
+    if (!trimmedName || Number.isNaN(duration) || duration <= 0) {
+      return;
+    }
+
+    const task: Task = {
+      id: this.generateId('task'),
+      name: trimmedName,
+      duration: Math.round(duration * 100) / 100,
+      assignedSlotId: null
+    };
+
+    this.tasks = [...this.tasks, task];
+    this.newTask = { name: '', duration: 1 };
+    taskForm.resetForm({ name: '', duration: 1 });
+    this.persistState();
+  }
+
+  protected handleTaskDragStart(taskId: string): void {
+    this.draggingTaskId = taskId;
+  }
+
+  protected handleTaskDragEnd(): void {
+    this.draggingTaskId = null;
+  }
+
+  protected allowSlotDrop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  protected dropTaskOnSlot(event: DragEvent, slotId: string): void {
+    event.preventDefault();
+    const taskId = this.draggingTaskId;
+    const slot = this.slots.find((s) => s.id === slotId);
+    const task = this.tasks.find((t) => t.id === taskId);
+    if (!taskId || !slot || !task) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    const remaining = this.remainingHoursForSlot(slotId, taskId);
+    if (task.duration > remaining) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    this.tasks = this.tasks.map((t) =>
+      t.id === taskId ? { ...t, assignedSlotId: slotId } : t
+    );
+    this.handleTaskDragEnd();
+    this.persistState();
+  }
+
+  protected unassignTask(taskId: string): void {
+    this.tasks = this.tasks.map((t) =>
+      t.id === taskId ? { ...t, assignedSlotId: null } : t
+    );
+    this.persistState();
+  }
+
+  protected tasksForSlot(slotId: string): Task[] {
+    return this.tasks.filter((t) => t.assignedSlotId === slotId);
+  }
+
+  protected slotIndex(slotId: string): number {
+    return this.slots.findIndex((s) => s.id === slotId);
+  }
+
+  protected isSlotSelected(slotId: string): boolean {
+    return this.selectedSlotIds.has(slotId);
+  }
+
+  protected toggleSlotSelection(slotId: string): void {
+    const next = new Set(this.selectedSlotIds);
+    if (next.has(slotId)) {
+      next.delete(slotId);
+    } else {
+      next.add(slotId);
+    }
+    this.selectedSlotIds = next;
+  }
+
+  protected selectAllSlots(): void {
+    this.selectedSlotIds = new Set(this.slots.map((s) => s.id));
+  }
+
+  protected clearSlotSelection(): void {
+    this.selectedSlotIds = new Set();
+  }
+
+  protected bulkDeleteSelectedSlots(): void {
+    const ids = Array.from(this.selectedSlotIds);
+    if (!ids.length) return;
+    const removed = this.removeSlotsByIds(ids);
+    if (removed) {
+      this.persistState();
+    }
+  }
+
+  protected bulkDuplicateSelectedSlots(): void {
+    if (!this.selectedSlotIds.size) return;
+    const toDuplicate = this.slots.filter((s) => this.selectedSlotIds.has(s.id));
+    if (!toDuplicate.length) return;
+    const copies = toDuplicate.map((slot) => ({ ...slot, id: this.generateId('slot') }));
+    this.slots = [...this.slots, ...copies];
+    this.persistState();
+  }
+
+  protected deleteTask(taskId: string): void {
+    this.tasks = this.tasks.filter((t) => t.id !== taskId);
+    if (this.draggingTaskId === taskId) {
+      this.handleTaskDragEnd();
+    }
+    this.persistState();
+  }
+
+  protected startEditTask(task: Task): void {
+    this.editingTaskId = task.id;
+    this.editingTaskDraft = { name: task.name, duration: task.duration };
+  }
+
+  protected cancelEditTask(form: NgForm): void {
+    this.editingTaskId = null;
+    this.editingTaskDraft = { name: '', duration: 1 };
+    form.resetForm();
+  }
+
+  protected saveTaskEdit(taskId: string, form: NgForm): void {
+    const trimmedName = this.editingTaskDraft.name.trim();
+    const duration = Number(this.editingTaskDraft.duration);
+    const task = this.tasks.find((t) => t.id === taskId);
+
+    if (!task || !trimmedName || Number.isNaN(duration) || duration <= 0) {
+      return;
+    }
+
+    if (task.assignedSlotId) {
+      const remaining = this.remainingHoursForSlot(task.assignedSlotId, taskId);
+      if (duration > remaining) {
+        return;
+      }
+    }
+
+    this.tasks = this.tasks.map((t) =>
+      t.id === taskId
+        ? {
+            ...t,
+            name: trimmedName,
+            duration: Math.round(duration * 100) / 100
+          }
+        : t
+    );
+
+    this.editingTaskId = null;
+    this.editingTaskDraft = { name: '', duration: 1 };
+    form.resetForm();
+    this.persistState();
+  }
+
+  protected availableHoursForTask(task: Task): number | null {
+    if (!task.assignedSlotId) return null;
+    return this.remainingHoursForSlot(task.assignedSlotId, task.id);
+  }
+
+  protected editExceedsSlot(task: Task): boolean {
+    const available = this.availableHoursForTask(task);
+    const duration = Number(this.editingTaskDraft.duration);
+    if (available === null) return false;
+    if (Number.isNaN(duration)) return false;
+    return duration > available;
+  }
+
+  private slotSortValue(slot: Slot): number {
+    const dayIndex = this.days.indexOf(slot.day);
+    const startMin = this.toMinutes(slot.start) ?? 0;
+    return (dayIndex === -1 ? Number.MAX_SAFE_INTEGER : dayIndex) * 1440 + startMin;
+  }
+
+  private removeSlotsByIds(ids: string[]): boolean {
+    if (!ids.length) return false;
+    const idSet = new Set(ids);
+
+    if (this.editingSlotIndex !== null) {
+      const editingId = this.slots[this.editingSlotIndex]?.id;
+      if (editingId && idSet.has(editingId)) {
+        this.editingSlotIndex = null;
+      }
+    }
+
+    const beforeCount = this.slots.length;
+    this.slots = this.slots.filter((s) => !idSet.has(s.id));
+    const removed = beforeCount !== this.slots.length;
+
+    if (removed) {
+      this.tasks = this.tasks.map((t) =>
+        t.assignedSlotId && idSet.has(t.assignedSlotId) ? { ...t, assignedSlotId: null } : t
+      );
+      this.selectedSlotIds = new Set(
+        Array.from(this.selectedSlotIds).filter((id) => !idSet.has(id))
+      );
+    }
+
+    return removed;
+  }
+
+  private loadData(): void {
+    this.http
+      .get<{ slots: Slot[]; tasks: Task[] }>(`${this.apiBase}/data`)
+      .subscribe({
+        next: (data) => {
+          this.slots = data.slots ?? [];
+          this.tasks = data.tasks ?? [];
+          this.clearSlotSelection();
+        },
+        error: (err) => {
+          console.error('Failed to load saved data', err);
+        }
+      });
+  }
+
+  private persistState(): void {
+    this.http
+      .post(`${this.apiBase}/sync`, {
+        slots: this.slots,
+        tasks: this.tasks
+      })
+      .subscribe({
+        error: (err) => {
+          console.error('Failed to save data', err);
+        }
+      });
+  }
+
+  private toMinutes(t: string): number | null {
+    const [h, m] = t.split(':').map(Number);
+    if (Number.isNaN(h) || Number.isNaN(m)) return null;
+    return h * 60 + m;
+  }
+
+  private generateId(prefix: string): string {
+    return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  private remainingHoursForSlot(slotId: string, excludeTaskId?: string): number {
+    const slot = this.slots.find((s) => s.id === slotId);
+    if (!slot) return 0;
+
+    const used = this.tasks
+      .filter((t) => t.assignedSlotId === slotId && t.id !== excludeTaskId)
+      .reduce((sum, t) => sum + t.duration, 0);
+
+    return Math.max(slot.hours - used, 0);
   }
 
   private computeHours(start: string, end: string): number | null {
     if (!start || !end) return null;
 
-    const toMinutes = (t: string): number | null => {
-      const [h, m] = t.split(':').map(Number);
-      if (Number.isNaN(h) || Number.isNaN(m)) return null;
-      return h * 60 + m;
-    };
-
-    const startMin = toMinutes(start);
-    const endMin = toMinutes(end);
+    const startMin = this.toMinutes(start);
+    const endMin = this.toMinutes(end);
 
     if (startMin === null || endMin === null) return null;
     if (endMin <= startMin) return null;
 
     const diffHours = (endMin - startMin) / 60;
-    return Math.round(diffHours * 100) / 100; // two decimals
+    return Math.round(diffHours * 100) / 100;
   }
 }

@@ -1,0 +1,138 @@
+{
+  "slots": [
+    {
+      "id": "slot-wockob2",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-f8446jn",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-wbwi7c6",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-hkagwev",
+      "day": "Tuesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-s8ryv88",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-932ivmy",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-zbjocg9",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-s4h325p",
+      "day": "Tuesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-cnll1i9",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-qpswite",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-kuy2d7y",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-67t0qxm",
+      "day": "Tuesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-9hzjhm5",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-z2zf99i",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-monl5e0",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-ss3om6m",
+      "day": "Tuesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-8cwdp8e",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-x9xy36w",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-g98es46",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    }
+  ],
+  "tasks": []
+}
