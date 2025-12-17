@@ -85,12 +85,25 @@ export class App implements OnInit {
 
   protected get sortedTasks(): Task[] {
     return [...this.tasks].sort((a, b) => {
+      const aAssigned = a.assignedSlotId ? 1 : 0;
+      const bAssigned = b.assignedSlotId ? 1 : 0;
+      if (aAssigned !== bAssigned) return aAssigned - bAssigned;
+
       const nameA = a.name.toLowerCase();
       const nameB = b.name.toLowerCase();
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
+
       return b.duration - a.duration;
     });
+  }
+
+  protected get activeTasks(): Task[] {
+    return this.sortedTasks.filter((task) => !task.postponed);
+  }
+
+  protected get postponedTasks(): Task[] {
+    return this.sortedTasks.filter((task) => task.postponed);
   }
 
   protected get selectedSlotListLabel(): string {
@@ -206,6 +219,61 @@ export class App implements OnInit {
 
   protected allowTaskReturnDrop(event: DragEvent): void {
     event.preventDefault();
+  }
+
+  protected allowTaskOver(event: DragEvent, targetTaskId: string): void {
+    if (!this.draggingTaskId || this.draggingTaskId === targetTaskId) return;
+    event.preventDefault();
+  }
+
+  protected handleTaskDropOnTask(event: DragEvent, targetTaskId: string): void {
+    event.preventDefault();
+    const sourceTaskId = this.draggingTaskId;
+    if (!sourceTaskId || sourceTaskId === targetTaskId) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    const sourceTask = this.tasks.find((t) => t.id === sourceTaskId);
+    const targetTask = this.tasks.find((t) => t.id === targetTaskId);
+
+    if (!sourceTask || !targetTask) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    const sourceName = sourceTask.name.trim().toLowerCase();
+    const targetName = targetTask.name.trim().toLowerCase();
+
+    if (!sourceName || sourceName !== targetName) {
+      this.handleTaskDragEnd();
+      return;
+    }
+
+    const mergedDuration = this.roundHours(sourceTask.duration + targetTask.duration);
+    let mergedAssignedSlotId = targetTask.assignedSlotId ?? sourceTask.assignedSlotId ?? null;
+    const mergedPostponed = !!(targetTask.postponed || sourceTask.postponed);
+
+    if (mergedAssignedSlotId) {
+      const available = this.remainingHoursForSlotExcluding(mergedAssignedSlotId, [
+        sourceTask.id,
+        targetTask.id
+      ]);
+      if (mergedDuration > available) {
+        mergedAssignedSlotId = null;
+      }
+    }
+
+    this.tasks = this.tasks
+      .filter((t) => t.id !== sourceTask.id)
+      .map((t) =>
+        t.id === targetTask.id
+          ? { ...t, duration: mergedDuration, assignedSlotId: mergedAssignedSlotId, postponed: mergedPostponed }
+          : t
+      );
+
+    this.persistState();
+    this.handleTaskDragEnd();
   }
 
   protected handleTaskReturnDrop(event: DragEvent): void {
@@ -620,6 +688,17 @@ export class App implements OnInit {
 
     const used = this.tasks
       .filter((t) => t.assignedSlotId === slotId && t.id !== excludeTaskId)
+      .reduce((sum, t) => sum + t.duration, 0);
+
+    return Math.max(slot.hours - used, 0);
+  }
+
+  private remainingHoursForSlotExcluding(slotId: string, excludeTaskIds: string[] = []): number {
+    const slot = this.slots.find((s) => s.id === slotId);
+    if (!slot) return 0;
+    const exclude = new Set(excludeTaskIds);
+    const used = this.tasks
+      .filter((t) => t.assignedSlotId === slotId && !exclude.has(t.id))
       .reduce((sum, t) => sum + t.duration, 0);
 
     return Math.max(slot.hours - used, 0);

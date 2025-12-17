@@ -266,14 +266,15 @@
       </div>
       <p class="panel-subtitle">Drag a task onto any available slot on the left (the duration must fit inside the slot).</p>
 
-      <ul class="task-list" *ngIf="tasks.length; else emptyTasks">
+      <ng-template #taskItem let-task>
         <li
-          *ngFor="let task of sortedTasks"
           [attr.data-task-id]="task.id"
           [draggable]="editingTaskId !== task.id"
           [class.editing]="editingTaskId === task.id"
           (dragstart)="handleTaskDragStart(task.id)"
           (dragend)="handleTaskDragEnd()"
+          (dragover)="allowTaskOver($event, task.id)"
+          (drop)="handleTaskDropOnTask($event, task.id)"
         >
           <ng-container *ngIf="editingTaskId !== task.id; else editTaskForm">
             <div class="task-main">
@@ -350,7 +351,25 @@
             </form>
           </ng-template>
         </li>
-      </ul>
+      </ng-template>
+
+      <ng-container *ngIf="tasks.length; else emptyTasks">
+        <ul class="task-list" *ngIf="activeTasks.length">
+          <ng-container *ngFor="let task of activeTasks">
+            <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
+          </ng-container>
+        </ul>
+
+        <div *ngIf="postponedTasks.length" class="task-divider">
+          <span>Postponed</span>
+        </div>
+
+        <ul class="task-list postponed-list" *ngIf="postponedTasks.length">
+          <ng-container *ngFor="let task of postponedTasks">
+            <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
+          </ng-container>
+        </ul>
+      </ng-container>
 
       <ng-template #emptyTasks>
         <p class="empty">No tasks yet. Add a task above.</p>

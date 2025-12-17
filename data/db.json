@@ -57,13 +57,6 @@
       "hours": 1.5
     },
     {
-      "id": "slot-co15nxv",
-      "day": "Wednesday",
-      "start": "08:30",
-      "end": "10:00",
-      "hours": 1.5
-    },
-    {
       "id": "slot-t5d4cl7",
       "day": "Thursday",
       "start": "10:45",
@@ -76,13 +69,6 @@
       "start": "08:30",
       "end": "10:00",
       "hours": 1.5
-    },
-    {
-      "id": "slot-6qe38bz",
-      "day": "Wednesday",
-      "start": "10:45",
-      "end": "11:45",
-      "hours": 1
     },
     {
       "id": "slot-8igyk4f",
@@ -187,7 +173,7 @@
     {
       "id": "task-ipthrx4",
       "name": "Safety project",
-      "duration": 16,
+      "duration": 13,
       "assignedSlotId": null,
       "postponed": false
     },
@@ -196,12 +182,12 @@
       "name": "Weekly Review",
       "duration": 2,
       "assignedSlotId": null,
-      "postponed": false
+      "postponed": true
     },
     {
       "id": "task-fz99ld5",
       "name": "Enfa3Nafsak",
-      "duration": 6,
+      "duration": 4,
       "assignedSlotId": null,
       "postponed": false
     },
@@ -215,36 +201,64 @@
     {
       "id": "task-7v18h45",
       "name": "Kids out",
-      "duration": 4.5,
-      "assignedSlotId": null,
+      "duration": 1,
+      "assignedSlotId": "slot-rn5lmnk",
       "postponed": false
     },
     {
       "id": "task-x262z5v",
       "name": "Haircut",
-      "duration": 1,
-      "assignedSlotId": null,
+      "duration": 0.5,
+      "assignedSlotId": "slot-z2zf99i",
       "postponed": false
     },
     {
-      "id": "task-zlov6p1",
+      "id": "task-lz66moz",
       "name": "Safety project",
-      "duration": 1.5,
-      "assignedSlotId": "slot-co15nxv",
-      "postponed": false
-    },
-    {
-      "id": "task-uab23gt",
-      "name": "Safety project",
-      "duration": 1.5,
+      "duration": 4,
       "assignedSlotId": null,
-      "postponed": false
+      "postponed": true
     },
     {
-      "id": "task-ahanvdp",
+      "id": "task-jlrqr14",
       "name": "Safety project",
       "duration": 1,
-      "assignedSlotId": "slot-6qe38bz",
+      "assignedSlotId": "slot-s4h325p",
+      "postponed": false
+    },
+    {
+      "id": "task-fojqy4u",
+      "name": "Haircut",
+      "duration": 0.5,
+      "assignedSlotId": "slot-cnll1i9",
+      "postponed": false
+    },
+    {
+      "id": "task-ch47ip9",
+      "name": "Kids out",
+      "duration": 1,
+      "assignedSlotId": "slot-b7da78j",
+      "postponed": false
+    },
+    {
+      "id": "task-64suz2x",
+      "name": "Kids out",
+      "duration": 1,
+      "assignedSlotId": "slot-kin1wuo",
+      "postponed": false
+    },
+    {
+      "id": "task-d99vvq7",
+      "name": "Kids out",
+      "duration": 0.5,
+      "assignedSlotId": "slot-5hdyx6y",
+      "postponed": false
+    },
+    {
+      "id": "task-x3y588n",
+      "name": "Kids out",
+      "duration": 1,
+      "assignedSlotId": "slot-7p26ado",
       "postponed": false
     }
   ],
