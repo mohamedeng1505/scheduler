@@ -1,32 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { OnInit } from '@angular/core';
-
-interface Slot {
-  id: string;
-  day: string;
-  start: string; // HH:mm
-  end: string; // HH:mm
-  hours: number;
-}
-
-interface Task {
-  id: string;
-  name: string;
-  duration: number;
-  assignedSlotId: string | null;
-  postponed?: boolean;
-}
-
-type SlotDraft = Pick<Slot, 'day' | 'start' | 'end'>;
-type SavedSlotList = { id: string; name: string; slots: Slot[] };
+import { TasksComponent } from './tasks/tasks.component';
+import { Slot, Task, SlotDraft, SavedSlotList } from './types';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, TasksComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -51,12 +34,10 @@ export class App implements OnInit {
   protected newTask: { name: string; duration: number } = { name: '', duration: 1 };
 
   protected editingSlotIndex: number | null = null;
-  protected editingTaskId: string | null = null;
-  protected editingTaskDraft: { name: string; duration: number } = { name: '', duration: 1 };
-  protected draggingTaskId: string | null = null;
   protected selectedSlotIds: Set<string> = new Set<string>();
   protected selectedSlotListId: string | null = null;
   protected slotListMenuOpen = false;
+  @ViewChild(TasksComponent) protected tasksComponent?: TasksComponent;
 
   constructor(private http: HttpClient, private host: ElementRef) {}
 
@@ -75,35 +56,6 @@ export class App implements OnInit {
 
   protected get totalHours(): number {
     return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
-  }
-
-  protected get totalTaskHours(): number {
-    return this.tasks
-      .filter((task) => !task.postponed)
-      .reduce((sum, task) => sum + task.duration, 0);
-  }
-
-  protected get sortedTasks(): Task[] {
-    return [...this.tasks].sort((a, b) => {
-      const aAssigned = a.assignedSlotId ? 1 : 0;
-      const bAssigned = b.assignedSlotId ? 1 : 0;
-      if (aAssigned !== bAssigned) return aAssigned - bAssigned;
-
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
-      if (nameA < nameB) return -1;
-      if (nameA > nameB) return 1;
-
-      return b.duration - a.duration;
-    });
-  }
-
-  protected get activeTasks(): Task[] {
-    return this.sortedTasks.filter((task) => !task.postponed);
-  }
-
-  protected get postponedTasks(): Task[] {
-    return this.sortedTasks.filter((task) => task.postponed);
   }
 
   protected get selectedSlotListLabel(): string {
@@ -205,152 +157,6 @@ export class App implements OnInit {
     this.persistState();
   }
 
-  protected handleTaskDragStart(taskId: string): void {
-    this.draggingTaskId = taskId;
-  }
-
-  protected handleTaskDragEnd(): void {
-    this.draggingTaskId = null;
-  }
-
-  protected allowSlotDrop(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  protected allowTaskReturnDrop(event: DragEvent): void {
-    event.preventDefault();
-  }
-
-  protected allowTaskOver(event: DragEvent, targetTaskId: string): void {
-    if (!this.draggingTaskId || this.draggingTaskId === targetTaskId) return;
-    event.preventDefault();
-  }
-
-  protected handleTaskDropOnTask(event: DragEvent, targetTaskId: string): void {
-    event.preventDefault();
-    const sourceTaskId = this.draggingTaskId;
-    if (!sourceTaskId || sourceTaskId === targetTaskId) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    const sourceTask = this.tasks.find((t) => t.id === sourceTaskId);
-    const targetTask = this.tasks.find((t) => t.id === targetTaskId);
-
-    if (!sourceTask || !targetTask) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    const sourceName = sourceTask.name.trim().toLowerCase();
-    const targetName = targetTask.name.trim().toLowerCase();
-
-    if (!sourceName || sourceName !== targetName) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    const mergedDuration = this.roundHours(sourceTask.duration + targetTask.duration);
-    let mergedAssignedSlotId = targetTask.assignedSlotId ?? sourceTask.assignedSlotId ?? null;
-    const mergedPostponed = !!(targetTask.postponed || sourceTask.postponed);
-
-    if (mergedAssignedSlotId) {
-      const available = this.remainingHoursForSlotExcluding(mergedAssignedSlotId, [
-        sourceTask.id,
-        targetTask.id
-      ]);
-      if (mergedDuration > available) {
-        mergedAssignedSlotId = null;
-      }
-    }
-
-    this.tasks = this.tasks
-      .filter((t) => t.id !== sourceTask.id)
-      .map((t) =>
-        t.id === targetTask.id
-          ? { ...t, duration: mergedDuration, assignedSlotId: mergedAssignedSlotId, postponed: mergedPostponed }
-          : t
-      );
-
-    this.persistState();
-    this.handleTaskDragEnd();
-  }
-
-  protected handleTaskReturnDrop(event: DragEvent): void {
-    event.preventDefault();
-    const taskId = this.draggingTaskId;
-    if (!taskId) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    const task = this.tasks.find((t) => t.id === taskId);
-    if (!task) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    this.tasks = this.tasks.map((t) =>
-      t.id === taskId ? { ...t, assignedSlotId: null } : t
-    );
-    this.handleTaskDragEnd();
-    this.persistState();
-  }
-
-  protected dropTaskOnSlot(event: DragEvent, slotId: string): void {
-    event.preventDefault();
-    const taskId = this.draggingTaskId;
-    const slot = this.slots.find((s) => s.id === slotId);
-    const task = this.tasks.find((t) => t.id === taskId);
-    if (!taskId || !slot || !task) {
-      this.handleTaskDragEnd();
-      return;
-    }
-
-    const remaining = this.remainingHoursForSlot(slotId, taskId);
-    const available = this.roundHours(remaining);
-
-    if (task.duration <= available) {
-      this.tasks = this.tasks.map((t) =>
-        t.id === taskId ? { ...t, assignedSlotId: slotId } : t
-      );
-    } else {
-      if (available <= 0) {
-        this.handleTaskDragEnd();
-        return;
-      }
-
-      const splitDuration = available;
-      const remainder = this.roundHours(task.duration - splitDuration);
-
-      const newTask: Task = {
-        ...task,
-        id: this.generateId('task'),
-        duration: splitDuration,
-        assignedSlotId: slotId,
-        postponed: false
-      };
-
-      const updatedTasks = remainder > 0
-        ? this.tasks.map((t) =>
-            t.id === taskId ? { ...t, duration: remainder, assignedSlotId: null } : t
-          )
-        : this.tasks.filter((t) => t.id !== taskId);
-
-      this.tasks = [...updatedTasks, newTask];
-    }
-
-    this.handleTaskDragEnd();
-    this.persistState();
-  }
-
-  protected unassignTask(taskId: string): void {
-    this.tasks = this.tasks.map((t) =>
-      t.id === taskId ? { ...t, assignedSlotId: null } : t
-    );
-    this.persistState();
-  }
-
   protected tasksForSlot(slotId: string): Task[] {
     return this.tasks.filter((t) => t.assignedSlotId === slotId);
   }
@@ -371,6 +177,11 @@ export class App implements OnInit {
       next.add(slotId);
     }
     this.selectedSlotIds = next;
+  }
+
+  protected isSlotFull(slotId: string): boolean {
+    const remaining = this.remainingHoursForSlot(slotId);
+    return remaining <= 0.001; // treat near-zero as full to avoid float drift
   }
 
   protected selectAllSlots(): void {
@@ -448,86 +259,8 @@ export class App implements OnInit {
     this.persistState();
   }
 
-  protected deleteTask(taskId: string): void {
-    this.tasks = this.tasks.filter((t) => t.id !== taskId);
-    if (this.draggingTaskId === taskId) {
-      this.handleTaskDragEnd();
-    }
-    this.persistState();
-  }
-
-  protected startEditTask(task: Task): void {
-    this.editingTaskId = task.id;
-    this.editingTaskDraft = { name: task.name, duration: task.duration };
-  }
-
-  protected duplicateTask(task: Task): void {
-    if (!task) return;
-    const copy: Task = {
-      ...task,
-      id: this.generateId('task'),
-      assignedSlotId: null,
-      postponed: false
-    };
-    this.tasks = [...this.tasks, copy];
-    this.persistState();
-  }
-
-  protected cancelEditTask(form: NgForm): void {
-    this.editingTaskId = null;
-    this.editingTaskDraft = { name: '', duration: 1 };
-    form.resetForm();
-  }
-
-  protected saveTaskEdit(taskId: string, form: NgForm): void {
-    const trimmedName = this.editingTaskDraft.name.trim();
-    const duration = Number(this.editingTaskDraft.duration);
-    const task = this.tasks.find((t) => t.id === taskId);
-
-    if (!task || !trimmedName || Number.isNaN(duration) || duration <= 0) {
-      return;
-    }
-
-    if (task.assignedSlotId) {
-      const remaining = this.remainingHoursForSlot(task.assignedSlotId, taskId);
-      if (duration > remaining) {
-        return;
-      }
-    }
-
-    this.tasks = this.tasks.map((t) =>
-      t.id === taskId
-        ? {
-            ...t,
-            name: trimmedName,
-            duration: Math.round(duration * 100) / 100
-          }
-        : t
-    );
-
-    this.editingTaskId = null;
-    this.editingTaskDraft = { name: '', duration: 1 };
-    form.resetForm();
-    this.persistState();
-  }
-
-  protected availableHoursForTask(task: Task): number | null {
-    if (!task.assignedSlotId) return null;
-    return this.remainingHoursForSlot(task.assignedSlotId, task.id);
-  }
-
-  protected editExceedsSlot(task: Task): boolean {
-    const available = this.availableHoursForTask(task);
-    const duration = Number(this.editingTaskDraft.duration);
-    if (available === null) return false;
-    if (Number.isNaN(duration)) return false;
-    return duration > available;
-  }
-
-  protected toggleTaskPostpone(taskId: string): void {
-    this.tasks = this.tasks.map((t) =>
-      t.id === taskId ? { ...t, postponed: !t.postponed } : t
-    );
+  protected onTasksChange(next: Task[]): void {
+    this.tasks = next;
     this.persistState();
   }
 
@@ -553,9 +286,14 @@ export class App implements OnInit {
     const removed = beforeCount !== this.slots.length;
 
     if (removed) {
-      this.tasks = this.tasks.map((t) =>
-        t.assignedSlotId && idSet.has(t.assignedSlotId) ? { ...t, assignedSlotId: null } : t
+      const tasksToRemove = new Set(
+        this.tasks
+          .filter((t) => t.assignedSlotId && idSet.has(t.assignedSlotId))
+          .map((t) => t.id)
       );
+
+      this.tasks = this.tasks.filter((t) => !tasksToRemove.has(t.id));
+
       this.selectedSlotIds = new Set(
         Array.from(this.selectedSlotIds).filter((id) => !idSet.has(id))
       );
@@ -571,6 +309,7 @@ export class App implements OnInit {
         next: (data) => {
           this.slots = data.slots ?? [];
           this.tasks = (data.tasks ?? []).map((t) => ({ ...t, postponed: !!t.postponed }));
+          this.normalizeTasks();
           this.clearSlotSelection();
         },
         error: (err) => {
@@ -660,6 +399,7 @@ export class App implements OnInit {
   }
 
   private persistState(): void {
+    this.normalizeTasks();
     this.http
       .post(`${this.apiBase}/sync`, {
         slots: this.slots,
@@ -719,5 +459,36 @@ export class App implements OnInit {
 
   private roundHours(value: number): number {
     return Math.round(value * 100) / 100;
+  }
+
+  private taskStatusKey(task: Task): string {
+    if (task.postponed) return 'postponed';
+    if (task.assignedSlotId) return `assigned:${task.assignedSlotId}`;
+    return 'unassigned';
+  }
+
+  private normalizeTasks(): void {
+    if (!this.tasks.length) return;
+
+    const groups = new Map<string, Task>();
+
+    for (const task of this.tasks) {
+      const trimmedName = task.name.trim();
+      const normalizedName = trimmedName || task.name;
+      const key = `${normalizedName.toLowerCase()}::${this.taskStatusKey(task)}`;
+      const copy: Task = { ...task, name: normalizedName };
+
+      const existing = groups.get(key);
+      if (!existing) {
+        groups.set(key, copy);
+      } else {
+        groups.set(key, {
+          ...existing,
+          duration: this.roundHours(existing.duration + copy.duration)
+        });
+      }
+    }
+
+    this.tasks = Array.from(groups.values());
   }
 }

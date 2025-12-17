@@ -1,0 +1,123 @@
+<section
+  class="panel task-panel"
+  (dragover)="allowTaskReturnDrop($event)"
+  (drop)="handleTaskReturnDrop($event)"
+>
+  <div class="panel-header">
+    <h2>Required tasks</h2>
+    <div>
+      <span class="badge badge-soft">{{ tasks.length }} task{{ tasks.length === 1 ? '' : 's' }}</span>
+      <span class="badge badge-soft">{{ totalTaskHours | number: '1.0-2' }} hrs</span>
+    </div>
+  </div>
+  <p class="panel-subtitle">Drag a task onto any available slot on the left (the duration must fit inside the slot).</p>
+
+  <ng-template #taskItem let-task>
+    <li
+      [attr.data-task-id]="task.id"
+      [draggable]="editingTaskId !== task.id"
+      [class.editing]="editingTaskId === task.id"
+      (dragstart)="handleTaskDragStart(task.id)"
+      (dragend)="handleTaskDragEnd()"
+      (dragover)="allowTaskOver($event, task.id)"
+      (drop)="handleTaskDropOnTask($event, task.id)"
+    >
+      <ng-container *ngIf="editingTaskId !== task.id; else editTaskForm">
+        <div class="task-main">
+          <div class="task-name">{{ task.name }}</div>
+          <div class="task-meta">
+            <span class="pill pill-soft">{{ task.duration }}h</span>
+            <span class="task-status" [class.assigned]="task.assignedSlotId">
+              {{ task.assignedSlotId ? 'Assigned to a slot' : 'Unassigned' }}
+            </span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <button type="button" class="link-button" *ngIf="task.assignedSlotId" (click)="unassignTask(task.id)">
+            Unassign
+          </button>
+          <button type="button" class="link-button" (click)="duplicateTask(task)">
+            Duplicate
+          </button>
+          <button
+            type="button"
+            class="link-button postpone-toggle"
+            [class.postponed]="task.postponed"
+            (click)="toggleTaskPostpone(task.id)"
+          >
+            {{ task.postponed ? 'Postponed' : 'Postpone' }}
+          </button>
+          <button type="button" class="link-button" (click)="startEditTask(task)">
+            Edit
+          </button>
+          <button type="button" class="link-button danger" (click)="deleteTask(task.id)">
+            Delete
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #editTaskForm>
+        <form class="task-edit-form" #taskEditForm="ngForm" (ngSubmit)="saveTaskEdit(task.id, taskEditForm)">
+          <div class="task-edit-fields">
+            <label class="field">
+              <span>Task name</span>
+              <input
+                type="text"
+                name="editName"
+                [(ngModel)]="editingTaskDraft.name"
+                required
+              />
+            </label>
+            <label class="field">
+              <span>Duration (hours)</span>
+              <input
+                type="number"
+                name="editDuration"
+                [(ngModel)]="editingTaskDraft.duration"
+                min="0.25"
+                step="0.25"
+                required
+              />
+            </label>
+          </div>
+          <p class="task-edit-note" *ngIf="task.assignedSlotId">
+            Max for this slot: {{ availableHoursForTask(task) | number: '1.0-2' }}h
+          </p>
+          <p class="task-edit-note error" *ngIf="editExceedsSlot(task)">
+            Duration exceeds available time in this slot.
+          </p>
+          <div class="task-edit-actions">
+            <button type="submit" [disabled]="taskEditForm.invalid || editExceedsSlot(task)">
+              Save
+            </button>
+            <button type="button" class="link-button" (click)="cancelEditTask(taskEditForm)">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </ng-template>
+    </li>
+  </ng-template>
+
+  <ng-container *ngIf="tasks.length; else emptyTasks">
+    <ul class="task-list" *ngIf="activeTasks.length">
+      <ng-container *ngFor="let task of activeTasks">
+        <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
+      </ng-container>
+    </ul>
+
+    <div *ngIf="postponedTasks.length" class="task-divider">
+      <span>Postponed</span>
+    </div>
+
+    <ul class="task-list postponed-list" *ngIf="postponedTasks.length">
+      <ng-container *ngFor="let task of postponedTasks">
+        <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
+      </ng-container>
+    </ul>
+  </ng-container>
+
+  <ng-template #emptyTasks>
+    <p class="empty">No tasks yet. Add a task from the header.</p>
+  </ng-template>
+</section>
