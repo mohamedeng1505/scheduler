@@ -709,6 +709,36 @@ app-tasks .task-panel {
   padding: 10px 12px;
 }
 
+.task-summary {
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.task-summary h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.task-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.task-summary-table th,
+.task-summary-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.task-summary-table th:last-child,
+.task-summary-table td:last-child {
+  text-align: right;
+}
+
 @media (max-width: 800px) {
   .grid {
     grid-template-columns: 1fr;

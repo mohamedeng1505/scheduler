@@ -58,6 +58,27 @@ export class TasksComponent implements OnChanges {
     return this.sortedTasks.filter((task) => task.postponed);
   }
 
+  protected get taskSummary(): { name: string; totalHours: number }[] {
+    const summary = new Map<string, { name: string; totalHours: number }>();
+
+    this.tasks.forEach((task) => {
+      const trimmedName = task.name.trim();
+      if (!trimmedName) return;
+      const key = trimmedName.toLowerCase();
+      const existing = summary.get(key);
+      if (existing) {
+        existing.totalHours = this.roundHours(existing.totalHours + task.duration);
+      } else {
+        summary.set(key, { name: trimmedName, totalHours: this.roundHours(task.duration) });
+      }
+    });
+
+    return Array.from(summary.values()).sort((a, b) => {
+      if (b.totalHours !== a.totalHours) return b.totalHours - a.totalHours;
+      return a.name.localeCompare(b.name);
+    });
+  }
+
   public isEditing(taskId: string): boolean {
     return this.editingTaskId === taskId;
   }

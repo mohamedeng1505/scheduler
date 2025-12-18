@@ -120,4 +120,22 @@
   <ng-template #emptyTasks>
     <p class="empty">No tasks yet. Add a task from the header.</p>
   </ng-template>
+
+  <div class="task-summary" *ngIf="taskSummary.length">
+    <h3>Task totals</h3>
+    <table class="task-summary-table">
+      <thead>
+        <tr>
+          <th>Task name</th>
+          <th>Total hours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let summary of taskSummary">
+          <td>{{ summary.name }}</td>
+          <td>{{ summary.totalHours | number: '1.0-2' }}h</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
