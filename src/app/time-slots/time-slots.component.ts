@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { Slot, Task } from '../types';
 import { TasksComponent } from '../tasks/tasks.component';
 
@@ -8,9 +8,10 @@ import { TasksComponent } from '../tasks/tasks.component';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './time-slots.component.html',
-  styleUrls: ['../app.css']
+  styleUrls: ['../app.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeSlotsComponent {
+export class TimeSlotsComponent implements OnChanges {
   private readonly fallbackDays = [
     'Sunday',
     'Monday',
@@ -32,16 +33,14 @@ export class TimeSlotsComponent {
   @Output() slotDelete = new EventEmitter<string>();
   @Output() slotSelectionToggle = new EventEmitter<string>();
 
-  protected get sortedSlots(): Slot[] {
-    return [...this.slots].sort((a, b) => this.slotSortValue(a) - this.slotSortValue(b));
-  }
+  protected sortedSlots: Slot[] = [];
+  protected totalHours = 0;
 
-  protected get totalHours(): number {
-    return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
-  }
+  private tasksBySlotId = new Map<string, Task[]>();
+  private remainingBySlotId = new Map<string, number>();
 
   protected tasksForSlot(slotId: string): Task[] {
-    return this.tasks.filter((t) => t.assignedSlotId === slotId);
+    return this.tasksBySlotId.get(slotId) ?? [];
   }
 
   protected isSlotSelected(slotId: string): boolean {
@@ -49,8 +48,20 @@ export class TimeSlotsComponent {
   }
 
   protected isSlotFull(slotId: string): boolean {
-    const remaining = this.remainingHoursForSlot(slotId);
+    const remaining = this.remainingBySlotId.get(slotId) ?? 0;
     return remaining <= 0.001;
+  }
+
+  protected trackBySlotId(_index: number, slot: Slot): string {
+    return slot.id;
+  }
+
+  protected trackByTaskId(_index: number, task: Task): string {
+    return task.id;
+  }
+
+  ngOnChanges(): void {
+    this.updateDerivedState();
   }
 
   private slotSortValue(slot: Slot): number {
@@ -60,15 +71,30 @@ export class TimeSlotsComponent {
     return (dayIndex === -1 ? Number.MAX_SAFE_INTEGER : dayIndex) * 1440 + startMin;
   }
 
-  private remainingHoursForSlot(slotId: string): number {
-    const slot = this.slots.find((s) => s.id === slotId);
-    if (!slot) return 0;
+  private updateDerivedState(): void {
+    this.sortedSlots = [...this.slots].sort((a, b) => this.slotSortValue(a) - this.slotSortValue(b));
+    this.totalHours = this.slots.reduce((sum, slot) => sum + slot.hours, 0);
 
-    const used = this.tasks
-      .filter((t) => t.assignedSlotId === slotId)
-      .reduce((sum, t) => sum + t.duration, 0);
+    const tasksBySlotId = new Map<string, Task[]>();
+    const usedBySlotId = new Map<string, number>();
 
-    return Math.max(slot.hours - used, 0);
+    for (const task of this.tasks) {
+      if (!task.assignedSlotId) continue;
+      const slotId = task.assignedSlotId;
+      const list = tasksBySlotId.get(slotId) ?? [];
+      list.push(task);
+      tasksBySlotId.set(slotId, list);
+      usedBySlotId.set(slotId, (usedBySlotId.get(slotId) ?? 0) + task.duration);
+    }
+
+    const remainingBySlotId = new Map<string, number>();
+    for (const slot of this.slots) {
+      const used = usedBySlotId.get(slot.id) ?? 0;
+      remainingBySlotId.set(slot.id, Math.max(slot.hours - used, 0));
+    }
+
+    this.tasksBySlotId = tasksBySlotId;
+    this.remainingBySlotId = remainingBySlotId;
   }
 
   private toMinutes(t: string): number | null {

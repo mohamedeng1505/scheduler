@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Slot, Task } from '../types';
 
@@ -8,7 +8,8 @@ import { Slot, Task } from '../types';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tasks.component.html',
-  styleUrls: ['../app.css']
+  styleUrls: ['../app.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TasksComponent implements OnChanges {
   @Input() tasks: Task[] = [];
@@ -19,6 +20,17 @@ export class TasksComponent implements OnChanges {
   protected editingTaskDraft: { name: string; duration: number } = { name: '', duration: 1 };
   protected draggingTaskId: string | null = null;
 
+  protected totalTaskHours = 0;
+  protected unassignedTaskHours = 0;
+  protected assignedTaskHours = 0;
+  protected postponedTaskHours = 0;
+  protected sortedTasks: Task[] = [];
+  protected activeTasks: Task[] = [];
+  protected postponedTasks: Task[] = [];
+  protected taskSummary: { name: string; totalHours: number }[] = [];
+
+  private slotById = new Map<string, Slot>();
+
   ngOnChanges(): void {
     if (this.editingTaskId && !this.tasks.some((t) => t.id === this.editingTaskId)) {
       this.editingTaskId = null;
@@ -27,28 +39,51 @@ export class TasksComponent implements OnChanges {
     if (this.draggingTaskId && !this.tasks.some((t) => t.id === this.draggingTaskId)) {
       this.handleTaskDragEnd();
     }
+
+    this.slotById = new Map(this.slots.map((slot) => [slot.id, slot]));
+    this.updateDerivedState();
   }
 
-  protected get totalTaskHours(): number {
-    return this.tasks
-      .filter((task) => !task.postponed)
-      .reduce((sum, task) => sum + task.duration, 0);
+  protected trackByTaskId(_index: number, task: Task): string {
+    return task.id;
   }
 
-  protected get unassignedTaskHours(): number {
-    return this.sumTaskHours((task) => !task.postponed && !task.assignedSlotId);
+  protected trackByTaskSummaryName(_index: number, summary: { name: string; totalHours: number }): string {
+    return summary.name;
   }
 
-  protected get assignedTaskHours(): number {
-    return this.sumTaskHours((task) => !task.postponed && !!task.assignedSlotId);
-  }
+  private updateDerivedState(): void {
+    const summary = new Map<string, { name: string; totalHours: number }>();
+    let total = 0;
+    let assigned = 0;
+    let unassigned = 0;
+    let postponedTotal = 0;
 
-  protected get postponedTaskHours(): number {
-    return this.sumTaskHours((task) => !!task.postponed);
-  }
+    for (const task of this.tasks) {
+      const duration = task.duration;
+      if (!task.postponed) {
+        total += duration;
+        if (task.assignedSlotId) {
+          assigned += duration;
+        } else {
+          unassigned += duration;
+        }
+      } else {
+        postponedTotal += duration;
+      }
 
-  protected get sortedTasks(): Task[] {
-    return [...this.tasks].sort((a, b) => {
+      const trimmedName = task.name.trim();
+      if (!trimmedName) continue;
+      const key = trimmedName.toLowerCase();
+      const existing = summary.get(key);
+      if (existing) {
+        existing.totalHours = this.roundHours(existing.totalHours + duration);
+      } else {
+        summary.set(key, { name: trimmedName, totalHours: this.roundHours(duration) });
+      }
+    }
+
+    const sortedTasks = [...this.tasks].sort((a, b) => {
       const aAssigned = a.assignedSlotId ? 1 : 0;
       const bAssigned = b.assignedSlotId ? 1 : 0;
       if (aAssigned !== bAssigned) return aAssigned - bAssigned;
@@ -60,32 +95,18 @@ export class TasksComponent implements OnChanges {
 
       return b.duration - a.duration;
     });
-  }
 
-  protected get activeTasks(): Task[] {
-    return this.sortedTasks.filter((task) => !task.postponed);
-  }
+    const sortedActive = sortedTasks.filter((task) => !task.postponed);
+    const sortedPostponed = sortedTasks.filter((task) => task.postponed);
 
-  protected get postponedTasks(): Task[] {
-    return this.sortedTasks.filter((task) => task.postponed);
-  }
-
-  protected get taskSummary(): { name: string; totalHours: number }[] {
-    const summary = new Map<string, { name: string; totalHours: number }>();
-
-    this.tasks.forEach((task) => {
-      const trimmedName = task.name.trim();
-      if (!trimmedName) return;
-      const key = trimmedName.toLowerCase();
-      const existing = summary.get(key);
-      if (existing) {
-        existing.totalHours = this.roundHours(existing.totalHours + task.duration);
-      } else {
-        summary.set(key, { name: trimmedName, totalHours: this.roundHours(task.duration) });
-      }
-    });
-
-    return Array.from(summary.values()).sort((a, b) => {
+    this.totalTaskHours = this.roundHours(total);
+    this.unassignedTaskHours = this.roundHours(unassigned);
+    this.assignedTaskHours = this.roundHours(assigned);
+    this.postponedTaskHours = this.roundHours(postponedTotal);
+    this.sortedTasks = sortedTasks;
+    this.activeTasks = sortedActive;
+    this.postponedTasks = sortedPostponed;
+    this.taskSummary = Array.from(summary.values()).sort((a, b) => {
       if (b.totalHours !== a.totalHours) return b.totalHours - a.totalHours;
       return a.name.localeCompare(b.name);
     });
@@ -356,7 +377,7 @@ export class TasksComponent implements OnChanges {
   }
 
   private remainingHoursForSlot(slotId: string, excludeTaskId?: string): number {
-    const slot = this.slots.find((s) => s.id === slotId);
+    const slot = this.slotById.get(slotId);
     if (!slot) return 0;
 
     const used = this.tasks
@@ -367,7 +388,7 @@ export class TasksComponent implements OnChanges {
   }
 
   private remainingHoursForSlotExcluding(slotId: string, excludeTaskIds: string[] = []): number {
-    const slot = this.slots.find((s) => s.id === slotId);
+    const slot = this.slotById.get(slotId);
     if (!slot) return 0;
     const exclude = new Set(excludeTaskIds);
     const used = this.tasks

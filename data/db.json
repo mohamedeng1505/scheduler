@@ -201,8 +201,8 @@
     {
       "id": "task-phlgwdb",
       "name": "Enfa3Nafsak",
-      "duration": 1,
-      "assignedSlotId": "slot-z2zf99i",
+      "duration": 0.5,
+      "assignedSlotId": null,
       "postponed": false
     },
     {
@@ -264,6 +264,13 @@
     {
       "id": "task-ydbrhct",
       "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": null,
+      "postponed": false
+    },
+    {
+      "id": "task-o30d26n",
+      "name": "Enfa3Nafsak (1)",
       "duration": 0.5,
       "assignedSlotId": "slot-z2zf99i",
       "postponed": false

@@ -104,7 +104,7 @@
 
   <ng-container *ngIf="tasks.length; else emptyTasks">
     <ul class="task-list" *ngIf="activeTasks.length">
-      <ng-container *ngFor="let task of activeTasks">
+      <ng-container *ngFor="let task of activeTasks; trackBy: trackByTaskId">
         <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
       </ng-container>
     </ul>
@@ -114,7 +114,7 @@
     </div>
 
     <ul class="task-list postponed-list" *ngIf="postponedTasks.length">
-      <ng-container *ngFor="let task of postponedTasks">
+      <ng-container *ngFor="let task of postponedTasks; trackBy: trackByTaskId">
         <ng-container *ngTemplateOutlet="taskItem; context: { $implicit: task }"></ng-container>
       </ng-container>
     </ul>
@@ -134,7 +134,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let summary of taskSummary">
+        <tr *ngFor="let summary of taskSummary; trackBy: trackByTaskSummaryName">
           <td>{{ summary.name }}</td>
           <td>{{ summary.totalHours | number: '1.0-2' }}h</td>
         </tr>
