@@ -377,6 +377,10 @@ app-tasks {
   display: block;
 }
 
+app-time-slots {
+  display: block;
+}
+
 app-tasks .task-panel {
   position: static;
   max-height: none;
@@ -760,3 +764,4 @@ app-tasks .task-panel {
     grid-template-columns: 1fr;
   }
 }
+

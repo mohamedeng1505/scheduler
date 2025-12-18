@@ -1,8 +1,1 @@
 npm run dev:server
-
-Required Tasks
-| Task Name | Total Hours |
-| --- | --- |
-|  |  |
-
-Note: Same task name counted once across unassigned/assigned/postponed.

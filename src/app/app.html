@@ -174,7 +174,7 @@
                 (click)="deleteSlotList(list.id); $event.stopPropagation();"
                 aria-label="Delete saved list"
               >
-                ×
+                I-
               </button>
             </div>
           </div>
@@ -195,72 +195,17 @@
   </header>
 
   <main class="grid">
-    <section class="panel slot-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <h2>Available slots</h2>
-          <span class="badge">{{ totalHours | number: '1.0-2' }} hrs</span>
-        </div>
-      </div>
-
-      <ul class="slot-list" *ngIf="slots.length; else emptySlots">
-        <li
-          *ngFor="let slot of sortedSlots; let i = index"
-          class="slot-card"
-          [class.slot-full]="isSlotFull(slot.id)"
-          (dragover)="tasksComponent?.allowSlotDrop($event)"
-          (drop)="tasksComponent?.handleDropOnSlot($event, slot.id)"
-        >
-          <div class="slot-select">
-            <input
-              type="checkbox"
-              [checked]="isSlotSelected(slot.id)"
-              (change)="toggleSlotSelection(slot.id)"
-              [attr.aria-label]="'Select slot ' + slot.day + ' ' + slot.start + '-' + slot.end"
-            />
-          </div>
-          <div class="slot-main">
-            <div class="slot-meta">
-              <span class="pill">{{ slot.day }}</span>
-              <span class="hours">{{ slot.start }} - {{ slot.end }} ({{ slot.hours }}h)</span>
-            </div>
-            <div class="slot-tasks" *ngIf="tasksForSlot(slot.id).length; else emptySlot">
-              <div
-                class="task-chip"
-                *ngFor="let task of tasksForSlot(slot.id)"
-                [attr.data-task-id]="task.id"
-                [draggable]="!(tasksComponent?.isEditing(task.id))"
-                (dragstart)="tasksComponent?.handleTaskDragStart(task.id)"
-                (dragend)="tasksComponent?.handleTaskDragEnd()"
-              >
-                <span class="task-chip-text">{{ task.name }} - {{ task.duration }}h</span>
-                <button
-                  type="button"
-                  class="chip-action"
-                  title="Unassign from slot"
-                  (click)="tasksComponent?.unassignTask(task.id)"
-                >
-                  ×
-                </button>
-                <button type="button" class="chip-action" (click)="tasksComponent?.deleteTask(task.id)">Delete</button>
-              </div>
-            </div>
-            <ng-template #emptySlot>
-              <p class="slot-empty">Drag a task here</p>
-            </ng-template>
-          </div>
-          <div class="slot-actions">
-            <button type="button" class="link-button" (click)="duplicateSlot(slotIndex(slot.id))">Duplicate</button>
-            <button type="button" class="link-button" (click)="startEdit(slotIndex(slot.id))">Edit</button>
-            <button type="button" class="link-button danger" (click)="deleteSlot(slot.id)">Delete</button>
-          </div>
-        </li>
-      </ul>
-
-      <ng-template #emptySlots>
-        <p class="empty">No slots yet. Add your first slot above.</p>
-      </ng-template>
-    </section>
+    <app-time-slots
+      [days]="days"
+      [slots]="slots"
+      [tasks]="tasks"
+      [selectedSlotIds]="selectedSlotIds"
+      [tasksComponent]="tasksComponent"
+      (slotEdit)="startEdit($event)"
+      (slotDuplicate)="duplicateSlot($event)"
+      (slotDelete)="deleteSlot($event)"
+      (slotSelectionToggle)="toggleSlotSelection($event)"
+    ></app-time-slots>
 
     <app-tasks
       [tasks]="tasks"

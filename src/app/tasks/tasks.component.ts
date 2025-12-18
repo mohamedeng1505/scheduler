@@ -35,6 +35,18 @@ export class TasksComponent implements OnChanges {
       .reduce((sum, task) => sum + task.duration, 0);
   }
 
+  protected get unassignedTaskHours(): number {
+    return this.sumTaskHours((task) => !task.postponed && !task.assignedSlotId);
+  }
+
+  protected get assignedTaskHours(): number {
+    return this.sumTaskHours((task) => !task.postponed && !!task.assignedSlotId);
+  }
+
+  protected get postponedTaskHours(): number {
+    return this.sumTaskHours((task) => !!task.postponed);
+  }
+
   protected get sortedTasks(): Task[] {
     return [...this.tasks].sort((a, b) => {
       const aAssigned = a.assignedSlotId ? 1 : 0;
@@ -367,6 +379,11 @@ export class TasksComponent implements OnChanges {
 
   private roundHours(value: number): number {
     return Math.round(value * 100) / 100;
+  }
+
+  private sumTaskHours(predicate: (task: Task) => boolean): number {
+    const total = this.tasks.filter(predicate).reduce((sum, task) => sum + task.duration, 0);
+    return this.roundHours(total);
   }
 
   private generateId(prefix: string): string {

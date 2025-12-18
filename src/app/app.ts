@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { OnInit } from '@angular/core';
 import { TasksComponent } from './tasks/tasks.component';
+import { TimeSlotsComponent } from './time-slots/time-slots.component';
 import { Slot, Task, SlotDraft, SavedSlotList } from './types';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, TasksComponent],
+  imports: [CommonModule, FormsModule, HttpClientModule, TasksComponent, TimeSlotsComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -46,16 +46,8 @@ export class App implements OnInit {
     this.loadSavedSlotLists();
   }
 
-  protected get sortedSlots(): Slot[] {
-    return [...this.slots].sort((a, b) => this.slotSortValue(a) - this.slotSortValue(b));
-  }
-
   protected get selectedSlotCount(): number {
     return this.selectedSlotIds.size;
-  }
-
-  protected get totalHours(): number {
-    return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
   }
 
   protected get selectedSlotListLabel(): string {
@@ -104,7 +96,8 @@ export class App implements OnInit {
     this.editingSlotIndex = null;
   }
 
-  protected startEdit(index: number): void {
+  protected startEdit(slotId: string): void {
+    const index = this.slots.findIndex((s) => s.id === slotId);
     if (index < 0) return;
     const slot = this.slots[index];
     if (!slot) return;
@@ -119,9 +112,8 @@ export class App implements OnInit {
     form.resetForm({ day: this.days[0], start: '09:00', end: '10:00' });
   }
 
-  protected duplicateSlot(index: number): void {
-    if (index < 0) return;
-    const slot = this.slots[index];
+  protected duplicateSlot(slotId: string): void {
+    const slot = this.slots.find((s) => s.id === slotId);
     if (!slot) return;
 
     const copy: Slot = { ...slot, id: this.generateId('slot') };
@@ -157,18 +149,6 @@ export class App implements OnInit {
     this.persistState();
   }
 
-  protected tasksForSlot(slotId: string): Task[] {
-    return this.tasks.filter((t) => t.assignedSlotId === slotId);
-  }
-
-  protected slotIndex(slotId: string): number {
-    return this.slots.findIndex((s) => s.id === slotId);
-  }
-
-  protected isSlotSelected(slotId: string): boolean {
-    return this.selectedSlotIds.has(slotId);
-  }
-
   protected toggleSlotSelection(slotId: string): void {
     const next = new Set(this.selectedSlotIds);
     if (next.has(slotId)) {
@@ -177,11 +157,6 @@ export class App implements OnInit {
       next.add(slotId);
     }
     this.selectedSlotIds = next;
-  }
-
-  protected isSlotFull(slotId: string): boolean {
-    const remaining = this.remainingHoursForSlot(slotId);
-    return remaining <= 0.001; // treat near-zero as full to avoid float drift
   }
 
   protected selectAllSlots(): void {
@@ -262,12 +237,6 @@ export class App implements OnInit {
   protected onTasksChange(next: Task[]): void {
     this.tasks = next;
     this.persistState();
-  }
-
-  private slotSortValue(slot: Slot): number {
-    const dayIndex = this.days.indexOf(slot.day);
-    const startMin = this.toMinutes(slot.start) ?? 0;
-    return (dayIndex === -1 ? Number.MAX_SAFE_INTEGER : dayIndex) * 1440 + startMin;
   }
 
   private removeSlotsByIds(ids: string[]): boolean {
@@ -420,28 +389,6 @@ export class App implements OnInit {
 
   private generateId(prefix: string): string {
     return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
-  }
-
-  private remainingHoursForSlot(slotId: string, excludeTaskId?: string): number {
-    const slot = this.slots.find((s) => s.id === slotId);
-    if (!slot) return 0;
-
-    const used = this.tasks
-      .filter((t) => t.assignedSlotId === slotId && t.id !== excludeTaskId)
-      .reduce((sum, t) => sum + t.duration, 0);
-
-    return Math.max(slot.hours - used, 0);
-  }
-
-  private remainingHoursForSlotExcluding(slotId: string, excludeTaskIds: string[] = []): number {
-    const slot = this.slots.find((s) => s.id === slotId);
-    if (!slot) return 0;
-    const exclude = new Set(excludeTaskIds);
-    const used = this.tasks
-      .filter((t) => t.assignedSlotId === slotId && !exclude.has(t.id))
-      .reduce((sum, t) => sum + t.duration, 0);
-
-    return Math.max(slot.hours - used, 0);
   }
 
   private computeHours(start: string, end: string): number | null {
