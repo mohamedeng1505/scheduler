@@ -510,6 +510,10 @@ app-tasks .task-panel {
   font-weight: 700;
   cursor: pointer;
   padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .chip-action:hover {
@@ -764,4 +768,3 @@ app-tasks .task-panel {
     grid-template-columns: 1fr;
   }
 }
-

@@ -37,15 +37,15 @@
             (dragend)="tasksComponent?.handleTaskDragEnd()"
           >
             <span class="task-chip-text">{{ task.name }} - {{ task.duration }}h</span>
+            <button type="button" class="chip-action" (click)="tasksComponent?.deleteTask(task.id)">Delete</button>
             <button
               type="button"
               class="chip-action"
               title="Unassign from slot"
               (click)="tasksComponent?.unassignTask(task.id)"
             >
-              I-
+              x
             </button>
-            <button type="button" class="chip-action" (click)="tasksComponent?.deleteTask(task.id)">Delete</button>
           </div>
         </div>
         <ng-template #emptySlot>
