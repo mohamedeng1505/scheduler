@@ -1,62 +1,6 @@
 {
   "slots": [
     {
-      "id": "slot-kuy2d7y",
-      "day": "Thursday",
-      "start": "21:15",
-      "end": "23:00",
-      "hours": 1.75
-    },
-    {
-      "id": "slot-8igyk4f",
-      "day": "Friday",
-      "start": "07:00",
-      "end": "08:00",
-      "hours": 1
-    },
-    {
-      "id": "slot-nmjcwiu",
-      "day": "Friday",
-      "start": "09:00",
-      "end": "10:00",
-      "hours": 1
-    },
-    {
-      "id": "slot-p5pqxts",
-      "day": "Friday",
-      "start": "13:30",
-      "end": "14:30",
-      "hours": 1
-    },
-    {
-      "id": "slot-jd8zwl1",
-      "day": "Friday",
-      "start": "15:30",
-      "end": "16:00",
-      "hours": 0.5
-    },
-    {
-      "id": "slot-zxx0ibp",
-      "day": "Friday",
-      "start": "17:30",
-      "end": "18:30",
-      "hours": 1
-    },
-    {
-      "id": "slot-agurpfh",
-      "day": "Friday",
-      "start": "19:00",
-      "end": "20:30",
-      "hours": 1.5
-    },
-    {
-      "id": "slot-elat7kw",
-      "day": "Friday",
-      "start": "21:15",
-      "end": "23:00",
-      "hours": 1.75
-    },
-    {
       "id": "slot-rn5lmnk",
       "day": "Saturday",
       "start": "07:00",
@@ -102,8 +46,8 @@
       "id": "slot-o15h53q",
       "day": "Saturday",
       "start": "21:15",
-      "end": "22:30",
-      "hours": 1.25
+      "end": "23:30",
+      "hours": 2.25
     }
   ],
   "tasks": [
@@ -127,13 +71,6 @@
       "duration": 4,
       "assignedSlotId": null,
       "postponed": true
-    },
-    {
-      "id": "task-fojqy4u",
-      "name": "Haircut",
-      "duration": 0.5,
-      "assignedSlotId": "slot-p5pqxts",
-      "postponed": false
     },
     {
       "id": "task-ch47ip9",
@@ -164,94 +101,24 @@
       "postponed": false
     },
     {
-      "id": "task-stqmcos",
-      "name": "DonezyAI",
-      "duration": 1,
-      "assignedSlotId": "slot-nmjcwiu",
-      "postponed": false
-    },
-    {
-      "id": "task-voxgbhm",
-      "name": "DonezyAI",
-      "duration": 0.5,
-      "assignedSlotId": "slot-8igyk4f",
-      "postponed": false
-    },
-    {
-      "id": "task-wc6oa22",
-      "name": "Enfa3Nafsak",
-      "duration": 0.5,
-      "assignedSlotId": "slot-0hfppac",
-      "postponed": false
-    },
-    {
-      "id": "task-ara3k0d",
-      "name": "Enfa3Nafsak",
-      "duration": 1,
-      "assignedSlotId": "slot-zxx0ibp",
-      "postponed": false
-    },
-    {
-      "id": "task-mnpqlqo",
-      "name": "Safety project",
-      "duration": 1.75,
-      "assignedSlotId": "slot-kuy2d7y",
-      "postponed": false
-    },
-    {
-      "id": "task-6ic045s",
-      "name": "Safety project",
-      "duration": 0.5,
-      "assignedSlotId": "slot-jd8zwl1",
-      "postponed": false
-    },
-    {
       "id": "task-y5ha9ig",
       "name": "Safety project",
-      "duration": 1.5,
-      "assignedSlotId": "slot-agurpfh",
-      "postponed": false
-    },
-    {
-      "id": "task-jhzxlj0",
-      "name": "Safety project",
-      "duration": 1.75,
-      "assignedSlotId": "slot-elat7kw",
+      "duration": 2.25,
+      "assignedSlotId": null,
       "postponed": false
     },
     {
       "id": "task-cn3i1z1",
       "name": "Safety project",
-      "duration": 1.25,
+      "duration": 2.25,
       "assignedSlotId": "slot-o15h53q",
       "postponed": false
     },
     {
       "id": "task-cwqgf80",
       "name": "Safety project",
-      "duration": 1,
+      "duration": 1.5,
       "assignedSlotId": "slot-0hfppac",
-      "postponed": false
-    },
-    {
-      "id": "task-bh0rb3d",
-      "name": "Safety project",
-      "duration": 0.5,
-      "assignedSlotId": "slot-8igyk4f",
-      "postponed": false
-    },
-    {
-      "id": "task-giitbov",
-      "name": "DonezyAI",
-      "duration": 0.5,
-      "assignedSlotId": "slot-p5pqxts",
-      "postponed": false
-    },
-    {
-      "id": "task-ydbrhct",
-      "name": "Safety project",
-      "duration": 0.5,
-      "assignedSlotId": null,
       "postponed": false
     }
   ],
