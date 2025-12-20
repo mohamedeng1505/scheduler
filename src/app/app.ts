@@ -239,6 +239,26 @@ export class App implements OnInit {
     this.persistState();
   }
 
+  protected resetSchedule(): void {
+    if (!this.slots.length && !this.tasks.length) {
+      return;
+    }
+
+    const confirmed = window.confirm('Clear all time slots and required tasks? This cannot be undone.');
+    if (!confirmed) {
+      return;
+    }
+
+    this.slots = [];
+    this.tasks = [];
+    this.editingSlotIndex = null;
+    this.selectedSlotIds = new Set<string>();
+    this.slotListMenuOpen = false;
+    this.newSlot = { day: this.days[0], start: '09:00', end: '10:00' };
+    this.newTask = { name: '', duration: 1 };
+    this.persistState();
+  }
+
   private removeSlotsByIds(ids: string[]): boolean {
     if (!ids.length) return false;
     const idSet = new Set(ids);

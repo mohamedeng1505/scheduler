@@ -174,7 +174,7 @@
                 (click)="deleteSlotList(list.id); $event.stopPropagation();"
                 aria-label="Delete saved list"
               >
-                I-
+                x
               </button>
             </div>
           </div>
@@ -189,6 +189,14 @@
           [disabled]="!selectedSlotListId"
         >
           Load
+        </button>
+        <button
+          type="button"
+          class="link-button danger"
+          (click)="resetSchedule()"
+          [disabled]="!slots.length && !tasks.length"
+        >
+          Reset all
         </button>
       </div>
     </div>
