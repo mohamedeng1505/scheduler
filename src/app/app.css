@@ -343,6 +343,7 @@ button.ghost {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   align-items: start;
+  position: relative;
 }
 
 .panel {
@@ -355,6 +356,40 @@ button.ghost {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.hour-diff-float {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+  border: 2px solid rgba(15, 23, 42, 0.1);
+  pointer-events: none;
+}
+
+.hour-diff-float.positive {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #166534;
+  border-color: rgba(22, 101, 52, 0.25);
+}
+
+.hour-diff-float.negative {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  border-color: rgba(153, 27, 27, 0.25);
 }
 
 .slot-panel {
@@ -456,6 +491,12 @@ app-tasks .task-panel {
   border-color: #bbf7d0;
   background: #f6fff8;
   box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+}
+
+.slot-list .slot-card.slot-next {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
 }
 
 .slot-card:hover {
@@ -766,5 +807,11 @@ app-tasks .task-panel {
 
   .task-form {
     grid-template-columns: 1fr;
+  }
+
+  .hour-diff-float {
+    position: static;
+    transform: none;
+    margin: 0 auto 12px;
   }
 }

@@ -3,6 +3,7 @@
     <div class="panel-title">
       <h2>Available slots</h2>
       <span class="badge">{{ totalHours | number: '1.0-2' }} hrs</span>
+      <span class="badge badge-soft">Unassigned {{ unassignedHours | number: '1.0-2' }} hrs</span>
     </div>
   </div>
 
@@ -11,6 +12,7 @@
       *ngFor="let slot of sortedSlots; trackBy: trackBySlotId"
       class="slot-card"
       [class.slot-full]="isSlotFull(slot.id)"
+      [class.slot-next]="slot.id === nearestSlotId"
       (dragover)="tasksComponent?.allowSlotDrop($event)"
       (drop)="tasksComponent?.handleDropOnSlot($event, slot.id)"
     >

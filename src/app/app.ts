@@ -63,6 +63,22 @@ export class App implements OnInit {
     return this.computeHours(this.newSlot.start, this.newSlot.end);
   }
 
+  protected get totalSlotHours(): number {
+    return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
+  }
+
+  protected get totalTaskHours(): number {
+    return this.tasks.reduce((sum, task) => sum + task.duration, 0);
+  }
+
+  protected get hourDifference(): number {
+    return this.totalSlotHours - this.totalTaskHours;
+  }
+
+  protected get hasAssignedTasks(): boolean {
+    return this.tasks.some((task) => !!task.assignedSlotId);
+  }
+
   protected saveSlot(form: NgForm): void {
     const hours = this.computeHours(this.newSlot.start, this.newSlot.end);
 
@@ -256,6 +272,22 @@ export class App implements OnInit {
     this.slotListMenuOpen = false;
     this.newSlot = { day: this.days[0], start: '09:00', end: '10:00' };
     this.newTask = { name: '', duration: 1 };
+    this.persistState();
+  }
+
+  protected emptySlots(): void {
+    if (!this.hasAssignedTasks) {
+      return;
+    }
+
+    const confirmed = window.confirm('Unassign all tasks from their time slots?');
+    if (!confirmed) {
+      return;
+    }
+
+    this.tasks = this.tasks.map((task) =>
+      task.assignedSlotId ? { ...task, assignedSlotId: null } : task
+    );
     this.persistState();
   }
 

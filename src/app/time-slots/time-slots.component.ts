@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { Slot, Task } from '../types';
 import { TasksComponent } from '../tasks/tasks.component';
 
@@ -11,7 +11,7 @@ import { TasksComponent } from '../tasks/tasks.component';
   styleUrls: ['../app.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeSlotsComponent implements OnChanges {
+export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
   private readonly fallbackDays = [
     'Sunday',
     'Monday',
@@ -35,9 +35,14 @@ export class TimeSlotsComponent implements OnChanges {
 
   protected sortedSlots: Slot[] = [];
   protected totalHours = 0;
+  protected unassignedHours = 0;
+  protected nearestSlotId: string | null = null;
 
   private tasksBySlotId = new Map<string, Task[]>();
   private remainingBySlotId = new Map<string, number>();
+  private refreshTimerId?: number;
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   protected tasksForSlot(slotId: string): Task[] {
     return this.tasksBySlotId.get(slotId) ?? [];
@@ -62,6 +67,19 @@ export class TimeSlotsComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.updateDerivedState();
+  }
+
+  ngOnInit(): void {
+    this.refreshTimerId = window.setInterval(() => {
+      this.updateNearestSlot();
+    }, 60_000);
+    this.updateNearestSlot();
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshTimerId !== undefined) {
+      window.clearInterval(this.refreshTimerId);
+    }
   }
 
   private slotSortValue(slot: Slot): number {
@@ -95,6 +113,51 @@ export class TimeSlotsComponent implements OnChanges {
 
     this.tasksBySlotId = tasksBySlotId;
     this.remainingBySlotId = remainingBySlotId;
+    this.unassignedHours = Array.from(remainingBySlotId.values()).reduce((sum, value) => sum + value, 0);
+    this.updateNearestSlot();
+  }
+
+  private updateNearestSlot(): void {
+    const nextSlotId = this.getNearestSlotId(new Date());
+    if (nextSlotId !== this.nearestSlotId) {
+      this.nearestSlotId = nextSlotId;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private getNearestSlotId(now: Date): string | null {
+    let nearestId: string | null = null;
+    let nearestTime = Number.POSITIVE_INFINITY;
+
+    for (const slot of this.slots) {
+      const nextTime = this.nextSlotTime(slot, now);
+      if (!nextTime) continue;
+      const timeValue = nextTime.getTime();
+      if (timeValue < nearestTime) {
+        nearestTime = timeValue;
+        nearestId = slot.id;
+      }
+    }
+
+    return nearestId;
+  }
+
+  private nextSlotTime(slot: Slot, now: Date): Date | null {
+    const slotDayIndex = this.fallbackDays.indexOf(slot.day);
+    const startMin = this.toMinutes(slot.start);
+    if (slotDayIndex === -1 || startMin === null) return null;
+
+    const nowDayIndex = now.getDay();
+    let dayDelta = (slotDayIndex - nowDayIndex + 7) % 7;
+    const next = new Date(now);
+    next.setDate(now.getDate() + dayDelta);
+    next.setHours(Math.floor(startMin / 60), startMin % 60, 0, 0);
+
+    if (dayDelta === 0 && next <= now) {
+      next.setDate(next.getDate() + 7);
+    }
+
+    return next;
   }
 
   private toMinutes(t: string): number | null {

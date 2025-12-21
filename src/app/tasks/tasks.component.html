@@ -8,9 +8,15 @@
     <div>
       <span class="badge badge-soft">{{ tasks.length }} task{{ tasks.length === 1 ? '' : 's' }}</span>
       <span class="badge">{{ totalTaskHours | number: '1.0-2' }} hrs</span>
-      <span class="badge badge-soft">{{ unassignedTaskHours | number: '1.0-2' }}h</span>
-      <span class="badge badge-soft">{{ assignedTaskHours | number: '1.0-2' }}h</span>
-      <span class="badge badge-soft">{{ postponedTaskHours | number: '1.0-2' }}h</span>
+      <span class="badge badge-soft" title="Unassigned">
+        {{ unassignedTaskHours | number: '1.0-2' }}h
+      </span>
+      <span class="badge badge-soft" title="Assigned">
+        {{ assignedTaskHours | number: '1.0-2' }}h
+      </span>
+      <span class="badge badge-soft" title="Postponed">
+        {{ postponedTaskHours | number: '1.0-2' }}h
+      </span>
     </div>
   </div>
   <p class="panel-subtitle">Drag a task onto any available slot on the left (the duration must fit inside the slot).</p>
