@@ -83,13 +83,21 @@ export class TasksComponent implements OnChanges {
       }
     }
 
+    const nameKey = (task: Task): string => task.name.trim().toLowerCase();
+    const totalHoursForTask = (task: Task): number => summary.get(nameKey(task))?.totalHours ?? 0;
+
     const sortedTasks = [...this.tasks].sort((a, b) => {
       const aAssigned = a.assignedSlotId ? 1 : 0;
       const bAssigned = b.assignedSlotId ? 1 : 0;
       if (aAssigned !== bAssigned) return aAssigned - bAssigned;
 
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
+      if (!aAssigned && !bAssigned) {
+        const totalDiff = totalHoursForTask(b) - totalHoursForTask(a);
+        if (totalDiff !== 0) return totalDiff;
+      }
+
+      const nameA = nameKey(a);
+      const nameB = nameKey(b);
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
 
