@@ -71,13 +71,6 @@
       "hours": 1.25
     },
     {
-      "id": "slot-6qe38bz",
-      "day": "Sunday",
-      "start": "10:45",
-      "end": "11:45",
-      "hours": 1
-    },
-    {
       "id": "slot-8igyk4f",
       "day": "Friday",
       "start": "07:00",
@@ -313,22 +306,22 @@
     {
       "id": "task-i67gdv9",
       "name": "Safety project",
-      "duration": 19,
-      "assignedSlotId": null,
+      "duration": 0.5,
+      "assignedSlotId": "slot-rn5lmnk",
       "postponed": false
     },
     {
       "id": "task-y49j8fi",
       "name": "Enfa3Nafsak",
-      "duration": 8.5,
-      "assignedSlotId": null,
+      "duration": 1,
+      "assignedSlotId": "slot-0hfppac",
       "postponed": false
     },
     {
       "id": "task-663cwqb",
       "name": "DonezyAI",
-      "duration": 6,
-      "assignedSlotId": null,
+      "duration": 1,
+      "assignedSlotId": "slot-p5pqxts",
       "postponed": false
     },
     {
@@ -336,13 +329,6 @@
       "name": "Life balance",
       "duration": 6,
       "assignedSlotId": null,
-      "postponed": false
-    },
-    {
-      "id": "task-3e6f4gk",
-      "name": "Weekly Review",
-      "duration": 1,
-      "assignedSlotId": "slot-6qe38bz",
       "postponed": false
     },
     {
@@ -399,6 +385,209 @@
       "name": "Safety project",
       "duration": 1.25,
       "assignedSlotId": "slot-22jii2c",
+      "postponed": false
+    },
+    {
+      "id": "task-f0z5khn",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-xf3gcik",
+      "postponed": false
+    },
+    {
+      "id": "task-ch9pict",
+      "name": "DonezyAI",
+      "duration": 1,
+      "assignedSlotId": "slot-dbjx32q",
+      "postponed": false
+    },
+    {
+      "id": "task-y2wu5um",
+      "name": "Enfa3Nafsak",
+      "duration": 1.5,
+      "assignedSlotId": "slot-ffbtto8",
+      "postponed": false
+    },
+    {
+      "id": "task-kntqijx",
+      "name": "Enfa3Nafsak",
+      "duration": 1.5,
+      "assignedSlotId": "slot-7vxx5c4",
+      "postponed": false
+    },
+    {
+      "id": "task-r1tu75x",
+      "name": "Enfa3Nafsak",
+      "duration": 1.5,
+      "assignedSlotId": "slot-z2zf99i",
+      "postponed": false
+    },
+    {
+      "id": "task-1cvqfd9",
+      "name": "Enfa3Nafsak",
+      "duration": 1.5,
+      "assignedSlotId": "slot-932ivmy",
+      "postponed": false
+    },
+    {
+      "id": "task-825hxzz",
+      "name": "Enfa3Nafsak",
+      "duration": 1.5,
+      "assignedSlotId": "slot-agurpfh",
+      "postponed": false
+    },
+    {
+      "id": "task-dk2e309",
+      "name": "DonezyAI",
+      "duration": 1,
+      "assignedSlotId": "slot-kbd98zq",
+      "postponed": false
+    },
+    {
+      "id": "task-cwbppwm",
+      "name": "DonezyAI",
+      "duration": 1,
+      "assignedSlotId": "slot-10f2en5",
+      "postponed": false
+    },
+    {
+      "id": "task-t4ni1bx",
+      "name": "DonezyAI",
+      "duration": 1,
+      "assignedSlotId": "slot-8igyk4f",
+      "postponed": false
+    },
+    {
+      "id": "task-fq4ipun",
+      "name": "DonezyAI",
+      "duration": 1,
+      "assignedSlotId": "slot-nmjcwiu",
+      "postponed": false
+    },
+    {
+      "id": "task-drgfz2h",
+      "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": "slot-x8pwagu",
+      "postponed": false
+    },
+    {
+      "id": "task-eed6lbf",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-w8dr3co",
+      "postponed": false
+    },
+    {
+      "id": "task-nsae74k",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-emfd27c",
+      "postponed": false
+    },
+    {
+      "id": "task-krrm3s1",
+      "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": "slot-g93z3ku",
+      "postponed": false
+    },
+    {
+      "id": "task-y5ldadu",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-ptqg9fv",
+      "postponed": false
+    },
+    {
+      "id": "task-xjqhhs4",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-9kc1se0",
+      "postponed": false
+    },
+    {
+      "id": "task-lt0xeeo",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-ai3zlho",
+      "postponed": false
+    },
+    {
+      "id": "task-ry1p3vk",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-jrulyv4",
+      "postponed": false
+    },
+    {
+      "id": "task-on0gymg",
+      "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": "slot-5xjkwzm",
+      "postponed": false
+    },
+    {
+      "id": "task-y4ijod1",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-lq3gbgh",
+      "postponed": false
+    },
+    {
+      "id": "task-k4a59n3",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-he1vi68",
+      "postponed": false
+    },
+    {
+      "id": "task-224n8vf",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-t5d4cl7",
+      "postponed": false
+    },
+    {
+      "id": "task-b2vytt3",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-67t0qxm",
+      "postponed": false
+    },
+    {
+      "id": "task-z68jn2g",
+      "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": "slot-cnll1i9",
+      "postponed": false
+    },
+    {
+      "id": "task-d6vlbo2",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-kuy2d7y",
+      "postponed": false
+    },
+    {
+      "id": "task-blcdu2s",
+      "name": "Safety project",
+      "duration": 0.5,
+      "assignedSlotId": "slot-jd8zwl1",
+      "postponed": false
+    },
+    {
+      "id": "task-4pognta",
+      "name": "Safety project",
+      "duration": 1,
+      "assignedSlotId": "slot-zxx0ibp",
+      "postponed": false
+    },
+    {
+      "id": "task-31s5r29",
+      "name": "Safety project",
+      "duration": 1.25,
+      "assignedSlotId": "slot-elat7kw",
       "postponed": false
     }
   ],
