@@ -469,6 +469,44 @@ app-tasks .task-panel {
   gap: 12px;
 }
 
+.slot-day-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slot-day-group {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+.slot-day-group:nth-child(odd) {
+  background: #f1f5f9;
+}
+
+.slot-day-group:nth-child(even) {
+  background: #eef2ff;
+}
+
+.slot-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.slot-day-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.slot-day-header + .slot-list {
+  margin-top: 10px;
+}
+
 .slot-list li,
 .slot-card {
   display: flex;

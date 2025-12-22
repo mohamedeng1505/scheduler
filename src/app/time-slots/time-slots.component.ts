@@ -34,6 +34,7 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
   @Output() slotSelectionToggle = new EventEmitter<string>();
 
   protected sortedSlots: Slot[] = [];
+  protected groupedSlots: { day: string; slots: Slot[] }[] = [];
   protected totalHours = 0;
   protected unassignedHours = 0;
   protected nearestSlotId: string | null = null;
@@ -63,6 +64,10 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
 
   protected trackByTaskId(_index: number, task: Task): string {
     return task.id;
+  }
+
+  protected trackByDay(_index: number, group: { day: string }): string {
+    return group.day;
   }
 
   ngOnChanges(): void {
@@ -114,6 +119,15 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
     this.tasksBySlotId = tasksBySlotId;
     this.remainingBySlotId = remainingBySlotId;
     this.unassignedHours = Array.from(remainingBySlotId.values()).reduce((sum, value) => sum + value, 0);
+    this.groupedSlots = this.sortedSlots.reduce<{ day: string; slots: Slot[] }[]>((groups, slot) => {
+      const last = groups[groups.length - 1];
+      if (!last || last.day !== slot.day) {
+        groups.push({ day: slot.day, slots: [slot] });
+      } else {
+        last.slots.push(slot);
+      }
+      return groups;
+    }, []);
     this.updateNearestSlot();
   }
 
