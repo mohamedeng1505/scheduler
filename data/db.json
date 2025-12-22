@@ -285,7 +285,7 @@
     {
       "id": "task-yw76pv9",
       "name": "Safety project",
-      "duration": 3,
+      "duration": 2.5,
       "assignedSlotId": null,
       "postponed": true
     },
@@ -472,27 +472,6 @@
       "postponed": false
     },
     {
-      "id": "task-0f6anng",
-      "name": "Life balance",
-      "duration": 1.25,
-      "assignedSlotId": "slot-emfd27c",
-      "postponed": false
-    },
-    {
-      "id": "task-rlv1qsl",
-      "name": "Life balance",
-      "duration": 1,
-      "assignedSlotId": "slot-kbd98zq",
-      "postponed": false
-    },
-    {
-      "id": "task-u8n03wb",
-      "name": "Life balance",
-      "duration": 1,
-      "assignedSlotId": "slot-10f2en5",
-      "postponed": false
-    },
-    {
       "id": "task-79xf3di",
       "name": "Safety project",
       "duration": 1,
@@ -511,6 +490,27 @@
       "name": "Safety project",
       "duration": 1,
       "assignedSlotId": "slot-7p26ado",
+      "postponed": false
+    },
+    {
+      "id": "task-lf6x49d",
+      "name": "Life balance",
+      "duration": 1.25,
+      "assignedSlotId": "slot-emfd27c",
+      "postponed": false
+    },
+    {
+      "id": "task-kuv5r9u",
+      "name": "Life balance",
+      "duration": 1,
+      "assignedSlotId": "slot-kbd98zq",
+      "postponed": false
+    },
+    {
+      "id": "task-fk82der",
+      "name": "Life balance",
+      "duration": 1,
+      "assignedSlotId": "slot-10f2en5",
       "postponed": false
     }
   ],

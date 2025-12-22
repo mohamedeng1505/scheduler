@@ -272,6 +272,31 @@ export class TasksComponent implements OnChanges {
     );
   }
 
+  public unassignTasksByName(name: string): void {
+    const normalizedName = name.trim().toLowerCase();
+    if (!normalizedName) return;
+
+    let changed = false;
+    const next = this.tasks.map((task) => {
+      if (!task.assignedSlotId) return task;
+      if (task.name.trim().toLowerCase() !== normalizedName) return task;
+      changed = true;
+      return { ...task, assignedSlotId: null };
+    });
+
+    if (changed) {
+      this.emitTasks(next);
+    }
+  }
+
+  protected hasAssignedTasksForName(name: string): boolean {
+    const normalizedName = name.trim().toLowerCase();
+    if (!normalizedName) return false;
+    return this.tasks.some(
+      (task) => task.assignedSlotId && task.name.trim().toLowerCase() === normalizedName
+    );
+  }
+
   public deleteTask(taskId: string): void {
     const next = this.tasks.filter((t) => t.id !== taskId);
     this.emitTasks(next);

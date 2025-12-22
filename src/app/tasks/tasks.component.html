@@ -136,13 +136,24 @@
       <thead>
         <tr>
           <th>Task name</th>
-          <th>Total hours</th>
+          <th class="task-summary-hours">Total hours</th>
+          <th>Unassign</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let summary of taskSummary; trackBy: trackByTaskSummaryName">
           <td>{{ summary.name }}</td>
-          <td>{{ summary.totalHours | number: '1.0-2' }}h</td>
+          <td class="task-summary-hours">{{ summary.totalHours | number: '1.0-2' }}h</td>
+          <td>
+            <button
+              type="button"
+              class="link-button"
+              [disabled]="!hasAssignedTasksForName(summary.name)"
+              (click)="unassignTasksByName(summary.name)"
+            >
+              Unassign
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>

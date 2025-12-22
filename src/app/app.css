@@ -821,6 +821,10 @@ app-tasks .task-panel {
   text-align: left;
 }
 
+.task-summary-hours {
+  text-align: right;
+}
+
 .task-summary-table th:last-child,
 .task-summary-table td:last-child {
   text-align: right;
