@@ -1,4 +1,4 @@
-:host {
+app-scheduler {
   display: block;
   min-height: 100vh;
   background-color: #f4f6fb;
@@ -610,3 +610,4 @@ button.ghost {
     margin: 0 auto 12px;
   }
 }
+
