@@ -8,7 +8,7 @@ import { Slot, Task } from '../types';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tasks.component.html',
-  styleUrls: ['../app.css'],
+  styleUrls: ['../app.css', './tasks.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TasksComponent implements OnChanges {
@@ -243,13 +243,13 @@ export class TasksComponent implements OnChanges {
 
       const splitDuration = available;
       const remainder = this.roundHours(task.duration - splitDuration);
-
       const newTask: Task = {
         ...task,
         id: this.generateId('task'),
         duration: splitDuration,
         assignedSlotId: slotId,
-        postponed: false
+        postponed: false,
+        tags: Array.isArray(task.tags) ? [...task.tags] : []
       };
 
       const updatedTasks = remainder > 0
@@ -318,7 +318,8 @@ export class TasksComponent implements OnChanges {
       id: this.generateId('task'),
       name: nextName,
       assignedSlotId: null,
-      postponed: false
+      postponed: false,
+      tags: Array.isArray(task.tags) ? [...task.tags] : []
     };
     this.emitTasks([...this.tasks, copy]);
   }
@@ -444,3 +445,4 @@ export class TasksComponent implements OnChanges {
     return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
   }
 }
+

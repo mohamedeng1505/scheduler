@@ -8,7 +8,7 @@ import { TasksComponent } from '../tasks/tasks.component';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './time-slots.component.html',
-  styleUrls: ['../app.css'],
+  styleUrls: ['../app.css', './time-slots.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {

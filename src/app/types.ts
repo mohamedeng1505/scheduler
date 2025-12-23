@@ -9,6 +9,7 @@ export interface Slot {
 export interface Task {
   id: string;
   name: string;
+  tags: string[];
   duration: number;
   assignedSlotId: string | null;
   postponed?: boolean;
@@ -16,3 +17,4 @@ export interface Task {
 
 export type SlotDraft = Pick<Slot, 'day' | 'start' | 'end'>;
 export type SavedSlotList = { id: string; name: string; slots: Slot[] };
+

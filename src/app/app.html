@@ -232,7 +232,7 @@
     ></app-time-slots>
 
     <app-tasks
-      [tasks]="tasks"
+      [tasks]="requiredTasks"
       [slots]="slots"
       (tasksChange)="onTasksChange($event)"
     ></app-tasks>
@@ -259,7 +259,7 @@
     <table class="no-time-table" *ngIf="noTimeTasks.length; else noTimeEmpty">
       <tbody>
         <tr *ngFor="let task of noTimeTasks">
-          <td>{{ task }}</td>
+          <td>{{ task.name }}</td>
         </tr>
       </tbody>
     </table>

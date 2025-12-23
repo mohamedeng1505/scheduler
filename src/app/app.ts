@@ -15,6 +15,7 @@ import { Slot, Task, SlotDraft, SavedSlotList } from './types';
 })
 export class App implements OnInit {
   private readonly apiBase = 'http://localhost:4000/api';
+  private readonly noTimeTag = 'No time';
 
   protected readonly days = [
     'Sunday',
@@ -29,7 +30,6 @@ export class App implements OnInit {
   protected slots: Slot[] = [];
   protected tasks: Task[] = [];
   protected savedSlotLists: SavedSlotList[] = [];
-  protected noTimeTasks: string[] = [];
   protected noTimeDraft = '';
 
   protected newSlot: SlotDraft = { day: this.days[0], start: '09:00', end: '10:00' };
@@ -70,7 +70,7 @@ export class App implements OnInit {
   }
 
   protected get totalTaskHours(): number {
-    return this.tasks.reduce((sum, task) => sum + task.duration, 0);
+    return this.requiredTasks.reduce((sum, task) => sum + task.duration, 0);
   }
 
   protected get hourDifference(): number {
@@ -78,7 +78,15 @@ export class App implements OnInit {
   }
 
   protected get hasAssignedTasks(): boolean {
-    return this.tasks.some((task) => !!task.assignedSlotId);
+    return this.requiredTasks.some((task) => !!task.assignedSlotId);
+  }
+
+  protected get requiredTasks(): Task[] {
+    return this.tasks.filter((task) => !this.isNoTimeTask(task));
+  }
+
+  protected get noTimeTasks(): Task[] {
+    return this.tasks.filter((task) => this.isNoTimeTask(task));
   }
 
   protected saveSlot(form: NgForm): void {
@@ -156,6 +164,7 @@ export class App implements OnInit {
     const task: Task = {
       id: this.generateId('task'),
       name: trimmedName,
+      tags: [],
       duration: Math.round(duration * 100) / 100,
       assignedSlotId: null,
       postponed: false
@@ -253,7 +262,8 @@ export class App implements OnInit {
   }
 
   protected onTasksChange(next: Task[]): void {
-    this.tasks = next;
+    const noTimeTasks = this.noTimeTasks;
+    this.tasks = [...next, ...noTimeTasks];
     this.persistState();
   }
 
@@ -269,7 +279,6 @@ export class App implements OnInit {
 
     this.slots = [];
     this.tasks = [];
-    this.noTimeTasks = [];
     this.editingSlotIndex = null;
     this.selectedSlotIds = new Set<string>();
     this.slotListMenuOpen = false;
@@ -332,8 +341,23 @@ export class App implements OnInit {
       .subscribe({
         next: (data) => {
           this.slots = data.slots ?? [];
-          this.tasks = (data.tasks ?? []).map((t) => ({ ...t, postponed: !!t.postponed }));
-          this.noTimeTasks = data.noTimeTasks ?? [];
+          const loadedTasks = (data.tasks ?? []).map((t) => ({
+            ...t,
+            postponed: !!t.postponed,
+            tags: Array.isArray(t.tags) ? t.tags : []
+          }));
+          const legacyNoTime = (data.noTimeTasks ?? [])
+            .map((name) => name.trim())
+            .filter(Boolean);
+          const noTimeNames = new Set(
+            loadedTasks
+              .filter((task) => this.isNoTimeTask(task))
+              .map((task) => task.name.trim().toLowerCase())
+          );
+          const migratedNoTime = legacyNoTime
+            .filter((name) => !noTimeNames.has(name.toLowerCase()))
+            .map((name) => this.buildNoTimeTask(name));
+          this.tasks = [...loadedTasks, ...migratedNoTime];
           this.normalizeTasks();
           this.clearSlotSelection();
         },
@@ -429,7 +453,7 @@ export class App implements OnInit {
       .post(`${this.apiBase}/sync`, {
         slots: this.slots,
         tasks: this.tasks,
-        noTimeTasks: this.noTimeTasks
+        noTimeTasks: this.noTimeTaskNames()
       })
       .subscribe({
         error: (err) => {
@@ -441,7 +465,8 @@ export class App implements OnInit {
   protected addNoTimeTask(name: string): void {
     const trimmed = name.trim();
     if (!trimmed) return;
-    this.noTimeTasks = [...this.noTimeTasks, trimmed];
+    const task = this.buildNoTimeTask(trimmed);
+    this.tasks = [...this.tasks, task];
     this.persistState();
   }
 
@@ -485,6 +510,32 @@ export class App implements OnInit {
     return 'unassigned';
   }
 
+  private isNoTimeTask(task: Task): boolean {
+    return Array.isArray(task.tags) && task.tags.includes(this.noTimeTag);
+  }
+
+  private normalizedTags(tags: string[]): string[] {
+    const normalized = (tags ?? [])
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    return Array.from(new Set(normalized)).sort();
+  }
+
+  private buildNoTimeTask(name: string): Task {
+    return {
+      id: this.generateId('task'),
+      name,
+      tags: [this.noTimeTag],
+      duration: 0,
+      assignedSlotId: null,
+      postponed: false
+    };
+  }
+
+  private noTimeTaskNames(): string[] {
+    return this.noTimeTasks.map((task) => task.name);
+  }
+
   private normalizeTasks(): void {
     if (!this.tasks.length) return;
 
@@ -493,8 +544,9 @@ export class App implements OnInit {
     for (const task of this.tasks) {
       const trimmedName = task.name.trim();
       const normalizedName = trimmedName || task.name;
-      const key = `${normalizedName.toLowerCase()}::${this.taskStatusKey(task)}`;
-      const copy: Task = { ...task, name: normalizedName };
+      const tags = this.normalizedTags(Array.isArray(task.tags) ? task.tags : []);
+      const key = `${normalizedName.toLowerCase()}::${this.taskStatusKey(task)}::${tags.join('|')}`;
+      const copy: Task = { ...task, name: normalizedName, tags };
 
       const existing = groups.get(key);
       if (!existing) {
@@ -510,3 +562,4 @@ export class App implements OnInit {
     this.tasks = Array.from(groups.values());
   }
 }
+

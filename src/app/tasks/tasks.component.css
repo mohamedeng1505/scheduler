@@ -1,0 +1,162 @@
+:host {
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+  display: block;
+  z-index: 2;
+}
+
+.task-panel {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.link-button.postpone-toggle.postponed {
+  color: #b45309;
+}
+
+.task-divider {
+  border-top: 1px solid #e5e7eb;
+  margin: 14px 0 10px;
+  position: relative;
+}
+
+.task-divider span {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: #ffffff;
+  padding: 0 8px;
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: grab;
+  position: relative;
+}
+
+.postponed-list li {
+  background: #fff7ed;
+  border-color: #f8d3b2;
+}
+
+.task-list li.editing {
+  border-style: solid;
+  border-color: #c7d2fe;
+  background: #eef2ff;
+  cursor: default;
+}
+
+.task-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.task-status {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.task-status.assigned {
+  color: #16a34a;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.task-edit-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.task-edit-note {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.task-edit-note.error {
+  color: #dc2626;
+}
+
+.task-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-edit-actions button[type="submit"] {
+  padding: 10px 12px;
+}
+
+.task-summary {
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.task-summary h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.task-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.task-summary-table th,
+.task-summary-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.task-summary-hours {
+  text-align: right;
+}
+
+.task-summary-table th:last-child,
+.task-summary-table td:last-child {
+  text-align: right;
+}
