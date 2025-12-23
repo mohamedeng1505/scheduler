@@ -3,6 +3,7 @@
   min-height: 100vh;
   background-color: #f4f6fb;
   color: #111827;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -64,10 +65,6 @@
   flex-shrink: 0;
 }
 
-.hero .bulk-actions .danger {
-  color: #fff;
-}
-
 .bulk-right {
   margin-left: auto;
   gap: 8px;
@@ -87,13 +84,8 @@
 ;
 }
 
-.slot-bulk-bar .link-button:hover:not(:disabled):not(.danger) {
+.slot-bulk-bar .link-button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.18);
-}
-
-.slot-bulk-bar .link-button:hover:not(:disabled).danger {
-  background: #fff;
-  color: #dc2626;
 }
 
 .slot-list-dropdown {
