@@ -18,7 +18,7 @@ async function ensureDataFile() {
   } catch {
     await fs.writeFile(
       DATA_PATH,
-      JSON.stringify({ slots: [], tasks: [], savedSlotLists: [] }, null, 2),
+      JSON.stringify({ slots: [], tasks: [], savedSlotLists: [], noTimeTasks: [] }, null, 2),
       'utf8'
     );
   }
@@ -33,7 +33,8 @@ async function readData() {
   return {
     slots: parsed.slots || [],
     tasks: parsed.tasks || [],
-    savedSlotLists: parsed.savedSlotLists || []
+    savedSlotLists: parsed.savedSlotLists || [],
+    noTimeTasks: parsed.noTimeTasks || []
   };
 }
 
@@ -45,7 +46,8 @@ async function writeData(data) {
       {
         slots: data.slots || [],
         tasks: data.tasks || [],
-        savedSlotLists: data.savedSlotLists || []
+        savedSlotLists: data.savedSlotLists || [],
+        noTimeTasks: data.noTimeTasks || []
       },
       null,
       2
@@ -65,14 +67,22 @@ app.get('/api/data', async (_req, res) => {
 });
 
 app.post('/api/sync', async (req, res) => {
-  const { slots, tasks } = req.body || {};
+  const { slots, tasks, noTimeTasks } = req.body || {};
   if (!Array.isArray(slots) || !Array.isArray(tasks)) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+  if (noTimeTasks !== undefined && !Array.isArray(noTimeTasks)) {
     return res.status(400).json({ message: 'Invalid payload' });
   }
 
   try {
     const existing = await readData();
-    await writeData({ ...existing, slots, tasks });
+    await writeData({
+      ...existing,
+      slots,
+      tasks,
+      noTimeTasks: Array.isArray(noTimeTasks) ? noTimeTasks : existing.noTimeTasks || []
+    });
     res.json({ status: 'ok' });
   } catch (err) {
     console.error('Failed to write data file', err);

@@ -237,4 +237,34 @@
       (tasksChange)="onTasksChange($event)"
     ></app-tasks>
   </main>
+
+  <section class="panel no-time-panel">
+    <div class="panel-header">
+      <h2>Tasks without a time slot</h2>
+    </div>
+    <form class="no-time-form" (ngSubmit)="submitNoTimeTask()">
+      <label class="no-time-label">
+        <span>Add something you want to do later</span>
+        <div class="no-time-input-row">
+          <input
+            type="text"
+            name="noTimeTask"
+            [(ngModel)]="noTimeDraft"
+            placeholder="e.g., Update portfolio"
+          />
+          <button type="submit" [disabled]="!noTimeDraft.trim()">Add</button>
+        </div>
+      </label>
+    </form>
+    <table class="no-time-table" *ngIf="noTimeTasks.length; else noTimeEmpty">
+      <tbody>
+        <tr *ngFor="let task of noTimeTasks">
+          <td>{{ task }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noTimeEmpty>
+      <p class="empty">Nothing listed yet.</p>
+    </ng-template>
+  </section>
 </div>

@@ -29,6 +29,8 @@ export class App implements OnInit {
   protected slots: Slot[] = [];
   protected tasks: Task[] = [];
   protected savedSlotLists: SavedSlotList[] = [];
+  protected noTimeTasks: string[] = [];
+  protected noTimeDraft = '';
 
   protected newSlot: SlotDraft = { day: this.days[0], start: '09:00', end: '10:00' };
   protected newTask: { name: string; duration: number } = { name: '', duration: 1 };
@@ -267,6 +269,7 @@ export class App implements OnInit {
 
     this.slots = [];
     this.tasks = [];
+    this.noTimeTasks = [];
     this.editingSlotIndex = null;
     this.selectedSlotIds = new Set<string>();
     this.slotListMenuOpen = false;
@@ -325,11 +328,12 @@ export class App implements OnInit {
 
   private loadData(): void {
     this.http
-      .get<{ slots: Slot[]; tasks: Task[] }>(`${this.apiBase}/data`)
+      .get<{ slots: Slot[]; tasks: Task[]; noTimeTasks?: string[] }>(`${this.apiBase}/data`)
       .subscribe({
         next: (data) => {
           this.slots = data.slots ?? [];
           this.tasks = (data.tasks ?? []).map((t) => ({ ...t, postponed: !!t.postponed }));
+          this.noTimeTasks = data.noTimeTasks ?? [];
           this.normalizeTasks();
           this.clearSlotSelection();
         },
@@ -424,13 +428,28 @@ export class App implements OnInit {
     this.http
       .post(`${this.apiBase}/sync`, {
         slots: this.slots,
-        tasks: this.tasks
+        tasks: this.tasks,
+        noTimeTasks: this.noTimeTasks
       })
       .subscribe({
         error: (err) => {
           console.error('Failed to save data', err);
         }
       });
+  }
+
+  protected addNoTimeTask(name: string): void {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    this.noTimeTasks = [...this.noTimeTasks, trimmed];
+    this.persistState();
+  }
+
+  protected submitNoTimeTask(): void {
+    const trimmed = this.noTimeDraft.trim();
+    if (!trimmed) return;
+    this.addNoTimeTask(trimmed);
+    this.noTimeDraft = '';
   }
 
   private toMinutes(t: string): number | null {

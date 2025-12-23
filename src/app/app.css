@@ -802,6 +802,40 @@ app-tasks .task-panel {
   padding-top: 12px;
 }
 
+.no-time-form {
+  margin: 0;
+}
+
+.no-time-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.no-time-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.no-time-input-row input {
+  flex: 1;
+}
+
+.no-time-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.no-time-table td {
+  padding: 6px 0;
+  border: none;
+  color: #374151;
+}
+
 .task-summary h3 {
   margin: 0 0 8px;
   font-size: 1rem;
