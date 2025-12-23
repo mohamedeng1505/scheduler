@@ -1,12 +1,28 @@
 app-scheduler {
+  --surface: #f4f6fb;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --text-muted: #6b7280;
+  --text-inverse: #f8fafc;
+  --primary: #0ea5e9;
+  --primary-strong: #0284c7;
+  --primary-soft: #e0f2fe;
+  --danger: #dc2626;
+  --danger-strong: #b91c1c;
+  --border: #e5e7eb;
+  --border-strong: #cbd5e1;
+  --hero-start: #0f172a;
+  --hero-end: #1d4ed8;
   display: block;
   min-height: 100vh;
-  background-color: #f4f6fb;
-  color: #111827;
-  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: var(--surface);
+  color: var(--text);
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -20,8 +36,8 @@ app-scheduler {
 }
 
 .hero {
-  background: linear-gradient(120deg, #0f172a, #1d4ed8);
-  color: #f8fafc;
+  background: linear-gradient(120deg, var(--hero-start), var(--hero-end));
+  color: var(--text-inverse);
   padding: 28px;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
@@ -75,17 +91,20 @@ app-scheduler {
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   padding: 8px 12px;
-  color: white;
-  background: #0ea5e9;
+  color: var(--text-inverse);
+  background: var(--primary);
 }
 
 .slot-bulk-bar .link-button.danger {
-  background: #dc2626;
-;
+  background: var(--danger);
 }
 
 .slot-bulk-bar .link-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--primary-strong);
+}
+
+.slot-bulk-bar .link-button.danger:hover:not(:disabled) {
+  background: var(--danger-strong);
 }
 
 .slot-list-dropdown {
@@ -127,7 +146,7 @@ app-scheduler {
   flex: 1;
   background: none;
   border: none;
-  color: #f8fafc;
+  color: var(--text-inverse);
   text-align: left;
   padding: 6px 4px;
   cursor: pointer;
@@ -136,7 +155,7 @@ app-scheduler {
 .slot-list-edit {
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #f8fafc;
+  color: var(--text-inverse);
   border-radius: 6px;
   width: 26px;
   height: 26px;
@@ -260,9 +279,10 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.14);
-  color: #0f172a;
+  color: var(--text);
   font-size: 1rem;
   min-width: 0;
+  font: inherit;
 }
 
 input:focus,
@@ -307,12 +327,12 @@ select:focus {
 button[type="submit"] {
   border: none;
   border-radius: 10px;
-  background: #0ea5e9;
-  color: #f8fafc;
+  background: var(--primary);
+  color: var(--text-inverse);
   font-weight: 600;
   padding: 12px 14px;
   cursor: pointer;
-  transition: transform 0.05s ease, box-shadow 0.15s ease;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 button[type="submit"]:disabled {
@@ -322,6 +342,7 @@ button[type="submit"]:disabled {
 }
 
 button[type="submit"]:not(:disabled):hover {
+  background: var(--primary-strong);
   box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
 }
 
@@ -332,7 +353,7 @@ button[type="submit"]:not(:disabled):active {
 button.ghost {
   border: 1px solid rgba(255, 255, 255, 0.4);
   background: transparent;
-  color: #f8fafc;
+  color: var(--text-inverse);
   padding: 11px 13px;
   border-radius: 10px;
   cursor: pointer;
@@ -346,9 +367,10 @@ button.ghost {
   position: relative;
 }
 
+
 .panel {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
@@ -413,12 +435,12 @@ button.ghost {
 .panel h2 {
   margin: 0;
   font-size: 1.2rem;
-  color: #0f172a;
+  color: var(--text);
 }
 
 .badge {
-  background: #0ea5e9;
-  color: #f8fafc;
+  background: var(--primary);
+  color: var(--text-inverse);
   border-radius: 999px;
   padding: 6px 12px;
   font-weight: 600;
@@ -426,14 +448,14 @@ button.ghost {
 }
 
 .badge-soft {
-  background: #e0f2fe;
-  color: #0ea5e9;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
 }
 
 .link-button {
   background: none;
   border: none;
-  color: #0ea5e9;
+  color: var(--primary);
   font-weight: 600;
   cursor: pointer;
   padding: 4px 6px;
@@ -454,7 +476,7 @@ button.ghost {
 }
 
 .selection-count {
-  color: #6b7280;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -474,17 +496,17 @@ button.ghost {
 
 .hours {
   font-weight: 600;
-  color: #1d4ed8;
+  color: var(--primary-strong);
 }
 
 .panel-subtitle {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .empty {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .no-time-panel {

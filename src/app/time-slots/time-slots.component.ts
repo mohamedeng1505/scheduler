@@ -87,15 +87,11 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
     }
   }
 
-  private slotSortValue(slot: Slot): number {
-    const dayOrder = this.days.length ? this.days : this.fallbackDays;
-    const dayIndex = dayOrder.indexOf(slot.day);
-    const startMin = this.toMinutes(slot.start) ?? 0;
-    return (dayIndex === -1 ? Number.MAX_SAFE_INTEGER : dayIndex) * 1440 + startMin;
-  }
-
   private updateDerivedState(): void {
-    this.sortedSlots = [...this.slots].sort((a, b) => this.slotSortValue(a) - this.slotSortValue(b));
+    const dayIndex = this.buildDayIndexMap();
+    this.sortedSlots = [...this.slots].sort(
+      (a, b) => this.slotSortValue(a, dayIndex) - this.slotSortValue(b, dayIndex)
+    );
     this.totalHours = this.slots.reduce((sum, slot) => sum + slot.hours, 0);
 
     const tasksBySlotId = new Map<string, Task[]>();
@@ -143,7 +139,8 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
     let nearestId: string | null = null;
     let nearestTime = Number.POSITIVE_INFINITY;
 
-    for (const slot of this.slots) {
+    const slots = this.sortedSlots.length ? this.sortedSlots : this.slots;
+    for (const slot of slots) {
       const nextTime = this.nextSlotTime(slot, now);
       if (!nextTime) continue;
       const timeValue = nextTime.getTime();
@@ -178,5 +175,16 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
     const [h, m] = t.split(':').map(Number);
     if (Number.isNaN(h) || Number.isNaN(m)) return null;
     return h * 60 + m;
+  }
+
+  private buildDayIndexMap(): Map<string, number> {
+    const dayOrder = this.days.length ? this.days : this.fallbackDays;
+    return new Map(dayOrder.map((day, index) => [day, index]));
+  }
+
+  private slotSortValue(slot: Slot, dayIndex: Map<string, number>): number {
+    const index = dayIndex.get(slot.day);
+    const startMin = this.toMinutes(slot.start) ?? 0;
+    return (index === undefined ? Number.MAX_SAFE_INTEGER : index) * 1440 + startMin;
   }
 }

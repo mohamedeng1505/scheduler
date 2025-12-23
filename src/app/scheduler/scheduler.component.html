@@ -36,7 +36,7 @@
         <label class="field day-field">
           <span>Day</span>
           <select name="day" [(ngModel)]="newSlot.day" required>
-            <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+            <option *ngFor="let day of days; trackBy: trackByDay" [value]="day">{{ day }}</option>
           </select>
         </label>
 
@@ -110,11 +110,8 @@
           <span>Select all slots</span>
         </label>
         <span class="selection-count">
-          {{ selectedSlotCount? selectedSlotCount : 0 }} selected
+          {{ selectedSlotCount || 0 }} selected
         </span>
-        <!-- <span class="selection-count" *ngIf="selectedSlotCount">
-          {{ selectedSlotCount }} selected
-        </span> -->
       </div>
       <div class="bulk-actions">
         <button
@@ -145,7 +142,7 @@
             {{ selectedSlotListLabel }}
           </button>
           <div class="slot-list-menu" *ngIf="slotListMenuOpen">
-            <div class="slot-list-item" *ngFor="let list of savedSlotLists">
+            <div class="slot-list-item" *ngFor="let list of savedSlotLists; trackBy: trackBySlotListId">
               <button type="button" class="slot-list-item-button" (click)="selectSlotList(list.id)">
                 {{ list.name }} ({{ list.slots.length }} slot{{ list.slots.length === 1 ? '' : 's' }})
               </button>

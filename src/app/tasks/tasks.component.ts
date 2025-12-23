@@ -54,6 +54,7 @@ export class TasksComponent implements OnChanges {
 
   private updateDerivedState(): void {
     const summary = new Map<string, { name: string; totalHours: number }>();
+    const nameKeyById = new Map<string, string>();
     let total = 0;
     let assigned = 0;
     let unassigned = 0;
@@ -73,18 +74,21 @@ export class TasksComponent implements OnChanges {
       }
 
       const trimmedName = task.name.trim();
+      const normalizedKey = trimmedName.toLowerCase();
+      nameKeyById.set(task.id, normalizedKey);
       if (!trimmedName) continue;
-      const key = trimmedName.toLowerCase();
-      const existing = summary.get(key);
+      const existing = summary.get(normalizedKey);
       if (existing) {
         existing.totalHours = this.roundHours(existing.totalHours + duration);
       } else {
-        summary.set(key, { name: trimmedName, totalHours: this.roundHours(duration) });
+        summary.set(normalizedKey, { name: trimmedName, totalHours: this.roundHours(duration) });
       }
     }
 
-    const nameKey = (task: Task): string => task.name.trim().toLowerCase();
-    const totalHoursForTask = (task: Task): number => summary.get(nameKey(task))?.totalHours ?? 0;
+    const nameKey = (task: Task): string =>
+      nameKeyById.get(task.id) ?? task.name.trim().toLowerCase();
+    const totalHoursForTask = (task: Task): number =>
+      summary.get(nameKeyById.get(task.id) ?? '')?.totalHours ?? 0;
 
     const sortedTasks = [...this.tasks].sort((a, b) => {
       const aAssigned = a.assignedSlotId ? 1 : 0;
@@ -434,11 +438,6 @@ export class TasksComponent implements OnChanges {
 
   private roundHours(value: number): number {
     return Math.round(value * 100) / 100;
-  }
-
-  private sumTaskHours(predicate: (task: Task) => boolean): number {
-    const total = this.tasks.filter(predicate).reduce((sum, task) => sum + task.duration, 0);
-    return this.roundHours(total);
   }
 
   private generateId(prefix: string): string {

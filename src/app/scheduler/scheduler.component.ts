@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { TasksComponent } from '../tasks/tasks.component';
 import { TimeSlotsComponent } from '../time-slots/time-slots.component';
@@ -12,11 +12,14 @@ import { SavedSlotList, Slot, SlotDraft, Task } from '../types';
   imports: [CommonModule, FormsModule, HttpClientModule, TasksComponent, TimeSlotsComponent],
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SchedulerComponent implements OnInit {
   private readonly apiBase = 'http://localhost:4000/api';
   private readonly noTimeTag = 'No time';
+  private readonly defaultStart = '09:00';
+  private readonly defaultEnd = '10:00';
 
   protected readonly days = [
     'Sunday',
@@ -30,11 +33,17 @@ export class SchedulerComponent implements OnInit {
 
   protected slots: Slot[] = [];
   protected tasks: Task[] = [];
+  protected requiredTasks: Task[] = [];
+  protected noTimeTasks: Task[] = [];
   protected savedSlotLists: SavedSlotList[] = [];
   protected noTimeDraft = '';
+  protected totalSlotHours = 0;
+  protected totalTaskHours = 0;
+  protected hourDifference = 0;
+  protected hasAssignedTasks = false;
 
-  protected newSlot: SlotDraft = { day: this.days[0], start: '09:00', end: '10:00' };
-  protected newTask: { name: string; duration: number } = { name: '', duration: 1 };
+  protected newSlot: SlotDraft = this.createDefaultSlotDraft();
+  protected newTask: { name: string; duration: number } = this.createDefaultTaskDraft();
 
   protected editingSlotIndex: number | null = null;
   protected selectedSlotIds: Set<string> = new Set<string>();
@@ -42,7 +51,11 @@ export class SchedulerComponent implements OnInit {
   protected slotListMenuOpen = false;
   @ViewChild(TasksComponent) protected tasksComponent?: TasksComponent;
 
-  constructor(private http: HttpClient, private host: ElementRef) {}
+  constructor(
+    private http: HttpClient,
+    private host: ElementRef,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -66,28 +79,12 @@ export class SchedulerComponent implements OnInit {
     return this.computeHours(this.newSlot.start, this.newSlot.end);
   }
 
-  protected get totalSlotHours(): number {
-    return this.slots.reduce((sum, slot) => sum + slot.hours, 0);
+  protected trackByDay(_index: number, day: string): string {
+    return day;
   }
 
-  protected get totalTaskHours(): number {
-    return this.requiredTasks.reduce((sum, task) => sum + task.duration, 0);
-  }
-
-  protected get hourDifference(): number {
-    return this.totalSlotHours - this.totalTaskHours;
-  }
-
-  protected get hasAssignedTasks(): boolean {
-    return this.requiredTasks.some((task) => !!task.assignedSlotId);
-  }
-
-  protected get requiredTasks(): Task[] {
-    return this.tasks.filter((task) => !this.isNoTimeTask(task));
-  }
-
-  protected get noTimeTasks(): Task[] {
-    return this.tasks.filter((task) => this.isNoTimeTask(task));
+  protected trackBySlotListId(_index: number, list: SavedSlotList): string {
+    return list.id;
   }
 
   protected saveSlot(form: NgForm): void {
@@ -118,8 +115,8 @@ export class SchedulerComponent implements OnInit {
     this.persistState();
 
     const keepDay = slot.day;
-    this.newSlot = { day: keepDay, start: '09:00', end: '10:00' };
-    form.resetForm({ day: keepDay, start: '09:00', end: '10:00' });
+    this.resetSlotDraft(keepDay);
+    form.resetForm({ day: keepDay, start: this.defaultStart, end: this.defaultEnd });
     this.editingSlotIndex = null;
   }
 
@@ -135,8 +132,8 @@ export class SchedulerComponent implements OnInit {
 
   protected cancelEdit(form: NgForm): void {
     this.editingSlotIndex = null;
-    this.newSlot = { day: this.days[0], start: '09:00', end: '10:00' };
-    form.resetForm({ day: this.days[0], start: '09:00', end: '10:00' });
+    this.resetSlotDraft();
+    form.resetForm({ day: this.days[0], start: this.defaultStart, end: this.defaultEnd });
   }
 
   protected duplicateSlot(slotId: string): void {
@@ -172,7 +169,7 @@ export class SchedulerComponent implements OnInit {
     };
 
     this.tasks = [...this.tasks, task];
-    this.newTask = { name: '', duration: 1 };
+    this.resetTaskDraft();
     taskForm.resetForm({ name: '', duration: 1 });
     this.persistState();
   }
@@ -263,8 +260,7 @@ export class SchedulerComponent implements OnInit {
   }
 
   protected onTasksChange(next: Task[]): void {
-    const noTimeTasks = this.noTimeTasks;
-    this.tasks = [...next, ...noTimeTasks];
+    this.tasks = [...next, ...this.noTimeTasks];
     this.persistState();
   }
 
@@ -283,8 +279,8 @@ export class SchedulerComponent implements OnInit {
     this.editingSlotIndex = null;
     this.selectedSlotIds = new Set<string>();
     this.slotListMenuOpen = false;
-    this.newSlot = { day: this.days[0], start: '09:00', end: '10:00' };
-    this.newTask = { name: '', duration: 1 };
+    this.resetSlotDraft();
+    this.resetTaskDraft();
     this.persistState();
   }
 
@@ -360,7 +356,9 @@ export class SchedulerComponent implements OnInit {
             .map((name) => this.buildNoTimeTask(name));
           this.tasks = [...loadedTasks, ...migratedNoTime];
           this.normalizeTasks();
+          this.updateDerivedState();
           this.clearSlotSelection();
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Failed to load saved data', err);
@@ -377,6 +375,7 @@ export class SchedulerComponent implements OnInit {
           if (!this.selectedSlotListId && this.savedSlotLists.length) {
             this.selectedSlotListId = this.savedSlotLists[this.savedSlotLists.length - 1].id;
           }
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Failed to load saved slot lists', err);
@@ -450,6 +449,8 @@ export class SchedulerComponent implements OnInit {
 
   private persistState(): void {
     this.normalizeTasks();
+    this.updateDerivedState();
+    this.cdr.markForCheck();
     this.http
       .post(`${this.apiBase}/sync`, {
         slots: this.slots,
@@ -561,5 +562,50 @@ export class SchedulerComponent implements OnInit {
     }
 
     this.tasks = Array.from(groups.values());
+  }
+
+  private updateDerivedState(): void {
+    this.totalSlotHours = this.roundHours(
+      this.slots.reduce((sum, slot) => sum + slot.hours, 0)
+    );
+
+    const required: Task[] = [];
+    const noTime: Task[] = [];
+    let taskTotal = 0;
+    let hasAssigned = false;
+
+    for (const task of this.tasks) {
+      if (this.isNoTimeTask(task)) {
+        noTime.push(task);
+        continue;
+      }
+      required.push(task);
+      taskTotal += task.duration;
+      if (task.assignedSlotId) {
+        hasAssigned = true;
+      }
+    }
+
+    this.requiredTasks = required;
+    this.noTimeTasks = noTime;
+    this.totalTaskHours = this.roundHours(taskTotal);
+    this.hasAssignedTasks = hasAssigned;
+    this.hourDifference = this.roundHours(this.totalSlotHours - this.totalTaskHours);
+  }
+
+  private resetSlotDraft(day: string = this.days[0]): void {
+    this.newSlot = this.createDefaultSlotDraft(day);
+  }
+
+  private resetTaskDraft(): void {
+    this.newTask = this.createDefaultTaskDraft();
+  }
+
+  private createDefaultSlotDraft(day: string = this.days[0]): SlotDraft {
+    return { day, start: this.defaultStart, end: this.defaultEnd };
+  }
+
+  private createDefaultTaskDraft(): { name: string; duration: number } {
+    return { name: '', duration: 1 };
   }
 }

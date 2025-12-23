@@ -1,15 +1,15 @@
 :host {
   position: sticky;
-  top: 16px;
   align-self: flex-start;
   display: block;
   z-index: 2;
+  top: 16px;
 }
 
 .task-panel {
   position: static;
-  max-height: none;
-  overflow: visible;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
 }
 
 .link-button.postpone-toggle.postponed {
