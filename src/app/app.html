@@ -1,1 +1,23 @@
-<app-scheduler></app-scheduler>
+<div class="app-shell">
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-mark">Atlas</span>
+      <span class="brand-sub">Life System</span>
+    </div>
+    <nav class="top-nav">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </a>
+      <a routerLink="/scheduler" routerLinkActive="active">Scheduler</a>
+      <a routerLink="/budget" routerLinkActive="active">Budget</a>
+      <a routerLink="/goals" routerLinkActive="active">Goals</a>
+    </nav>
+  </header>
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

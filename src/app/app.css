@@ -1,3 +1,80 @@
 :host {
   display: block;
+  min-height: 100vh;
+  font-family: "Avenir Next", "Futura", "Gill Sans", "Trebuchet MS", sans-serif;
+  color: #141414;
+  background: radial-gradient(circle at top, rgba(255, 232, 189, 0.8), rgba(255, 255, 255, 0))
+      no-repeat,
+    linear-gradient(130deg, #f7f2e8, #e8f1ff 60%, #fffdf7 100%);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 6vw 8px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-mark {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.brand-sub {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.6px;
+  color: #6b5f4b;
+}
+
+.top-nav {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+}
+
+.top-nav a {
+  color: #3e3a32;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.top-nav a:hover,
+.top-nav a.active {
+  background: rgba(64, 52, 34, 0.12);
+  color: #1d1a14;
+}
+
+.app-main {
+  flex: 1;
+  padding: 0 6vw 48px;
+}
+
+@media (max-width: 900px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .top-nav {
+    flex-wrap: wrap;
+  }
 }

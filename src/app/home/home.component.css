@@ -1,0 +1,124 @@
+:host {
+  display: block;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(32px, 4vw, 56px);
+  margin: 8px 0 12px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 12px;
+  color: #5a4b3a;
+  margin: 0;
+}
+
+.lede {
+  font-size: 18px;
+  max-width: 520px;
+  color: #2f2a23;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.btn {
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+}
+
+.btn.primary {
+  background: #1c2a3a;
+  color: #f6f0e5;
+  box-shadow: 0 12px 24px rgba(28, 42, 58, 0.2);
+}
+
+.btn.ghost {
+  border: 1px solid rgba(33, 40, 46, 0.3);
+  color: #1c2a3a;
+}
+
+.hero-card {
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: 20px;
+  padding: 20px 24px;
+  box-shadow: 0 18px 30px rgba(57, 46, 28, 0.15);
+}
+
+.hero-card ul {
+  padding-left: 18px;
+  margin: 12px 0 0;
+  color: #3f3a33;
+}
+
+.card-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #7a6f62;
+  margin: 0 0 6px;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.organizer-card {
+  background: #fffaf3;
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: 0 14px 24px rgba(72, 55, 28, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+}
+
+.status.live {
+  background: rgba(56, 116, 71, 0.12);
+  color: #2f6c3b;
+}
+
+.status.preview {
+  background: rgba(199, 122, 43, 0.15);
+  color: #99521e;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #1c2a3a;
+  font-weight: 600;
+}

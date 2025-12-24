@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { SchedulerComponent } from './scheduler/scheduler.component';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [SchedulerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {}
-
