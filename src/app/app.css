@@ -19,6 +19,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 6vw 8px;
+  position: relative;
+  z-index: 10;
 }
 
 .brand {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { TasksComponent } from '../tasks/tasks.component';
 import { TimeSlotsComponent } from '../time-slots/time-slots.component';
@@ -11,8 +11,7 @@ import { SavedSlotList, Slot, SlotDraft, Task } from '../types';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, TasksComponent, TimeSlotsComponent],
   templateUrl: './scheduler.component.html',
-  styleUrls: ['./scheduler.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./scheduler.shared.css', './scheduler.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SchedulerComponent implements OnInit {

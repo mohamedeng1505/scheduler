@@ -8,7 +8,7 @@ import { Slot, Task } from '../types';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tasks.component.html',
-  styleUrls: ['../app.css', './tasks.component.css'],
+  styleUrls: ['../app.css', '../scheduler/scheduler.shared.css', './tasks.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TasksComponent implements OnChanges {

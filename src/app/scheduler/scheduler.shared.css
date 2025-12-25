@@ -1,0 +1,155 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-header div {
+  display: flex;
+  gap: 10px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.badge {
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.badge-soft {
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.pill-soft {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.hours {
+  font-weight: 600;
+  color: var(--primary-strong);
+}
+
+.panel-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.field span {
+  color: rgba(248, 250, 252, 0.85);
+}
+
+input,
+select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--text);
+  font-size: 1rem;
+  min-width: 0;
+  font: inherit;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 1px;
+  background: #ffffff;
+}
+
+button[type="submit"] {
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button[type="submit"]:not(:disabled):hover {
+  background: var(--primary-strong);
+  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+}
+
+button[type="submit"]:not(:disabled):active {
+  transform: translateY(1px);
+}
