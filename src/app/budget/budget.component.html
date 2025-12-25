@@ -1,19 +1,236 @@
-<section class="panel">
-  <p class="eyebrow">Budget planner</p>
-  <h1>Cash flow, clear focus.</h1>
-  <p>
-    This organizer will track income, categories, and monthly targets. Start with
-    a clean slate and fill it in as you build the planner.
-  </p>
-  <div class="stack">
-    <div class="card">
-      <h3>Planned features</h3>
-      <ul>
-        <li>Income streams with pay cadence</li>
-        <li>Category caps and rollover tracking</li>
-        <li>Monthly review highlights</li>
-      </ul>
+<div class="budget-page">
+  <header class="budget-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Budget planner</p>
+      <h1>Budget clarity, Notion-style.</h1>
+      <p class="lede">
+        Track every line item, map pay cycles, and keep your cash flow visible at a
+        glance. Use this layout as the front end for your Notion database.
+      </p>
+      <div class="hero-actions">
+        <button class="btn primary" type="button">Add budget item</button>
+        <button class="btn ghost" type="button">Import Notion view</button>
+      </div>
     </div>
-    <a class="btn" routerLink="/">Back to Home</a>
-  </div>
-</section>
+
+    <div class="hero-side">
+      <div class="month-card">
+        <div>
+          <p class="month-label">Active month</p>
+          <h2>{{ monthLabel }}</h2>
+        </div>
+        <span class="sync-pill">{{ syncLabel }}</span>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <p>Total income</p>
+          <h3>{{ totalIncome | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <span class="metric-note">3 income streams</span>
+        </div>
+        <div class="metric-card">
+          <p>Planned spend</p>
+          <h3>{{ totalPlanned | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <span class="metric-note">7 categories</span>
+        </div>
+        <div class="metric-card">
+          <p>Cash left</p>
+          <h3>{{ cashLeft | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <span class="metric-note">After planned costs</span>
+        </div>
+        <div class="metric-card">
+          <p>Savings rate</p>
+          <h3>{{ savingsRate | number: '1.0-0' }}%</h3>
+          <span class="metric-note">Based on actual spend</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="budget-layout">
+    <div class="main-column">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Monthly plan</p>
+            <h2>Category budget</h2>
+          </div>
+          <div class="chip-row">
+            <button class="chip active" type="button">All</button>
+            <button class="chip" type="button">Paid</button>
+            <button class="chip" type="button">In progress</button>
+            <button class="chip" type="button">Over</button>
+          </div>
+        </div>
+
+        <div class="table categories-table">
+          <div class="table-row is-header">
+            <div>Category</div>
+            <div>Planned</div>
+            <div>Actual</div>
+            <div>Variance</div>
+            <div>Status</div>
+          </div>
+
+          <div class="table-row" *ngFor="let category of categories; trackBy: trackByName">
+            <div class="cell primary">
+              <span class="table-label">Category</span>
+              <div class="cell-main">
+                <span class="cell-title">{{ category.name }}</span>
+                <span class="cell-sub">{{ category.group }} · due {{ category.due }}</span>
+              </div>
+            </div>
+            <div class="cell">
+              <span class="table-label">Planned</span>
+              <span>{{ category.planned | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Actual</span>
+              <span>{{ category.actual | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Variance</span>
+              <span
+                class="variance"
+                [class.negative]="category.actual > category.planned"
+                [class.positive]="category.actual <= category.planned"
+              >
+                {{ category.planned - category.actual | currency: 'EGP' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Status</span>
+              <span class="status-chip" [ngClass]="category.status">{{ category.status }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Income</p>
+            <h2>Pay cycles & inflow</h2>
+          </div>
+          <button class="text-link" type="button">Add stream</button>
+        </div>
+
+        <div class="table income-table">
+          <div class="table-row is-header">
+            <div>Stream</div>
+            <div>Cadence</div>
+            <div>Next pay</div>
+            <div>Amount</div>
+            <div>Status</div>
+          </div>
+          <div class="table-row" *ngFor="let income of incomeStreams; trackBy: trackByName">
+            <div class="cell primary">
+              <span class="table-label">Stream</span>
+              <span class="cell-title">{{ income.name }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Cadence</span>
+              <span>{{ income.cadence }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Next pay</span>
+              <span>{{ income.nextPay }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Amount</span>
+              <span>{{ income.amount | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Status</span>
+              <span class="status-chip" [ngClass]="income.status">{{ income.status }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel notes-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Notes</p>
+            <h2>Monthly review</h2>
+          </div>
+          <button class="text-link" type="button">Add note</button>
+        </div>
+        <div class="note-grid">
+          <article class="note-card" *ngFor="let note of notes">
+            <p>{{ note }}</p>
+          </article>
+          <article class="note-card muted">
+            <p>Highlight any non-recurring expenses and move them to next month.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side-column">
+      <section class="panel mini">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Upcoming</p>
+            <h3>Next bills</h3>
+          </div>
+          <span class="pill">4 items</span>
+        </div>
+        <div class="bill-list">
+          <article class="bill-item" *ngFor="let bill of bills; trackBy: trackByName">
+            <div>
+              <p class="bill-title">{{ bill.name }}</p>
+              <span class="bill-sub">{{ bill.account }} · {{ bill.due }}</span>
+            </div>
+            <div class="bill-meta">
+              <span>{{ bill.amount | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+              <span class="status-chip" [ngClass]="bill.status">{{ bill.status }}</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel mini">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Envelopes</p>
+            <h3>Targets</h3>
+          </div>
+          <button class="text-link" type="button">Adjust</button>
+        </div>
+        <div class="envelope-list">
+          <div class="envelope-card" *ngFor="let envelope of envelopes; trackBy: trackByName">
+            <div class="envelope-head">
+              <span class="envelope-title">{{ envelope.name }}</span>
+              <span class="envelope-amount">
+                {{ envelope.spent | currency: 'EGP' : 'symbol' : '1.0-0' }} /
+                {{ envelope.target | currency: 'EGP' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+            <div class="progress">
+              <div
+                class="progress-fill"
+                [ngClass]="envelope.accent"
+                [style.width.%]="envelopeProgress(envelope)"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel mini rules-panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Rules</p>
+            <h3>Spending guardrails</h3>
+          </div>
+        </div>
+        <ul class="rules">
+          <li>Keep weekly discretionary under $120.</li>
+          <li>Transfer 10% of income to savings.</li>
+          <li>Review recurring charges before the 20th.</li>
+        </ul>
+      </section>
+    </aside>
+  </section>
+</div>

@@ -15,32 +15,11 @@
       "hours": 1.25
     },
     {
-      "id": "slot-67t0qxm",
-      "day": "Thursday",
-      "start": "12:45",
-      "end": "13:45",
-      "hours": 1
-    },
-    {
       "id": "slot-z2zf99i",
       "day": "Thursday",
       "start": "19:00",
       "end": "20:30",
       "hours": 1.5
-    },
-    {
-      "id": "slot-t5d4cl7",
-      "day": "Thursday",
-      "start": "10:45",
-      "end": "11:45",
-      "hours": 1
-    },
-    {
-      "id": "slot-he1vi68",
-      "day": "Thursday",
-      "start": "08:45",
-      "end": "10:00",
-      "hours": 1.25
     },
     {
       "id": "slot-8igyk4f",
@@ -178,7 +157,7 @@
       "id": "task-lrf4d6g",
       "name": "Weekly Review",
       "tags": [],
-      "duration": 1.5,
+      "duration": 1.25,
       "assignedSlotId": null,
       "postponed": true
     },
@@ -186,7 +165,7 @@
       "id": "task-yw76pv9",
       "name": "Safety project",
       "tags": [],
-      "duration": 1.5,
+      "duration": 1.25,
       "assignedSlotId": "slot-0hfppac",
       "postponed": false
     },
@@ -220,30 +199,6 @@
       "tags": [],
       "duration": 1,
       "assignedSlotId": "slot-nmjcwiu",
-      "postponed": false
-    },
-    {
-      "id": "task-k4a59n3",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": "slot-he1vi68",
-      "postponed": false
-    },
-    {
-      "id": "task-224n8vf",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-t5d4cl7",
-      "postponed": false
-    },
-    {
-      "id": "task-b2vytt3",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-67t0qxm",
       "postponed": false
     },
     {
@@ -314,8 +269,8 @@
       "id": "task-eap6sfv",
       "name": "Weekly Review",
       "tags": [],
-      "duration": 0.5,
-      "assignedSlotId": "slot-o15h53q",
+      "duration": 0.75,
+      "assignedSlotId": null,
       "postponed": false
     },
     {
