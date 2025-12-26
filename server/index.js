@@ -18,7 +18,11 @@ async function ensureDataFile() {
   } catch {
     await fs.writeFile(
       DATA_PATH,
-      JSON.stringify({ slots: [], tasks: [], savedSlotLists: [], noTimeTasks: [] }, null, 2),
+      JSON.stringify(
+        { slots: [], tasks: [], savedSlotLists: [], noTimeTasks: [], moneyChallenge: { selected: [] } },
+        null,
+        2
+      ),
       'utf8'
     );
   }
@@ -28,13 +32,14 @@ async function readData() {
   await ensureDataFile();
   const raw = await fs.readFile(DATA_PATH, 'utf8');
   const parsed = JSON.parse(
-    raw.toString() || '{"slots":[],"tasks":[],"savedSlotLists":[]}'
+    raw.toString() || '{"slots":[],"tasks":[],"savedSlotLists":[],"moneyChallenge":{"selected":[]}}'
   );
   return {
     slots: parsed.slots || [],
     tasks: parsed.tasks || [],
     savedSlotLists: parsed.savedSlotLists || [],
-    noTimeTasks: parsed.noTimeTasks || []
+    noTimeTasks: parsed.noTimeTasks || [],
+    moneyChallenge: parsed.moneyChallenge || { selected: [] }
   };
 }
 
@@ -47,7 +52,8 @@ async function writeData(data) {
         slots: data.slots || [],
         tasks: data.tasks || [],
         savedSlotLists: data.savedSlotLists || [],
-        noTimeTasks: data.noTimeTasks || []
+        noTimeTasks: data.noTimeTasks || [],
+        moneyChallenge: data.moneyChallenge || { selected: [] }
       },
       null,
       2
@@ -63,6 +69,39 @@ app.get('/api/data', async (_req, res) => {
   } catch (err) {
     console.error('Failed to read data file', err);
     res.status(500).json({ message: 'Failed to load data' });
+  }
+});
+
+app.get('/api/money-challenge', async (_req, res) => {
+  try {
+    const data = await readData();
+    res.json(data.moneyChallenge || { selected: [] });
+  } catch (err) {
+    console.error('Failed to read money challenge data', err);
+    res.status(500).json({ message: 'Failed to load money challenge' });
+  }
+});
+
+app.post('/api/money-challenge', async (req, res) => {
+  const { selected } = req.body || {};
+  if (!Array.isArray(selected)) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  const sanitized = selected
+    .filter((value) => Number.isInteger(value) && value >= 0 && value < 90);
+  const unique = Array.from(new Set(sanitized)).sort((a, b) => a - b);
+
+  try {
+    const data = await readData();
+    await writeData({
+      ...data,
+      moneyChallenge: { selected: unique }
+    });
+    res.json({ selected: unique });
+  } catch (err) {
+    console.error('Failed to save money challenge data', err);
+    res.status(500).json({ message: 'Failed to save money challenge' });
   }
 });
 

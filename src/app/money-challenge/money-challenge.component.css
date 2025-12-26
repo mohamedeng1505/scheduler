@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  --ink: #1c1b18;
+  --muted: #6a5c4d;
+  --accent: #b33a2e;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-shadow: 0 18px 28px rgba(42, 30, 22, 0.16);
+}
+
+.money-challenge-page {
+  display: grid;
+  gap: 26px;
+  padding: 12px 0 32px;
+  position: relative;
+}
+
+.money-challenge-page::before,
+.money-challenge-page::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 36%;
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.money-challenge-page::before {
+  background: radial-gradient(circle at top, #f6c9b2, rgba(255, 255, 255, 0));
+  top: -70px;
+  right: 10%;
+}
+
+.money-challenge-page::after {
+  background: radial-gradient(circle at bottom, #f2e1b9, rgba(255, 255, 255, 0));
+  bottom: 80px;
+  left: -60px;
+}
+
+.challenge-hero,
+.challenge-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.challenge-hero {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.6fr) minmax(180px, 0.6fr);
+  gap: 24px;
+  align-items: end;
+}
+
+.challenge-hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(30px, 4vw, 52px);
+  font-family: "Cochin", "Palatino Linotype", "Book Antiqua", serif;
+  color: var(--ink);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 2.8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.lede {
+  margin: 0;
+  font-size: 16px;
+  color: #2d2822;
+  max-width: 520px;
+}
+
+.hero-card {
+  background: var(--panel);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: var(--panel-shadow);
+}
+
+.hero-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hero-card h2 {
+  margin: 8px 0 6px;
+  font-size: 32px;
+  color: var(--ink);
+}
+
+.hero-note {
+  margin: 0;
+  color: #6b5a4c;
+  font-size: 12px;
+}
+
+.challenge-panel {
+  background: var(--panel);
+  padding: 22px;
+  border-radius: 22px;
+  box-shadow: var(--panel-shadow);
+}
+
+.grid-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(68px, 1fr));
+  gap: 10px;
+  min-width: 720px;
+}
+
+.challenge-cell {
+  position: relative;
+  border: 1px solid rgba(45, 36, 29, 0.16);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
+  padding: 14px 10px;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.challenge-cell:hover {
+  transform: translateY(-2px);
+  border-color: rgba(179, 58, 46, 0.4);
+  box-shadow: 0 12px 18px rgba(179, 58, 46, 0.12);
+}
+
+.challenge-cell.is-selected {
+  border-color: rgba(179, 58, 46, 0.6);
+  background: rgba(244, 214, 210, 0.65);
+}
+
+.cell-value {
+  position: relative;
+  z-index: 2;
+}
+
+.cell-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #b02a24;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: rotate(-8deg) scale(0.9);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  text-shadow: 0 2px 6px rgba(176, 42, 36, 0.3);
+  pointer-events: none;
+}
+
+.challenge-cell.is-selected .cell-mark {
+  opacity: 1;
+  transform: rotate(-8deg) scale(1);
+}
+
+@media (max-width: 900px) {
+  .challenge-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

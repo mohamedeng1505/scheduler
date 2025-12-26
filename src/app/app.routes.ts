@@ -15,6 +15,13 @@ export const routes: Routes = [
     loadComponent: () => import('./budget/budget.component').then((m) => m.BudgetComponent)
   },
   {
+    path: 'money-challenge',
+    loadComponent: () =>
+      import('./money-challenge/money-challenge.component').then(
+        (m) => m.MoneyChallengeComponent
+      )
+  },
+  {
     path: 'goals',
     loadComponent: () => import('./goals/goals.component').then((m) => m.GoalsComponent)
   },

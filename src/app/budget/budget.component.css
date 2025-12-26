@@ -520,6 +520,35 @@
   gap: 6px;
 }
 
+.money-challenge-card {
+  background: linear-gradient(135deg, rgba(251, 236, 228, 0.95), rgba(255, 255, 255, 0.9));
+  border: 1px solid rgba(189, 90, 70, 0.2);
+}
+
+.money-challenge-card .card-copy {
+  margin: 0;
+  color: #4a3a31;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.money-challenge-card .card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #8b2e25;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(179, 58, 46, 0.12);
+  width: fit-content;
+}
+
+.money-challenge-card .card-link:hover {
+  background: rgba(179, 58, 46, 0.2);
+}
+
 .budget-hero,
 .panel,
 .month-card,

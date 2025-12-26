@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 type Account = {
   name: string;
@@ -12,7 +13,7 @@ type Account = {
 @Component({
   selector: 'app-budget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './budget.component.html',
   styleUrl: './budget.component.css'
 })

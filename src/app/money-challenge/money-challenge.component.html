@@ -1,0 +1,33 @@
+<div class="money-challenge-page">
+  <header class="challenge-hero">
+    <div>
+      <p class="eyebrow">Money Challenge</p>
+      <h1>Mark each amount as you save it.</h1>
+      <p class="lede">
+        Tap any number to lock it in. Tap again to remove the mark if you tapped the wrong one.
+      </p>
+    </div>
+    <div class="hero-card">
+      <p class="hero-label">Total cells</p>
+      <h2>90</h2>
+      <p class="hero-note">10 columns by 9 rows</p>
+    </div>
+  </header>
+
+  <section class="challenge-panel">
+    <div class="grid-scroll">
+      <div class="challenge-grid" role="grid">
+        <button
+          class="challenge-cell"
+          type="button"
+          *ngFor="let value of gridValues; let index = index"
+          [class.is-selected]="isSelected(index)"
+          (click)="toggleCell(index)"
+        >
+          <span class="cell-value">{{ value }}</span>
+          <span class="cell-mark" aria-hidden="true">X</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
