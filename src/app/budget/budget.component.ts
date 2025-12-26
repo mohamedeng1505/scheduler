@@ -1,13 +1,22 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
+
+type Account = {
+  name: string;
+  initial: number;
+  draft?: number;
+  editing?: boolean;
+};
 
 @Component({
   selector: 'app-budget',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './budget.component.html',
   styleUrl: './budget.component.css'
 })
+
 export class BudgetComponent {
   monthLabel = 'October 2025';
   syncLabel = 'Synced 2 hours ago';
@@ -153,6 +162,46 @@ export class BudgetComponent {
     }
   ];
 
+
+  accounts: Account[] = [
+    { name: 'Cash', initial: 0 },
+    { name: 'Ahli bank', initial: 0 },
+    { name: 'Ahli dollars', initial: 0 },
+    { name: 'Faisal savings', initial: 0 },
+    { name: 'Faisal current', initial: 0 },
+    { name: 'Hyperwallet', initial: 0 },
+    { name: 'Paypal', initial: 0 },
+    { name: 'Dollars', initial: 0 },
+    { name: 'Card', initial: 0 },
+    { name: 'Faisal 3 years', initial: 0 },
+    { name: 'Ahli certificates', initial: 0 },
+    { name: 'Gold 21', initial: 0 },
+    { name: 'Phone cash', initial: 0 },
+    { name: 'Vodafone cash', initial: 0 },
+    { name: 'Stock market', initial: 0 },
+    { name: 'FIB mutual fund', initial: 0 },
+    { name: 'CIB mutual fund', initial: 0 },
+    { name: 'Bashayer mutual fund', initial: 0 },
+    { name: 'Mama Hanan', initial: 0 },
+    { name: 'Zoo balance', initial: 0 },
+    { name: 'Dody', initial: 0 },
+    { name: 'A Mostafa', initial: 0 },
+    { name: 'Youssef', initial: 0 },
+    { name: 'Home savings', initial: 0 },
+    { name: 'Adham', initial: 0 },
+    { name: 'Riyals', initial: 0 },
+    { name: 'Omar', initial: 0 },
+    { name: 'Noon', initial: 0 },
+    { name: 'Younes', initial: 0 },
+    { name: 'Ahli bank Extra', initial: 0 },
+    { name: 'Gold 24', initial: 0 },
+    { name: 'Mashreq bank', initial: 0 },
+    { name: 'Azimut', initial: 0 },
+    { name: 'Mai', initial: 0 },
+    { name: 'Money challenge', initial: 0 },
+    { name: 'Mousa', initial: 0 },
+  ];
+
   notes = [
     'Shift dining out to weekends only.',
     'Move 120 to travel once bonus hits.',
@@ -189,7 +238,24 @@ export class BudgetComponent {
     return Math.min((envelope.spent / envelope.target) * 100, 100);
   }
 
+  startEdit(account: Account): void {
+    account.draft = account.initial;
+    account.editing = true;
+  }
+
+  saveEdit(account: Account): void {
+    const value = Number(account.draft);
+    account.initial = Number.isFinite(value) ? value : 0;
+    account.editing = false;
+  }
+
+  cancelEdit(account: Account): void {
+    account.draft = account.initial;
+    account.editing = false;
+  }
+
   trackByName(index: number, item: { name: string }): string {
     return item.name;
   }
 }
+

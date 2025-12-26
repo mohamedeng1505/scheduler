@@ -181,6 +181,12 @@
   align-items: start;
 }
 
+.main-column,
+.side-column {
+  display: grid;
+  gap: 24px;
+}
+
 .panel {
   background: var(--panel);
   padding: 22px;
@@ -272,6 +278,10 @@
 .categories-table {
   --table-columns: 1.8fr 0.8fr 0.8fr 0.8fr 0.6fr;
 }
+.accounts-table {
+  --table-columns: 1fr 0.6fr;
+}
+
 
 .cell {
   display: grid;
@@ -300,6 +310,41 @@
   letter-spacing: 1.4px;
   font-size: 10px;
   color: #8b7760;
+}
+
+.table-value {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+
+.table-value.editable {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  width: fit-content;
+  justify-self: start;
+}
+
+.table-value.editable:hover {
+  background: rgba(31, 42, 58, 0.08);
+}
+
+.table-input {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(33, 40, 46, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+}
+
+.table-input:focus {
+  outline: 2px solid rgba(198, 112, 58, 0.25);
+  border-color: rgba(198, 112, 58, 0.4);
 }
 
 .variance {
@@ -538,3 +583,4 @@
     transition: none !important;
   }
 }
+

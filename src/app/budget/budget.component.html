@@ -148,6 +148,48 @@
         </div>
       </section>
 
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Database</p>
+            <h2>Accounts</h2>
+          </div>
+          <span class="pill">{{ accounts.length }} entries</span>
+        </div>
+        <div class="table accounts-table">
+          <div class="table-row is-header">
+            <div>Account</div>
+            <div>Initial</div>
+          </div>
+          <div class="table-row" *ngFor="let account of accounts; trackBy: trackByName">
+            <div class="cell primary">
+              <span class="table-label">Account</span>
+              <span class="cell-title">{{ account.name }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Initial</span>
+              <span
+                class="table-value editable"
+                *ngIf="!account.editing"
+                (click)="startEdit(account)"
+              >
+                {{ account.initial | number: '1.0-0' }}
+              </span>
+              <input
+                *ngIf="account.editing"
+                class="table-input"
+                type="number"
+                inputmode="decimal"
+                [(ngModel)]="account.draft"
+                (blur)="saveEdit(account)"
+                (keydown.enter)="saveEdit(account)"
+                (keydown.escape)="cancelEdit(account)"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="panel notes-panel">
         <div class="panel-head">
           <div>
@@ -234,3 +276,4 @@
     </aside>
   </section>
 </div>
+
