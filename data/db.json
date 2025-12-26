@@ -1,27 +1,6 @@
 {
   "slots": [
     {
-      "id": "slot-cnll1i9",
-      "day": "Thursday",
-      "start": "18:00",
-      "end": "18:30",
-      "hours": 0.5
-    },
-    {
-      "id": "slot-kuy2d7y",
-      "day": "Thursday",
-      "start": "21:15",
-      "end": "22:30",
-      "hours": 1.25
-    },
-    {
-      "id": "slot-z2zf99i",
-      "day": "Thursday",
-      "start": "19:00",
-      "end": "20:30",
-      "hours": 1.5
-    },
-    {
       "id": "slot-8igyk4f",
       "day": "Friday",
       "start": "07:00",
@@ -149,15 +128,15 @@
       "id": "task-lqjzxpt",
       "name": "Life balance",
       "tags": [],
-      "duration": 0.75,
-      "assignedSlotId": null,
+      "duration": 0.25,
+      "assignedSlotId": "slot-o15h53q",
       "postponed": false
     },
     {
       "id": "task-lrf4d6g",
       "name": "Weekly Review",
       "tags": [],
-      "duration": 1.25,
+      "duration": 1.75,
       "assignedSlotId": null,
       "postponed": true
     },
@@ -165,16 +144,8 @@
       "id": "task-yw76pv9",
       "name": "Safety project",
       "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": "slot-0hfppac",
-      "postponed": false
-    },
-    {
-      "id": "task-r1tu75x",
-      "name": "Enfa3Nafsak",
-      "tags": [],
       "duration": 1.5,
-      "assignedSlotId": "slot-z2zf99i",
+      "assignedSlotId": "slot-0hfppac",
       "postponed": false
     },
     {
@@ -199,14 +170,6 @@
       "tags": [],
       "duration": 1,
       "assignedSlotId": "slot-nmjcwiu",
-      "postponed": false
-    },
-    {
-      "id": "task-d6vlbo2",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": "slot-kuy2d7y",
       "postponed": false
     },
     {
@@ -258,19 +221,19 @@
       "postponed": false
     },
     {
-      "id": "task-ox6geha",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 0.5,
-      "assignedSlotId": "slot-cnll1i9",
-      "postponed": false
-    },
-    {
       "id": "task-eap6sfv",
       "name": "Weekly Review",
       "tags": [],
-      "duration": 0.75,
+      "duration": 0.25,
       "assignedSlotId": null,
+      "postponed": false
+    },
+    {
+      "id": "task-ye7wok3",
+      "name": "Safety project",
+      "tags": [],
+      "duration": 0.75,
+      "assignedSlotId": "slot-o15h53q",
       "postponed": false
     },
     {
