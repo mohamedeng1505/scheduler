@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { TasksComponent } from '../tasks/tasks.component';
 import { TimeSlotsComponent } from '../time-slots/time-slots.component';
@@ -14,11 +14,12 @@ import { SavedSlotList, Slot, SlotDraft, Task } from '../types';
   styleUrls: ['./scheduler.shared.css', './scheduler.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SchedulerComponent implements OnInit {
+export class SchedulerComponent implements OnInit, OnDestroy {
   private readonly apiBase = 'http://localhost:4000/api';
   private readonly noTimeTag = 'No time';
   private readonly defaultStart = '09:00';
   private readonly defaultEnd = '10:00';
+  private cleanupTimerId?: number;
 
   protected readonly days = [
     'Sunday',
@@ -59,6 +60,15 @@ export class SchedulerComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
     this.loadSavedSlotLists();
+    this.cleanupTimerId = window.setInterval(() => {
+      this.cleanupPassedSlots();
+    }, 60_000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.cleanupTimerId !== undefined) {
+      window.clearInterval(this.cleanupTimerId);
+    }
   }
 
   protected get selectedSlotCount(): number {
@@ -299,38 +309,6 @@ export class SchedulerComponent implements OnInit {
     this.persistState();
   }
 
-  private removeSlotsByIds(ids: string[]): boolean {
-    if (!ids.length) return false;
-    const idSet = new Set(ids);
-
-    if (this.editingSlotIndex !== null) {
-      const editingId = this.slots[this.editingSlotIndex]?.id;
-      if (editingId && idSet.has(editingId)) {
-        this.editingSlotIndex = null;
-      }
-    }
-
-    const beforeCount = this.slots.length;
-    this.slots = this.slots.filter((s) => !idSet.has(s.id));
-    const removed = beforeCount !== this.slots.length;
-
-    if (removed) {
-      const tasksToRemove = new Set(
-        this.tasks
-          .filter((t) => t.assignedSlotId && idSet.has(t.assignedSlotId))
-          .map((t) => t.id)
-      );
-
-      this.tasks = this.tasks.filter((t) => !tasksToRemove.has(t.id));
-
-      this.selectedSlotIds = new Set(
-        Array.from(this.selectedSlotIds).filter((id) => !idSet.has(id))
-      );
-    }
-
-    return removed;
-  }
-
   private loadData(): void {
     this.http
       .get<{ slots: Slot[]; tasks: Task[]; noTimeTasks?: string[] }>(`${this.apiBase}/data`)
@@ -357,6 +335,7 @@ export class SchedulerComponent implements OnInit {
           this.normalizeTasks();
           this.updateDerivedState();
           this.clearSlotSelection();
+          this.cleanupPassedSlots();
           this.cdr.markForCheck();
         },
         error: (err) => {
@@ -484,6 +463,40 @@ export class SchedulerComponent implements OnInit {
     return h * 60 + m;
   }
 
+  private cleanupPassedSlots(now: Date = new Date()): void {
+    if (!this.slots.length) return;
+    const passedIds = this.slots
+      .filter((slot) => this.isSlotPassed(slot, now))
+      .map((slot) => slot.id);
+    if (!passedIds.length) return;
+
+    const passedIdSet = new Set(passedIds);
+    const tasksAssignedToRemoved = this.tasks.filter(
+      (t) => t.assignedSlotId && passedIdSet.has(t.assignedSlotId)
+    );
+    const deleteAssigned = this.confirmTaskCleanup(tasksAssignedToRemoved);
+
+    const removed = this.removeSlotsByIds(passedIds, deleteAssigned);
+    if (removed) {
+      this.persistState();
+    }
+  }
+
+  private isSlotPassed(slot: Slot, now: Date): boolean {
+    const dayIndex = this.days.indexOf(slot.day);
+    if (dayIndex < 0) return false;
+    const endMin = this.toMinutes(slot.end);
+    if (endMin === null) return false;
+
+    const nowDayIndex = now.getDay();
+    const dayDelta = dayIndex - nowDayIndex;
+    const endDate = new Date(now);
+    endDate.setDate(now.getDate() + dayDelta);
+    endDate.setHours(Math.floor(endMin / 60), endMin % 60, 0, 0);
+
+    return endDate <= now;
+  }
+
   private generateId(prefix: string): string {
     return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
   }
@@ -607,4 +620,48 @@ export class SchedulerComponent implements OnInit {
   private createDefaultTaskDraft(): { name: string; duration: number } {
     return { name: '', duration: 1 };
   }
+
+  private removeSlotsByIds(ids: string[], deleteAssignedTasks: boolean = true): boolean {
+    if (!ids.length) return false;
+    const idSet = new Set(ids);
+
+    if (this.editingSlotIndex !== null) {
+      const editingId = this.slots[this.editingSlotIndex]?.id;
+      if (editingId && idSet.has(editingId)) {
+        this.editingSlotIndex = null;
+      }
+    }
+
+    const beforeCount = this.slots.length;
+    this.slots = this.slots.filter((s) => !idSet.has(s.id));
+    const removed = beforeCount !== this.slots.length;
+
+    if (removed) {
+      const tasksAssignedToRemoved = this.tasks.filter(
+        (t) => t.assignedSlotId && idSet.has(t.assignedSlotId)
+      );
+      if (deleteAssignedTasks) {
+        const tasksToRemove = new Set(tasksAssignedToRemoved.map((t) => t.id));
+        this.tasks = this.tasks.filter((t) => !tasksToRemove.has(t.id));
+      } else {
+        this.tasks = this.tasks.map((t) =>
+          t.assignedSlotId && idSet.has(t.assignedSlotId) ? { ...t, assignedSlotId: null } : t
+        );
+      }
+
+      this.selectedSlotIds = new Set(
+        Array.from(this.selectedSlotIds).filter((id) => !idSet.has(id))
+      );
+    }
+
+    return removed;
+  }
+
+  private confirmTaskCleanup(tasks: Task[]): boolean {
+    if (!tasks.length) return true;
+    const list = tasks.map((task) => `- ${task.name}`).join('\n');
+    const message = `The following tasks are assigned to passed time slots:\n\n${list}\n\nClick OK to delete these tasks.\nClick Cancel to return them to Required tasks as unassigned.`;
+    return window.confirm(message);
+  }
+
 }
