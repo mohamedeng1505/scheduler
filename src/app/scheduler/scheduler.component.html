@@ -264,4 +264,31 @@
       <p class="empty">Nothing listed yet.</p>
     </ng-template>
   </section>
+
+  <div class="cleanup-modal" *ngIf="cleanupModalOpen && pendingCleanupTasks.length">
+    <div class="cleanup-backdrop"></div>
+    <div class="cleanup-card" role="dialog" aria-modal="true" aria-labelledby="cleanup-title">
+      <div>
+        <p class="cleanup-eyebrow">Slots ended</p>
+        <h3 id="cleanup-title">Tasks need a decision</h3>
+        <p class="cleanup-subtitle">
+          These tasks were assigned to time slots that have passed. Choose whether to delete them or return them to Required tasks.
+        </p>
+      </div>
+      <ul class="cleanup-list">
+        <li *ngFor="let task of pendingCleanupTasks; trackBy: trackByTaskId">
+          <span>{{ task.name }}</span>
+          <span class="cleanup-duration">{{ task.duration | number: '1.0-2' }}h</span>
+        </li>
+      </ul>
+      <div class="cleanup-actions">
+        <button type="button" class="cleanup-button" (click)="confirmReturnPendingCleanup()">
+          Return to Required
+        </button>
+        <button type="button" class="cleanup-button danger" (click)="confirmDeletePendingCleanup()">
+          Delete tasks
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

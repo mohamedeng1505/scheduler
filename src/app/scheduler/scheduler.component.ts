@@ -17,6 +17,7 @@ import { SavedSlotList, Slot, SlotDraft, Task } from '../types';
 export class SchedulerComponent implements OnInit, OnDestroy {
   private readonly apiBase = 'http://localhost:4000/api';
   private readonly noTimeTag = 'No time';
+  private readonly pendingCleanupTag = '__pending_cleanup__';
   private readonly defaultStart = '09:00';
   private readonly defaultEnd = '10:00';
   private cleanupTimerId?: number;
@@ -35,12 +36,14 @@ export class SchedulerComponent implements OnInit, OnDestroy {
   protected tasks: Task[] = [];
   protected requiredTasks: Task[] = [];
   protected noTimeTasks: Task[] = [];
+  protected pendingCleanupTasks: Task[] = [];
   protected savedSlotLists: SavedSlotList[] = [];
   protected noTimeDraft = '';
   protected totalSlotHours = 0;
   protected totalTaskHours = 0;
   protected hourDifference = 0;
   protected hasAssignedTasks = false;
+  protected cleanupModalOpen = false;
 
   protected newSlot: SlotDraft = this.createDefaultSlotDraft();
   protected newTask: { name: string; duration: number } = this.createDefaultTaskDraft();
@@ -94,6 +97,10 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
   protected trackBySlotListId(_index: number, list: SavedSlotList): string {
     return list.id;
+  }
+
+  protected trackByTaskId(_index: number, task: Task): string {
+    return task.id;
   }
 
   protected saveSlot(form: NgForm): void {
@@ -474,10 +481,19 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     const tasksAssignedToRemoved = this.tasks.filter(
       (t) => t.assignedSlotId && passedIdSet.has(t.assignedSlotId)
     );
-    const deleteAssigned = this.confirmTaskCleanup(tasksAssignedToRemoved);
+    if (tasksAssignedToRemoved.length) {
+      this.tasks = this.tasks.map((task) =>
+        task.assignedSlotId && passedIdSet.has(task.assignedSlotId)
+          ? this.markTaskPendingCleanup(task)
+          : task
+      );
+    }
 
-    const removed = this.removeSlotsByIds(passedIds, deleteAssigned);
+    const removed = this.removeSlotsByIds(passedIds, true);
     if (removed) {
+      if (tasksAssignedToRemoved.length) {
+        this.cleanupModalOpen = true;
+      }
       this.persistState();
     }
   }
@@ -526,6 +542,10 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
   private isNoTimeTask(task: Task): boolean {
     return Array.isArray(task.tags) && task.tags.includes(this.noTimeTag);
+  }
+
+  private isPendingCleanupTask(task: Task): boolean {
+    return Array.isArray(task.tags) && task.tags.includes(this.pendingCleanupTag);
   }
 
   private normalizedTags(tags: string[]): string[] {
@@ -583,10 +603,15 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
     const required: Task[] = [];
     const noTime: Task[] = [];
+    const pending: Task[] = [];
     let taskTotal = 0;
     let hasAssigned = false;
 
     for (const task of this.tasks) {
+      if (this.isPendingCleanupTask(task)) {
+        pending.push(task);
+        continue;
+      }
       if (this.isNoTimeTask(task)) {
         noTime.push(task);
         continue;
@@ -600,6 +625,10 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
     this.requiredTasks = required;
     this.noTimeTasks = noTime;
+    this.pendingCleanupTasks = pending;
+    if (pending.length && !this.cleanupModalOpen) {
+      this.cleanupModalOpen = true;
+    }
     this.totalTaskHours = this.roundHours(taskTotal);
     this.hasAssignedTasks = hasAssigned;
     this.hourDifference = this.roundHours(this.totalSlotHours - this.totalTaskHours);
@@ -657,11 +686,39 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     return removed;
   }
 
-  private confirmTaskCleanup(tasks: Task[]): boolean {
-    if (!tasks.length) return true;
-    const list = tasks.map((task) => `- ${task.name}`).join('\n');
-    const message = `The following tasks are assigned to passed time slots:\n\n${list}\n\nClick OK to delete these tasks.\nClick Cancel to return them to Required tasks as unassigned.`;
-    return window.confirm(message);
+  protected confirmDeletePendingCleanup(): void {
+    if (!this.pendingCleanupTasks.length) return;
+    const pendingIds = new Set(this.pendingCleanupTasks.map((task) => task.id));
+    this.tasks = this.tasks.filter((task) => !pendingIds.has(task.id));
+    this.cleanupModalOpen = false;
+    this.persistState();
   }
 
+  protected confirmReturnPendingCleanup(): void {
+    if (!this.pendingCleanupTasks.length) return;
+    const pendingIds = new Set(this.pendingCleanupTasks.map((task) => task.id));
+    this.tasks = this.tasks.map((task) =>
+      pendingIds.has(task.id) ? this.restorePendingCleanupTask(task) : task
+    );
+    this.cleanupModalOpen = false;
+    this.persistState();
+  }
+
+  private markTaskPendingCleanup(task: Task): Task {
+    const nextTags = new Set([...(task.tags ?? []), this.pendingCleanupTag]);
+    return {
+      ...task,
+      assignedSlotId: null,
+      tags: Array.from(nextTags)
+    };
+  }
+
+  private restorePendingCleanupTask(task: Task): Task {
+    const tags = (task.tags ?? []).filter((tag) => tag !== this.pendingCleanupTag);
+    return {
+      ...task,
+      assignedSlotId: null,
+      tags
+    };
+  }
 }

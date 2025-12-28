@@ -1,6 +1,139 @@
 {
   "slots": [
     {
+      "id": "slot-s8ryv88",
+      "day": "Sunday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-932ivmy",
+      "day": "Monday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-zbjocg9",
+      "day": "Sunday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-s4h325p",
+      "day": "Sunday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-cnll1i9",
+      "day": "Thursday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-kuy2d7y",
+      "day": "Thursday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-67t0qxm",
+      "day": "Thursday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-z2zf99i",
+      "day": "Thursday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-co15nxv",
+      "day": "Sunday",
+      "start": "08:45",
+      "end": "10:00",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-t5d4cl7",
+      "day": "Thursday",
+      "start": "10:45",
+      "end": "11:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-he1vi68",
+      "day": "Thursday",
+      "start": "08:45",
+      "end": "10:00",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-6qe38bz",
+      "day": "Sunday",
+      "start": "10:45",
+      "end": "11:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-8igyk4f",
+      "day": "Friday",
+      "start": "07:00",
+      "end": "08:00",
+      "hours": 1
+    },
+    {
+      "id": "slot-nmjcwiu",
+      "day": "Friday",
+      "start": "09:00",
+      "end": "10:00",
+      "hours": 1
+    },
+    {
+      "id": "slot-p5pqxts",
+      "day": "Friday",
+      "start": "13:30",
+      "end": "14:30",
+      "hours": 1
+    },
+    {
+      "id": "slot-jd8zwl1",
+      "day": "Friday",
+      "start": "15:30",
+      "end": "16:00",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-zxx0ibp",
+      "day": "Friday",
+      "start": "17:30",
+      "end": "18:30",
+      "hours": 1
+    },
+    {
+      "id": "slot-agurpfh",
+      "day": "Friday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-elat7kw",
+      "day": "Friday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
       "id": "slot-rn5lmnk",
       "day": "Saturday",
       "start": "07:00",
@@ -48,11 +181,169 @@
       "start": "21:15",
       "end": "22:30",
       "hours": 1.25
+    },
+    {
+      "id": "slot-g93z3ku",
+      "day": "Tuesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-6uoip5r",
+      "day": "Sunday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-w8dr3co",
+      "day": "Monday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-dbjx32q",
+      "day": "Monday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-22jii2c",
+      "day": "Monday",
+      "start": "08:45",
+      "end": "10:00",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-xf3gcik",
+      "day": "Monday",
+      "start": "10:45",
+      "end": "11:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-x8pwagu",
+      "day": "Monday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-ffbtto8",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-ptqg9fv",
+      "day": "Tuesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-10f2en5",
+      "day": "Tuesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-emfd27c",
+      "day": "Tuesday",
+      "start": "08:45",
+      "end": "10:00",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-kbd98zq",
+      "day": "Tuesday",
+      "start": "10:45",
+      "end": "11:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-5xjkwzm",
+      "day": "Wednesday",
+      "start": "18:00",
+      "end": "18:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-7vxx5c4",
+      "day": "Wednesday",
+      "start": "19:00",
+      "end": "20:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-lq3gbgh",
+      "day": "Wednesday",
+      "start": "21:15",
+      "end": "22:30",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-jrulyv4",
+      "day": "Wednesday",
+      "start": "12:45",
+      "end": "13:45",
+      "hours": 1
+    },
+    {
+      "id": "slot-9kc1se0",
+      "day": "Wednesday",
+      "start": "08:45",
+      "end": "10:00",
+      "hours": 1.25
+    },
+    {
+      "id": "slot-ai3zlho",
+      "day": "Wednesday",
+      "start": "10:45",
+      "end": "11:45",
+      "hours": 1
     }
   ],
   "tasks": [
     {
-      "id": "task-lrf4d6g",
+      "id": "task-5hyfkoi",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-elat7kw",
+      "postponed": false
+    },
+    {
+      "id": "task-imtqmma",
+      "name": "Enfa3Nafsak",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-x8pwagu",
+      "postponed": false
+    },
+    {
+      "id": "task-u2yj31s",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-p5pqxts",
+      "postponed": false
+    },
+    {
+      "id": "task-a5ftzrk",
+      "name": "Amp & Pb",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-zbjocg9",
+      "postponed": false
+    },
+    {
+      "id": "task-jwizkxb",
       "name": "Weekly Review",
       "tags": [],
       "duration": 0.75,
@@ -60,55 +351,295 @@
       "postponed": false
     },
     {
-      "id": "task-yw76pv9",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": null,
-      "postponed": false
-    },
-    {
-      "id": "task-wxkdo9w",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-rn5lmnk",
-      "postponed": false
-    },
-    {
-      "id": "task-vch9z5v",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-kin1wuo",
-      "postponed": false
-    },
-    {
-      "id": "task-ye7wok3",
-      "name": "Safety project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-b7da78j",
-      "postponed": false
-    },
-    {
-      "id": "task-3g718ko",
-      "name": "Safety project",
+      "id": "task-5wwcscg",
+      "name": "Life balance",
       "tags": [],
       "duration": 0.5,
-      "assignedSlotId": "slot-5hdyx6y",
+      "assignedSlotId": "slot-0hfppac",
       "postponed": false
     },
     {
-      "id": "task-ifm4qjd",
-      "name": "Safety project",
+      "id": "task-6k16lep",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-co15nxv",
+      "postponed": false
+    },
+    {
+      "id": "task-9usggv7",
+      "name": "Enfa3Nafsak",
       "tags": [],
       "duration": 1,
-      "assignedSlotId": "slot-7p26ado",
+      "assignedSlotId": "slot-6qe38bz",
       "postponed": false
     },
     {
-      "id": "task-z95fazv",
+      "id": "task-pjjrax9",
+      "name": "Enfa3Nafsak",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-s4h325p",
+      "postponed": false
+    },
+    {
+      "id": "task-iuuhs5c",
+      "name": "Enfa3Nafsak",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-s8ryv88",
+      "postponed": false
+    },
+    {
+      "id": "task-m296bl6",
+      "name": "Enfa3Nafsak",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-6uoip5r",
+      "postponed": false
+    },
+    {
+      "id": "task-udpyt9e",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.25,
+      "assignedSlotId": "slot-zbjocg9",
+      "postponed": false
+    },
+    {
+      "id": "task-hev7i3e",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-emfd27c",
+      "postponed": false
+    },
+    {
+      "id": "task-02qmxkn",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-kbd98zq",
+      "postponed": false
+    },
+    {
+      "id": "task-4teyv70",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 0.75,
+      "assignedSlotId": "slot-10f2en5",
+      "postponed": false
+    },
+    {
+      "id": "task-fvui03o",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-8igyk4f",
+      "postponed": false
+    },
+    {
+      "id": "task-39y72cq",
+      "name": "DonezyAI",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-nmjcwiu",
+      "postponed": false
+    },
+    {
+      "id": "task-r7irq2z",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-22jii2c",
+      "postponed": false
+    },
+    {
+      "id": "task-3p54z7t",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-xf3gcik",
+      "postponed": false
+    },
+    {
+      "id": "task-thlb60u",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-dbjx32q",
+      "postponed": false
+    },
+    {
+      "id": "task-iu5gxno",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-932ivmy",
+      "postponed": false
+    },
+    {
+      "id": "task-81c00ft",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-w8dr3co",
+      "postponed": false
+    },
+    {
+      "id": "task-gmrozv9",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.25,
+      "assignedSlotId": "slot-10f2en5",
+      "postponed": false
+    },
+    {
+      "id": "task-mf6jfy0",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-g93z3ku",
+      "postponed": false
+    },
+    {
+      "id": "task-b34wcy6",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-ffbtto8",
+      "postponed": false
+    },
+    {
+      "id": "task-zjy6rvg",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-ptqg9fv",
+      "postponed": false
+    },
+    {
+      "id": "task-xhj5tz8",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-9kc1se0",
+      "postponed": false
+    },
+    {
+      "id": "task-15acklc",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-ai3zlho",
+      "postponed": false
+    },
+    {
+      "id": "task-2zjx7c7",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-jrulyv4",
+      "postponed": false
+    },
+    {
+      "id": "task-yiq9iiz",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-5xjkwzm",
+      "postponed": false
+    },
+    {
+      "id": "task-66gv5bc",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-7vxx5c4",
+      "postponed": false
+    },
+    {
+      "id": "task-x1o1eu3",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-lq3gbgh",
+      "postponed": false
+    },
+    {
+      "id": "task-9lzfn0g",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-he1vi68",
+      "postponed": false
+    },
+    {
+      "id": "task-zrk3ius",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-t5d4cl7",
+      "postponed": false
+    },
+    {
+      "id": "task-sbaz8jb",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-67t0qxm",
+      "postponed": false
+    },
+    {
+      "id": "task-18vn913",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-cnll1i9",
+      "postponed": false
+    },
+    {
+      "id": "task-4qk7w1e",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-z2zf99i",
+      "postponed": false
+    },
+    {
+      "id": "task-km0vs9l",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.25,
+      "assignedSlotId": "slot-kuy2d7y",
+      "postponed": false
+    },
+    {
+      "id": "task-gu84w37",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-jd8zwl1",
+      "postponed": false
+    },
+    {
+      "id": "task-61snx4b",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-zxx0ibp",
+      "postponed": false
+    },
+    {
+      "id": "task-f779hxx",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1.5,
+      "assignedSlotId": "slot-agurpfh",
+      "postponed": false
+    },
+    {
+      "id": "task-wxtha3g",
       "name": "Weekly Review",
       "tags": [],
       "duration": 1.25,
@@ -116,41 +647,43 @@
       "postponed": false
     },
     {
-      "id": "task-n5ez09h",
-      "name": "Safety project",
+      "id": "task-fp9du8n",
+      "name": "Life balance",
       "tags": [],
-      "duration": 0.75,
-      "assignedSlotId": "slot-0hfppac",
+      "duration": 1,
+      "assignedSlotId": "slot-rn5lmnk",
       "postponed": false
     },
     {
-      "id": "task-onnuyi8",
-      "name": "Learn Angular",
-      "tags": [
-        "No time"
-      ],
-      "duration": 0,
-      "assignedSlotId": null,
+      "id": "task-h8x3exi",
+      "name": "Life balance",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-b7da78j",
       "postponed": false
     },
     {
-      "id": "task-6xn4axh",
-      "name": "Memorize Quran",
-      "tags": [
-        "No time"
-      ],
-      "duration": 0,
-      "assignedSlotId": null,
+      "id": "task-osubf6r",
+      "name": "Life balance",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-kin1wuo",
       "postponed": false
     },
     {
-      "id": "task-ayu4i4m",
-      "name": "Notion template",
-      "tags": [
-        "No time"
-      ],
-      "duration": 0,
-      "assignedSlotId": null,
+      "id": "task-s1ib1d2",
+      "name": "Life balance",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-5hdyx6y",
+      "postponed": false
+    },
+    {
+      "id": "task-z9fevbl",
+      "name": "Life balance",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-7p26ado",
       "postponed": false
     }
   ],
@@ -470,11 +1003,7 @@
       ]
     }
   ],
-  "noTimeTasks": [
-    "Learn Angular",
-    "Memorize Quran",
-    "Notion template"
-  ],
+  "noTimeTasks": [],
   "moneyChallenge": {
     "selected": [
       0,
