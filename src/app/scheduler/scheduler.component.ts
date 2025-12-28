@@ -704,6 +704,28 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     this.persistState();
   }
 
+  protected keepPendingCleanupTask(taskId: string): void {
+    if (!taskId) return;
+    const task = this.tasks.find((t) => t.id === taskId);
+    if (!task || !this.isPendingCleanupTask(task)) return;
+    this.tasks = this.tasks.map((t) => (t.id === taskId ? this.restorePendingCleanupTask(t) : t));
+    if (!this.tasks.some((t) => this.isPendingCleanupTask(t))) {
+      this.cleanupModalOpen = false;
+    }
+    this.persistState();
+  }
+
+  protected deletePendingCleanupTask(taskId: string): void {
+    if (!taskId) return;
+    const task = this.tasks.find((t) => t.id === taskId);
+    if (!task || !this.isPendingCleanupTask(task)) return;
+    this.tasks = this.tasks.filter((t) => t.id !== taskId);
+    if (!this.tasks.some((t) => this.isPendingCleanupTask(t))) {
+      this.cleanupModalOpen = false;
+    }
+    this.persistState();
+  }
+
   private markTaskPendingCleanup(task: Task): Task {
     const nextTags = new Set([...(task.tags ?? []), this.pendingCleanupTag]);
     return {

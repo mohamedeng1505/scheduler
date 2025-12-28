@@ -277,18 +277,28 @@
       </div>
       <ul class="cleanup-list">
         <li *ngFor="let task of pendingCleanupTasks; trackBy: trackByTaskId">
-          <span>{{ task.name }}</span>
-          <span class="cleanup-duration">{{ task.duration | number: '1.0-2' }}h</span>
+          <div class="cleanup-task-info">
+            <span class="cleanup-name">{{ task.name }}</span>
+            <span class="cleanup-duration">{{ task.duration | number: '1.0-2' }}h</span>
+          </div>
+          <div class="cleanup-item-actions">
+            <button
+              type="button"
+              class="cleanup-button compact"
+              (click)="keepPendingCleanupTask(task.id)"
+            >
+              Keep
+            </button>
+            <button
+              type="button"
+              class="cleanup-button danger compact"
+              (click)="deletePendingCleanupTask(task.id)"
+            >
+              Delete
+            </button>
+          </div>
         </li>
       </ul>
-      <div class="cleanup-actions">
-        <button type="button" class="cleanup-button" (click)="confirmReturnPendingCleanup()">
-          Return to Required
-        </button>
-        <button type="button" class="cleanup-button danger" (click)="confirmDeletePendingCleanup()">
-          Delete tasks
-        </button>
-      </div>
     </div>
   </div>
 </div>
