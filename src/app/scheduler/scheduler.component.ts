@@ -572,28 +572,12 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
   private normalizeTasks(): void {
     if (!this.tasks.length) return;
-
-    const groups = new Map<string, Task>();
-
-    for (const task of this.tasks) {
+    this.tasks = this.tasks.map((task) => {
       const trimmedName = task.name.trim();
       const normalizedName = trimmedName || task.name;
       const tags = this.normalizedTags(Array.isArray(task.tags) ? task.tags : []);
-      const key = `${normalizedName.toLowerCase()}::${this.taskStatusKey(task)}::${tags.join('|')}`;
-      const copy: Task = { ...task, name: normalizedName, tags };
-
-      const existing = groups.get(key);
-      if (!existing) {
-        groups.set(key, copy);
-      } else {
-        groups.set(key, {
-          ...existing,
-          duration: this.roundHours(existing.duration + copy.duration)
-        });
-      }
-    }
-
-    this.tasks = Array.from(groups.values());
+      return { ...task, name: normalizedName, tags };
+    });
   }
 
   private updateDerivedState(): void {
