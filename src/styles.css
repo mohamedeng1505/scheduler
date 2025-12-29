@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --donezy-primary: #00b894;
+  --donezy-secondary: #2d3436;
+  --donezy-accent: #f1c40f;
+  --donezy-bg: #ecf0f1;
+  --donezy-surface: #ffffff;
+  --donezy-text-muted: rgba(45, 52, 54, 0.7);
+  --donezy-text-inverse: #ffffff;
+  --donezy-primary-soft: rgba(0, 184, 148, 0.14);
+  --donezy-secondary-soft: rgba(45, 52, 54, 0.12);
+  --donezy-accent-soft: rgba(241, 196, 15, 0.2);
+  --donezy-border: rgba(45, 52, 54, 0.2);
+}
+
+body {
+  background: var(--donezy-bg);
+  color: var(--donezy-secondary);
+}

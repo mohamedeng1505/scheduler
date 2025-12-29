@@ -3,18 +3,18 @@
 }
 
 .panel {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   padding: 28px;
   border-radius: 20px;
   max-width: 720px;
-  box-shadow: 0 16px 28px rgba(48, 40, 28, 0.14);
+  box-shadow: 0 16px 28px rgba(45, 52, 54, 0.16);
 }
 
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 3px;
   font-size: 12px;
-  color: #7d5b3d;
+  color: var(--donezy-text-muted);
   margin: 0 0 8px;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .card {
-  background: #fdf6ed;
+  background: var(--donezy-bg);
   border-radius: 16px;
   padding: 16px 18px;
 }
@@ -35,7 +35,7 @@
   text-decoration: none;
   padding: 10px 18px;
   border-radius: 999px;
-  border: 1px solid rgba(33, 40, 46, 0.3);
-  color: #1c2a3a;
+  border: 1px solid var(--donezy-border);
+  color: var(--donezy-secondary);
   font-weight: 600;
 }

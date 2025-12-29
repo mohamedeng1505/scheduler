@@ -19,14 +19,14 @@
   text-transform: uppercase;
   letter-spacing: 3px;
   font-size: 12px;
-  color: #5a4b3a;
+  color: var(--donezy-text-muted);
   margin: 0;
 }
 
 .lede {
   font-size: 18px;
   max-width: 520px;
-  color: #2f2a23;
+  color: var(--donezy-secondary);
 }
 
 .hero-actions {
@@ -45,34 +45,34 @@
 }
 
 .btn.primary {
-  background: #1c2a3a;
-  color: #f6f0e5;
-  box-shadow: 0 12px 24px rgba(28, 42, 58, 0.2);
+  background: var(--donezy-primary);
+  color: var(--donezy-text-inverse);
+  box-shadow: 0 12px 24px rgba(0, 184, 148, 0.25);
 }
 
 .btn.ghost {
-  border: 1px solid rgba(33, 40, 46, 0.3);
-  color: #1c2a3a;
+  border: 1px solid var(--donezy-border);
+  color: var(--donezy-secondary);
 }
 
 .hero-card {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 20px;
   padding: 20px 24px;
-  box-shadow: 0 18px 30px rgba(57, 46, 28, 0.15);
+  box-shadow: 0 18px 30px rgba(45, 52, 54, 0.18);
 }
 
 .hero-card ul {
   padding-left: 18px;
   margin: 12px 0 0;
-  color: #3f3a33;
+  color: var(--donezy-secondary);
 }
 
 .card-label {
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 2px;
-  color: #7a6f62;
+  color: var(--donezy-text-muted);
   margin: 0 0 6px;
 }
 
@@ -83,10 +83,10 @@
 }
 
 .organizer-card {
-  background: #fffaf3;
+  background: var(--donezy-surface);
   border-radius: 18px;
   padding: 20px 22px;
-  box-shadow: 0 14px 24px rgba(72, 55, 28, 0.12);
+  box-shadow: 0 14px 24px rgba(45, 52, 54, 0.16);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -108,17 +108,17 @@
 }
 
 .status.live {
-  background: rgba(56, 116, 71, 0.12);
-  color: #2f6c3b;
+  background: var(--donezy-primary-soft);
+  color: var(--donezy-primary);
 }
 
 .status.preview {
-  background: rgba(199, 122, 43, 0.15);
-  color: #99521e;
+  background: var(--donezy-accent-soft);
+  color: var(--donezy-secondary);
 }
 
 .card-link {
   text-decoration: none;
-  color: #1c2a3a;
+  color: var(--donezy-secondary);
   font-weight: 600;
 }

@@ -13,11 +13,11 @@
 }
 
 .link-button.postpone-toggle.postponed {
-  color: #b45309;
+  color: var(--donezy-accent);
 }
 
 .task-divider {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--donezy-border);
   margin: 14px 0 10px;
   position: relative;
 }
@@ -27,8 +27,8 @@
   top: -10px;
   left: 0;
   font-size: 0.85rem;
-  color: #6b7280;
-  background: #ffffff;
+  color: var(--donezy-text-muted);
+  background: var(--donezy-surface);
   padding: 0 8px;
 }
 
@@ -47,28 +47,28 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--donezy-border);
   border-radius: 10px;
-  background: #f8fafc;
+  background: var(--donezy-bg);
   cursor: grab;
   position: relative;
 }
 
 .postponed-list li {
-  background: #fff7ed;
-  border-color: #f8d3b2;
+  background: rgba(241, 196, 15, 0.12);
+  border-color: rgba(241, 196, 15, 0.35);
 }
 
 .task-list li.editing {
   border-style: solid;
-  border-color: #c7d2fe;
-  background: #eef2ff;
+  border-color: rgba(0, 184, 148, 0.35);
+  background: rgba(0, 184, 148, 0.08);
   cursor: default;
 }
 
 .task-name {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--donezy-secondary);
 }
 
 .task-meta {
@@ -79,12 +79,12 @@
 }
 
 .task-status {
-  color: #6b7280;
+  color: var(--donezy-text-muted);
   font-weight: 600;
 }
 
 .task-status.assigned {
-  color: #16a34a;
+  color: var(--donezy-primary);
 }
 
 .task-actions {
@@ -109,12 +109,12 @@
 
 .task-edit-note {
   margin: 0;
-  color: #6b7280;
+  color: var(--donezy-text-muted);
   font-size: 0.9rem;
 }
 
 .task-edit-note.error {
-  color: #dc2626;
+  color: var(--donezy-accent);
 }
 
 .task-edit-actions {
@@ -129,14 +129,14 @@
 
 .task-summary {
   margin-top: 8px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--donezy-border);
   padding-top: 12px;
 }
 
 .task-summary h3 {
   margin: 0 0 8px;
   font-size: 1rem;
-  color: #0f172a;
+  color: var(--donezy-secondary);
 }
 
 .task-summary-table {
@@ -148,7 +148,7 @@
 .task-summary-table th,
 .task-summary-table td {
   padding: 8px 6px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--donezy-border);
   text-align: left;
 }
 

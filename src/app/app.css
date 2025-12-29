@@ -2,10 +2,10 @@
   display: block;
   min-height: 100vh;
   font-family: "Avenir Next", "Futura", "Gill Sans", "Trebuchet MS", sans-serif;
-  color: #141414;
-  background: radial-gradient(circle at top, rgba(255, 232, 189, 0.8), rgba(255, 255, 255, 0))
-      no-repeat,
-    linear-gradient(130deg, #f7f2e8, #e8f1ff 60%, #fffdf7 100%);
+  color: var(--donezy-secondary);
+  background:
+    radial-gradient(circle at top, rgba(241, 196, 15, 0.25), rgba(236, 240, 241, 0)) no-repeat,
+    linear-gradient(130deg, rgba(0, 184, 148, 0.08), var(--donezy-bg) 60%, rgba(241, 196, 15, 0.12) 100%);
 }
 
 .app-shell {
@@ -39,7 +39,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 2.6px;
-  color: #6b5f4b;
+  color: var(--donezy-text-muted);
 }
 
 .top-nav {
@@ -51,7 +51,7 @@
 }
 
 .top-nav a {
-  color: #3e3a32;
+  color: var(--donezy-secondary);
   text-decoration: none;
   padding: 6px 10px;
   border-radius: 999px;
@@ -60,8 +60,8 @@
 
 .top-nav a:hover,
 .top-nav a.active {
-  background: rgba(64, 52, 34, 0.12);
-  color: #1d1a14;
+  background: var(--donezy-secondary-soft);
+  color: var(--donezy-secondary);
 }
 
 .app-main {

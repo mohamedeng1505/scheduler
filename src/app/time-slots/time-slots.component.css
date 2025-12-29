@@ -22,18 +22,18 @@
 }
 
 .slot-day-group {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--donezy-border);
   border-radius: 12px;
   padding: 12px;
-  background: #f8fafc;
+  background: var(--donezy-bg);
 }
 
 .slot-day-group:nth-child(odd) {
-  background: #f1f5f9;
+  background: rgba(236, 240, 241, 0.7);
 }
 
 .slot-day-group:nth-child(even) {
-  background: #eef2ff;
+  background: rgba(0, 184, 148, 0.08);
 }
 
 .slot-day-header {
@@ -46,7 +46,7 @@
 .slot-day-header h3 {
   margin: 0;
   font-size: 1.05rem;
-  color: #0f172a;
+  color: var(--donezy-secondary);
 }
 
 .slot-day-header + .slot-list {
@@ -60,9 +60,9 @@
   align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--donezy-border);
   border-radius: 10px;
-  background: #f9fafb;
+  background: var(--donezy-surface);
   position: relative;
 }
 
@@ -72,19 +72,19 @@
 }
 
 .slot-list .slot-card.slot-full {
-  border-color: #bbf7d0;
-  background: #f6fff8;
-  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+  border-color: rgba(0, 184, 148, 0.5);
+  background: rgba(0, 184, 148, 0.08);
+  box-shadow: 0 0 0 2px rgba(0, 184, 148, 0.2);
 }
 
 .slot-list .slot-card.slot-next {
-  border-color: #f59e0b;
-  background: #fffbeb;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  border-color: rgba(241, 196, 15, 0.6);
+  background: rgba(241, 196, 15, 0.12);
+  box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.25);
 }
 
 .slot-card:hover {
-  border-color: #cbd5e1;
+  border-color: rgba(0, 184, 148, 0.45);
 }
 
 .slot-main {
@@ -96,7 +96,7 @@
 
 .slot-name {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--donezy-secondary);
 }
 
 .slot-meta {
@@ -116,8 +116,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--donezy-primary-soft);
+  color: var(--donezy-secondary);
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 600;
@@ -131,7 +131,7 @@
 .chip-action {
   border: none;
   background: transparent;
-  color: #dc2626;
+  color: var(--donezy-accent);
   font-weight: 700;
   cursor: pointer;
   padding: 2px 4px;
@@ -147,7 +147,7 @@
 
 .slot-empty {
   margin: 6px 0 0;
-  color: #6b7280;
+  color: var(--donezy-text-muted);
   font-size: 0.95rem;
 }
 
