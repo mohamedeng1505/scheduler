@@ -162,27 +162,6 @@
       "hours": 1.25
     },
     {
-      "id": "slot-jrulyv4",
-      "day": "Wednesday",
-      "start": "12:45",
-      "end": "13:45",
-      "hours": 1
-    },
-    {
-      "id": "slot-9kc1se0",
-      "day": "Wednesday",
-      "start": "08:45",
-      "end": "10:00",
-      "hours": 1.25
-    },
-    {
-      "id": "slot-ai3zlho",
-      "day": "Wednesday",
-      "start": "10:45",
-      "end": "11:45",
-      "hours": 1
-    },
-    {
       "id": "slot-nmd0gdq",
       "day": "Wednesday",
       "start": "22:30",
@@ -235,7 +214,7 @@
       "id": "task-3p54z7t",
       "name": "Safety Project",
       "tags": [],
-      "duration": 2,
+      "duration": 2.75,
       "assignedSlotId": null,
       "postponed": true
     },
@@ -245,30 +224,6 @@
       "tags": [],
       "duration": 1,
       "assignedSlotId": "slot-nmjcwiu",
-      "postponed": false
-    },
-    {
-      "id": "task-xhj5tz8",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": "slot-9kc1se0",
-      "postponed": false
-    },
-    {
-      "id": "task-15acklc",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-ai3zlho",
-      "postponed": false
-    },
-    {
-      "id": "task-2zjx7c7",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-jrulyv4",
       "postponed": false
     },
     {
