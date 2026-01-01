@@ -38,9 +38,9 @@
     {
       "id": "slot-he1vi68",
       "day": "Thursday",
-      "start": "08:45",
+      "start": "08:30",
       "end": "10:00",
-      "hours": 1.25
+      "hours": 1.5
     },
     {
       "id": "slot-8igyk4f",
@@ -141,31 +141,10 @@
       "hours": 1.25
     },
     {
-      "id": "slot-5xjkwzm",
-      "day": "Wednesday",
-      "start": "18:00",
-      "end": "18:30",
-      "hours": 0.5
-    },
-    {
-      "id": "slot-7vxx5c4",
-      "day": "Wednesday",
-      "start": "19:00",
-      "end": "20:30",
-      "hours": 1.5
-    },
-    {
-      "id": "slot-lq3gbgh",
-      "day": "Wednesday",
-      "start": "21:15",
-      "end": "22:30",
-      "hours": 1.25
-    },
-    {
-      "id": "slot-nmd0gdq",
-      "day": "Wednesday",
-      "start": "22:30",
-      "end": "23:30",
+      "id": "slot-14m7cst",
+      "day": "Saturday",
+      "start": "11:00",
+      "end": "12:00",
       "hours": 1
     }
   ],
@@ -183,8 +162,8 @@
       "name": "Amp & Pb",
       "tags": [],
       "duration": 0.75,
-      "assignedSlotId": null,
-      "postponed": true
+      "assignedSlotId": "slot-kuy2d7y",
+      "postponed": false
     },
     {
       "id": "task-jwizkxb",
@@ -195,66 +174,26 @@
       "postponed": true
     },
     {
-      "id": "task-6k16lep",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-nmd0gdq",
-      "postponed": false
-    },
-    {
       "id": "task-fvui03o",
       "name": "DonezyAI",
-      "tags": [],
-      "duration": 1,
-      "assignedSlotId": "slot-kuy2d7y",
-      "postponed": false
-    },
-    {
-      "id": "task-3p54z7t",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 2.75,
-      "assignedSlotId": null,
-      "postponed": true
-    },
-    {
-      "id": "task-zjy6rvg",
-      "name": "Safety Project",
       "tags": [],
       "duration": 1,
       "assignedSlotId": "slot-nmjcwiu",
       "postponed": false
     },
     {
-      "id": "task-yiq9iiz",
+      "id": "task-3p54z7t",
       "name": "Safety Project",
       "tags": [],
-      "duration": 0.5,
-      "assignedSlotId": "slot-5xjkwzm",
-      "postponed": false
-    },
-    {
-      "id": "task-66gv5bc",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1.5,
-      "assignedSlotId": "slot-7vxx5c4",
-      "postponed": false
-    },
-    {
-      "id": "task-x1o1eu3",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 1.25,
-      "assignedSlotId": "slot-lq3gbgh",
-      "postponed": false
+      "duration": 4,
+      "assignedSlotId": null,
+      "postponed": true
     },
     {
       "id": "task-9lzfn0g",
       "name": "Safety Project",
       "tags": [],
-      "duration": 1.25,
+      "duration": 1.5,
       "assignedSlotId": "slot-he1vi68",
       "postponed": false
     },
@@ -319,14 +258,6 @@
       "name": "Yearly review",
       "tags": [],
       "duration": 0.5,
-      "assignedSlotId": "slot-5hdyx6y",
-      "postponed": false
-    },
-    {
-      "id": "task-4wppbn8",
-      "name": "Yearly review",
-      "tags": [],
-      "duration": 1,
       "assignedSlotId": "slot-7p26ado",
       "postponed": false
     },
@@ -336,14 +267,6 @@
       "tags": [],
       "duration": 1.5,
       "assignedSlotId": "slot-0hfppac",
-      "postponed": false
-    },
-    {
-      "id": "task-f4y4pzd",
-      "name": "Safety Project",
-      "tags": [],
-      "duration": 0.25,
-      "assignedSlotId": "slot-kuy2d7y",
       "postponed": false
     },
     {
@@ -400,6 +323,38 @@
       "tags": [],
       "duration": 1,
       "assignedSlotId": "slot-kin1wuo",
+      "postponed": false
+    },
+    {
+      "id": "task-6lo0t58",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-5hdyx6y",
+      "postponed": false
+    },
+    {
+      "id": "task-19glmo7",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-7p26ado",
+      "postponed": false
+    },
+    {
+      "id": "task-hbwdsop",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 1,
+      "assignedSlotId": "slot-14m7cst",
+      "postponed": false
+    },
+    {
+      "id": "task-tntsvbs",
+      "name": "Safety Project",
+      "tags": [],
+      "duration": 0.5,
+      "assignedSlotId": "slot-kuy2d7y",
       "postponed": false
     }
   ],
