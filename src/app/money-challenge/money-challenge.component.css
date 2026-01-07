@@ -107,7 +107,7 @@
 }
 
 .grid-scroll {
-  overflow-x: auto;
+  overflow-x: hidden;
   padding-bottom: 6px;
 }
 
