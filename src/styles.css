@@ -11,9 +11,11 @@
   --donezy-secondary-soft: rgba(45, 52, 54, 0.12);
   --donezy-accent-soft: rgba(241, 196, 15, 0.2);
   --donezy-border: rgba(45, 52, 54, 0.2);
+  --donezy-font-sans: "Manrope", "Segoe UI", Arial, sans-serif;
 }
 
 body {
   background: var(--donezy-bg);
   color: var(--donezy-secondary);
+  font-family: var(--donezy-font-sans);
 }

@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-height: 100vh;
-  font-family: "Avenir Next", "Futura", "Gill Sans", "Trebuchet MS", sans-serif;
+  font-family: var(--donezy-font-sans);
   color: var(--donezy-secondary);
   background:
     radial-gradient(circle at top, rgba(241, 196, 15, 0.25), rgba(236, 240, 241, 0)) no-repeat,

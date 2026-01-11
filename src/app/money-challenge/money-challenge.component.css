@@ -53,7 +53,7 @@
 .challenge-hero h1 {
   margin: 0 0 8px;
   font-size: clamp(30px, 4vw, 52px);
-  font-family: "Cochin", "Palatino Linotype", "Book Antiqua", serif;
+  font-family: var(--donezy-font-sans);
   color: var(--ink);
 }
 
