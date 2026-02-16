@@ -282,6 +282,37 @@
   --table-columns: 1fr 0.6fr;
 }
 
+.form-table .table-row {
+  padding: 10px 12px;
+}
+
+.form-table .table-row.is-header {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+}
+
+.form-table .table-input {
+  min-height: 34px;
+}
+
+.expense-form-table,
+.income-form-table {
+  --table-columns: 1.4fr 1fr 1fr 0.7fr 0.9fr 1.2fr;
+}
+
+.transfer-form-table {
+  --table-columns: 1.2fr 1.2fr 0.7fr 0.9fr 1.4fr;
+}
+
+.expense-transactions-table,
+.income-transactions-table {
+  --table-columns: 1.2fr 1fr 1fr 0.7fr 0.9fr 1.2fr 0.7fr;
+}
+
+.transfer-transactions-table {
+  --table-columns: 1.2fr 1.2fr 0.7fr 0.9fr 1.2fr 0.7fr;
+}
+
 
 .cell {
   display: grid;

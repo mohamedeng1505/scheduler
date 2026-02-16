@@ -25,22 +25,22 @@
       <div class="metric-grid">
         <div class="metric-card">
           <p>Total income</p>
-          <h3>{{ totalIncome | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <h3>{{ totalIncome | currency: 'EGP' : 'symbol' : '1.2-2' }}</h3>
           <span class="metric-note">3 income streams</span>
         </div>
         <div class="metric-card">
           <p>Planned spend</p>
-          <h3>{{ totalPlanned | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <h3>{{ totalPlanned | currency: 'EGP' : 'symbol' : '1.2-2' }}</h3>
           <span class="metric-note">7 categories</span>
         </div>
         <div class="metric-card">
           <p>Cash left</p>
-          <h3>{{ cashLeft | currency: 'EGP' : 'symbol' : '1.0-0' }}</h3>
+          <h3>{{ cashLeft | currency: 'EGP' : 'symbol' : '1.2-2' }}</h3>
           <span class="metric-note">After planned costs</span>
         </div>
         <div class="metric-card">
           <p>Savings rate</p>
-          <h3>{{ savingsRate | number: '1.0-0' }}%</h3>
+          <h3>{{ savingsRate | number: '1.2-2' }}%</h3>
           <span class="metric-note">Based on actual spend</span>
         </div>
       </div>
@@ -82,11 +82,11 @@
             </div>
             <div class="cell">
               <span class="table-label">Planned</span>
-              <span>{{ category.planned | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+              <span>{{ category.planned | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
             </div>
             <div class="cell">
               <span class="table-label">Actual</span>
-              <span>{{ category.actual | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+              <span>{{ category.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
             </div>
             <div class="cell">
               <span class="table-label">Variance</span>
@@ -95,7 +95,7 @@
                 [class.negative]="category.actual > category.planned"
                 [class.positive]="category.actual <= category.planned"
               >
-                {{ category.planned - category.actual | currency: 'EGP' : 'symbol' : '1.0-0' }}
+                {{ category.planned - category.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}
               </span>
             </div>
             <div class="cell">
@@ -138,7 +138,7 @@
             </div>
             <div class="cell">
               <span class="table-label">Amount</span>
-              <span>{{ income.amount | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+              <span>{{ income.amount | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
             </div>
             <div class="cell">
               <span class="table-label">Status</span>
@@ -146,6 +146,162 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Add expense</h2>
+          </div>
+        </div>
+        <div class="table form-table expense-form-table">
+          <div class="table-row is-header">
+            <div>Account</div>
+            <div>Category</div>
+            <div>Subcategory</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+          </div>
+          <div class="table-row">
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newExpense.accountId">
+                <option value="" disabled>Select</option>
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newExpense.categoryId">
+                <option value="">None</option>
+                <option *ngFor="let category of expenseCategories; trackBy: trackByName" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newExpense.subcategoryId">
+                <option value="">None</option>
+                <option *ngFor="let subcategory of expenseSubcategories; trackBy: trackByName" [value]="subcategory.id">
+                  {{ subcategory.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <input class="table-input" type="number" inputmode="decimal" [(ngModel)]="newExpense.amount" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="date" [(ngModel)]="newExpense.date" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="text" [(ngModel)]="newExpense.note" />
+            </div>
+          </div>
+        </div>
+        <button class="btn primary" type="button" (click)="addExpenseTransaction()">Add expense</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Add income</h2>
+          </div>
+        </div>
+        <div class="table form-table income-form-table">
+          <div class="table-row is-header">
+            <div>Account</div>
+            <div>Category</div>
+            <div>Subcategory</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+          </div>
+          <div class="table-row">
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newIncome.accountId">
+                <option value="" disabled>Select</option>
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newIncome.categoryId">
+                <option value="">None</option>
+                <option *ngFor="let category of incomeCategories; trackBy: trackByName" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newIncome.subcategoryId">
+                <option value="">None</option>
+                <option *ngFor="let subcategory of incomeSubcategories; trackBy: trackByName" [value]="subcategory.id">
+                  {{ subcategory.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <input class="table-input" type="number" inputmode="decimal" [(ngModel)]="newIncome.amount" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="date" [(ngModel)]="newIncome.date" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="text" [(ngModel)]="newIncome.note" />
+            </div>
+          </div>
+        </div>
+        <button class="btn primary" type="button" (click)="addIncomeTransaction()">Add income</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Add transfer</h2>
+          </div>
+        </div>
+        <div class="table form-table transfer-form-table">
+          <div class="table-row is-header">
+            <div>From</div>
+            <div>To</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+          </div>
+          <div class="table-row">
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newTransfer.fromAccountId">
+                <option value="" disabled>Select</option>
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <select class="table-input" [(ngModel)]="newTransfer.toAccountId">
+                <option value="" disabled>Select</option>
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <input class="table-input" type="number" inputmode="decimal" [(ngModel)]="newTransfer.amount" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="date" [(ngModel)]="newTransfer.date" />
+            </div>
+            <div class="cell">
+              <input class="table-input" type="text" [(ngModel)]="newTransfer.note" />
+            </div>
+          </div>
+        </div>
+        <button class="btn primary" type="button" (click)="addTransferTransaction()">Add transfer</button>
       </section>
 
       <section class="panel">
@@ -160,6 +316,7 @@
           <div class="table-row is-header">
             <div>Account</div>
             <div>Initial</div>
+            <div>Balance</div>
           </div>
           <div class="table-row" *ngFor="let account of accounts; trackBy: trackByName">
             <div class="cell primary">
@@ -173,7 +330,7 @@
                 *ngIf="!account.editing"
                 (click)="startEdit(account)"
               >
-                {{ account.initial | number: '1.0-0' }}
+                {{ account.initial | number: '1.2-2' }}
               </span>
               <input
                 *ngIf="account.editing"
@@ -185,6 +342,10 @@
                 (keydown.enter)="saveEdit(account)"
                 (keydown.escape)="cancelEdit(account)"
               />
+            </div>
+            <div class="cell">
+              <span class="table-label">Balance</span>
+              <span>{{ getAccountBalance(account.id) | number: '1.2-2' }}</span>
             </div>
           </div>
         </div>
@@ -207,6 +368,216 @@
           </article>
         </div>
       </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Expense transactions</h2>
+          </div>
+          <span class="pill">{{ expenseTransactions.length }} entries</span>
+        </div>
+        <div class="table transactions-table expense-transactions-table">
+          <div class="table-row is-header">
+            <div>Account</div>
+            <div>Category</div>
+            <div>Subcategory</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+            <div>Actions</div>
+          </div>
+          <div class="table-row" *ngFor="let tx of expenseTransactions; trackBy: trackById">
+            <div class="cell">
+              <span class="table-label">Account</span>
+              <span *ngIf="!tx.editing">{{ getAccountName(tx.accountId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.accountId">
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Category</span>
+              <span *ngIf="!tx.editing">{{ getExpenseCategoryName(tx.categoryId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.categoryId">
+                <option value="">None</option>
+                <option *ngFor="let category of expenseCategories; trackBy: trackByName" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Subcategory</span>
+              <span *ngIf="!tx.editing">{{ getExpenseSubcategoryName(tx.subcategoryId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.subcategoryId">
+                <option value="">None</option>
+                <option *ngFor="let subcategory of expenseSubcategories; trackBy: trackByName" [value]="subcategory.id">
+                  {{ subcategory.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Amount</span>
+              <span *ngIf="!tx.editing">{{ tx.amount | number: '1.2-2' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="number" [(ngModel)]="tx.draft!.amount" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Date</span>
+              <span *ngIf="!tx.editing">{{ tx.date || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="date" [(ngModel)]="tx.draft!.date" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Note</span>
+              <span *ngIf="!tx.editing">{{ tx.note || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="text" [(ngModel)]="tx.draft!.note" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Actions</span>
+              <button *ngIf="!tx.editing" class="text-link" type="button" (click)="startEditExpense(tx)">Edit</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="saveEditExpense(tx)">Save</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="cancelEditExpense(tx)">Cancel</button>
+              <button class="text-link danger" type="button" (click)="deleteExpense(tx)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Income transactions</h2>
+          </div>
+          <span class="pill">{{ incomeTransactions.length }} entries</span>
+        </div>
+        <div class="table transactions-table income-transactions-table">
+          <div class="table-row is-header">
+            <div>Account</div>
+            <div>Category</div>
+            <div>Subcategory</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+            <div>Actions</div>
+          </div>
+          <div class="table-row" *ngFor="let tx of incomeTransactions; trackBy: trackById">
+            <div class="cell">
+              <span class="table-label">Account</span>
+              <span *ngIf="!tx.editing">{{ getAccountName(tx.accountId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.accountId">
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Category</span>
+              <span *ngIf="!tx.editing">{{ getIncomeCategoryName(tx.categoryId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.categoryId">
+                <option value="">None</option>
+                <option *ngFor="let category of incomeCategories; trackBy: trackByName" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Subcategory</span>
+              <span *ngIf="!tx.editing">{{ getIncomeSubcategoryName(tx.subcategoryId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.subcategoryId">
+                <option value="">None</option>
+                <option *ngFor="let subcategory of incomeSubcategories; trackBy: trackByName" [value]="subcategory.id">
+                  {{ subcategory.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Amount</span>
+              <span *ngIf="!tx.editing">{{ tx.amount | number: '1.2-2' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="number" [(ngModel)]="tx.draft!.amount" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Date</span>
+              <span *ngIf="!tx.editing">{{ tx.date || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="date" [(ngModel)]="tx.draft!.date" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Note</span>
+              <span *ngIf="!tx.editing">{{ tx.note || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="text" [(ngModel)]="tx.draft!.note" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Actions</span>
+              <button *ngIf="!tx.editing" class="text-link" type="button" (click)="startEditIncome(tx)">Edit</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="saveEditIncome(tx)">Save</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="cancelEditIncome(tx)">Cancel</button>
+              <button class="text-link danger" type="button" (click)="deleteIncome(tx)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Transactions</p>
+            <h2>Transfer transactions</h2>
+          </div>
+          <span class="pill">{{ transferTransactions.length }} entries</span>
+        </div>
+        <div class="table transactions-table transfer-transactions-table">
+          <div class="table-row is-header">
+            <div>From</div>
+            <div>To</div>
+            <div>Amount</div>
+            <div>Date</div>
+            <div>Note</div>
+            <div>Actions</div>
+          </div>
+          <div class="table-row" *ngFor="let tx of transferTransactions; trackBy: trackById">
+            <div class="cell">
+              <span class="table-label">From</span>
+              <span *ngIf="!tx.editing">{{ getAccountName(tx.fromAccountId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.fromAccountId">
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">To</span>
+              <span *ngIf="!tx.editing">{{ getAccountName(tx.toAccountId) }}</span>
+              <select *ngIf="tx.editing" class="table-input" [(ngModel)]="tx.draft!.toAccountId">
+                <option *ngFor="let account of accounts; trackBy: trackByName" [value]="account.id">
+                  {{ account.name }}
+                </option>
+              </select>
+            </div>
+            <div class="cell">
+              <span class="table-label">Amount</span>
+              <span *ngIf="!tx.editing">{{ tx.amount | number: '1.2-2' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="number" [(ngModel)]="tx.draft!.amount" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Date</span>
+              <span *ngIf="!tx.editing">{{ tx.date || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="date" [(ngModel)]="tx.draft!.date" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Note</span>
+              <span *ngIf="!tx.editing">{{ tx.note || '-' }}</span>
+              <input *ngIf="tx.editing" class="table-input" type="text" [(ngModel)]="tx.draft!.note" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Actions</span>
+              <button *ngIf="!tx.editing" class="text-link" type="button" (click)="startEditTransfer(tx)">Edit</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="saveEditTransfer(tx)">Save</button>
+              <button *ngIf="tx.editing" class="text-link" type="button" (click)="cancelEditTransfer(tx)">Cancel</button>
+              <button class="text-link danger" type="button" (click)="deleteTransfer(tx)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <aside class="side-column">
@@ -225,7 +596,7 @@
               <span class="bill-sub">{{ bill.account }} · {{ bill.due }}</span>
             </div>
             <div class="bill-meta">
-              <span>{{ bill.amount | currency: 'EGP' : 'symbol' : '1.0-0' }}</span>
+              <span>{{ bill.amount | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
               <span class="status-chip" [ngClass]="bill.status">{{ bill.status }}</span>
             </div>
           </article>
@@ -245,8 +616,8 @@
             <div class="envelope-head">
               <span class="envelope-title">{{ envelope.name }}</span>
               <span class="envelope-amount">
-                {{ envelope.spent | currency: 'EGP' : 'symbol' : '1.0-0' }} /
-                {{ envelope.target | currency: 'EGP' : 'symbol' : '1.0-0' }}
+                {{ envelope.spent | currency: 'EGP' : 'symbol' : '1.2-2' }} /
+                {{ envelope.target | currency: 'EGP' : 'symbol' : '1.2-2' }}
               </span>
             </div>
             <div class="progress">

@@ -19,7 +19,23 @@ async function ensureDataFile() {
     await fs.writeFile(
       DATA_PATH,
       JSON.stringify(
-        { slots: [], tasks: [], savedSlotLists: [], noTimeTasks: [], moneyChallenge: { selected: [] } },
+        {
+          slots: [],
+          tasks: [],
+          savedSlotLists: [],
+          noTimeTasks: [],
+          moneyChallenge: { selected: [] },
+          budget: {
+            accounts: [],
+            expenseCategories: [],
+            expenseSubcategories: [],
+            incomeCategories: [],
+            incomeSubcategories: [],
+            expenseTransactions: [],
+            incomeTransactions: [],
+            transferTransactions: []
+          }
+        },
         null,
         2
       ),
@@ -32,14 +48,25 @@ async function readData() {
   await ensureDataFile();
   const raw = await fs.readFile(DATA_PATH, 'utf8');
   const parsed = JSON.parse(
-    raw.toString() || '{"slots":[],"tasks":[],"savedSlotLists":[],"moneyChallenge":{"selected":[]}}'
+    raw.toString() ||
+      '{"slots":[],"tasks":[],"savedSlotLists":[],"noTimeTasks":[],"moneyChallenge":{"selected":[]},"budget":{"accounts":[],"expenseCategories":[],"expenseSubcategories":[],"incomeCategories":[],"incomeSubcategories":[],"expenseTransactions":[],"incomeTransactions":[],"transferTransactions":[]}}'
   );
   return {
     slots: parsed.slots || [],
     tasks: parsed.tasks || [],
     savedSlotLists: parsed.savedSlotLists || [],
     noTimeTasks: parsed.noTimeTasks || [],
-    moneyChallenge: parsed.moneyChallenge || { selected: [] }
+    moneyChallenge: parsed.moneyChallenge || { selected: [] },
+    budget: parsed.budget || {
+      accounts: [],
+      expenseCategories: [],
+      expenseSubcategories: [],
+      incomeCategories: [],
+      incomeSubcategories: [],
+      expenseTransactions: [],
+      incomeTransactions: [],
+      transferTransactions: []
+    }
   };
 }
 
@@ -53,7 +80,17 @@ async function writeData(data) {
         tasks: data.tasks || [],
         savedSlotLists: data.savedSlotLists || [],
         noTimeTasks: data.noTimeTasks || [],
-        moneyChallenge: data.moneyChallenge || { selected: [] }
+        moneyChallenge: data.moneyChallenge || { selected: [] },
+        budget: data.budget || {
+          accounts: [],
+          expenseCategories: [],
+          expenseSubcategories: [],
+          incomeCategories: [],
+          incomeSubcategories: [],
+          expenseTransactions: [],
+          incomeTransactions: [],
+          transferTransactions: []
+        }
       },
       null,
       2
@@ -102,6 +139,147 @@ app.post('/api/money-challenge', async (req, res) => {
   } catch (err) {
     console.error('Failed to save money challenge data', err);
     res.status(500).json({ message: 'Failed to save money challenge' });
+  }
+});
+
+app.get('/api/budget', async (_req, res) => {
+  try {
+    const data = await readData();
+    res.json(data.budget || {
+      accounts: [],
+      expenseCategories: [],
+      expenseSubcategories: [],
+      incomeCategories: [],
+      incomeSubcategories: [],
+      expenseTransactions: [],
+      incomeTransactions: [],
+      transferTransactions: []
+    });
+  } catch (err) {
+    console.error('Failed to read budget data', err);
+    res.status(500).json({ message: 'Failed to load budget data' });
+  }
+});
+
+app.put('/api/budget/accounts', async (req, res) => {
+  const { accounts } = req.body || {};
+  if (!Array.isArray(accounts)) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  const sanitized = accounts
+    .filter((acct) => acct && typeof acct.id === 'string' && typeof acct.name === 'string')
+    .map((acct) => ({
+      id: acct.id.trim(),
+      name: acct.name.trim(),
+      initial: Number.isFinite(Number(acct.initial)) ? Number(acct.initial) : 0
+    }))
+    .filter((acct) => acct.id && acct.name);
+
+  try {
+    const data = await readData();
+    const budget = data.budget || {
+      accounts: [],
+      expenseCategories: [],
+      expenseSubcategories: [],
+      incomeCategories: [],
+      incomeSubcategories: [],
+      expenseTransactions: [],
+      incomeTransactions: [],
+      transferTransactions: []
+    };
+    await writeData({
+      ...data,
+      budget: {
+        ...budget,
+        accounts: sanitized
+      }
+    });
+    res.json({ accounts: sanitized });
+  } catch (err) {
+    console.error('Failed to save budget accounts', err);
+    res.status(500).json({ message: 'Failed to save budget accounts' });
+  }
+});
+
+app.put('/api/budget/transactions', async (req, res) => {
+  const { expenseTransactions, incomeTransactions, transferTransactions } = req.body || {};
+  if (!Array.isArray(expenseTransactions) || !Array.isArray(incomeTransactions) || !Array.isArray(transferTransactions)) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  const sanitizeAmount = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
+  const sanitizeText = (value) => (typeof value === 'string' ? value.trim() : '');
+
+  const sanitizedExpenses = expenseTransactions
+    .filter((tx) => tx && typeof tx.id === 'string' && typeof tx.accountId === 'string')
+    .map((tx) => ({
+      id: tx.id.trim(),
+      accountId: tx.accountId.trim(),
+      categoryId: sanitizeText(tx.categoryId) || undefined,
+      subcategoryId: sanitizeText(tx.subcategoryId) || undefined,
+      amount: sanitizeAmount(tx.amount),
+      date: sanitizeText(tx.date) || undefined,
+      note: sanitizeText(tx.note) || undefined
+    }))
+    .filter((tx) => tx.id && tx.accountId);
+
+  const sanitizedIncome = incomeTransactions
+    .filter((tx) => tx && typeof tx.id === 'string' && typeof tx.accountId === 'string')
+    .map((tx) => ({
+      id: tx.id.trim(),
+      accountId: tx.accountId.trim(),
+      categoryId: sanitizeText(tx.categoryId) || undefined,
+      subcategoryId: sanitizeText(tx.subcategoryId) || undefined,
+      amount: sanitizeAmount(tx.amount),
+      date: sanitizeText(tx.date) || undefined,
+      note: sanitizeText(tx.note) || undefined
+    }))
+    .filter((tx) => tx.id && tx.accountId);
+
+  const sanitizedTransfers = transferTransactions
+    .filter(
+      (tx) => tx && typeof tx.id === 'string' && typeof tx.fromAccountId === 'string' && typeof tx.toAccountId === 'string'
+    )
+    .map((tx) => ({
+      id: tx.id.trim(),
+      fromAccountId: tx.fromAccountId.trim(),
+      toAccountId: tx.toAccountId.trim(),
+      amount: sanitizeAmount(tx.amount),
+      date: sanitizeText(tx.date) || undefined,
+      note: sanitizeText(tx.note) || undefined
+    }))
+    .filter((tx) => tx.id && tx.fromAccountId && tx.toAccountId);
+
+  try {
+    const data = await readData();
+    const budget = data.budget || {
+      accounts: [],
+      expenseCategories: [],
+      expenseSubcategories: [],
+      incomeCategories: [],
+      incomeSubcategories: [],
+      expenseTransactions: [],
+      incomeTransactions: [],
+      transferTransactions: []
+    };
+    await writeData({
+      ...data,
+      budget: {
+        ...budget,
+        expenseTransactions: sanitizedExpenses,
+        incomeTransactions: sanitizedIncome,
+        transferTransactions: sanitizedTransfers
+      }
+    });
+    res.json({
+      expenseTransactions: sanitizedExpenses,
+      incomeTransactions: sanitizedIncome,
+      transferTransactions: sanitizedTransfers
+    });
+  } catch (err) {
+    console.error('Failed to save budget transactions', err);
+    res.status(500).json({ message: 'Failed to save budget transactions' });
   }
 });
 
