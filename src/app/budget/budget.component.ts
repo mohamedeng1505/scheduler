@@ -67,12 +67,25 @@ type TransferTransaction = {
   };
 };
 
+type MonthlyPlanEntry = {
+  id: string;
+  categoryId: string;
+  subcategoryId?: string;
+  planned: number;
+  actual: number;
+  due?: string;
+  status: string;
+  draft?: number;
+  editing?: boolean;
+};
+
 type BudgetState = {
   accounts: Account[];
   expenseCategories?: { id: string; name: string }[];
   expenseSubcategories?: { id: string; name: string }[];
   incomeCategories?: { id: string; name: string }[];
   incomeSubcategories?: { id: string; name: string }[];
+  monthlyPlanEntries?: MonthlyPlanEntry[];
   expenseTransactions: ExpenseTransaction[];
   incomeTransactions: IncomeTransaction[];
   transferTransactions: TransferTransaction[];
@@ -89,67 +102,15 @@ type BudgetState = {
 export class BudgetComponent {
   private readonly apiBase = 'http://localhost:4000/api';
 
-  monthLabel = 'October 2025';
-  syncLabel = 'Synced 2 hours ago';
+  private readonly monthFormatter = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric'
+  });
 
-  categories = [
-    {
-      name: 'Mortgage',
-      group: 'Housing',
-      planned: 1450,
-      actual: 1450,
-      due: '1st',
-      status: 'paid'
-    },
-    {
-      name: 'Electric + Water',
-      group: 'Utilities',
-      planned: 220,
-      actual: 198,
-      due: '12th',
-      status: 'paid'
-    },
-    {
-      name: 'Groceries',
-      group: 'Living',
-      planned: 520,
-      actual: 446,
-      due: 'Weekly',
-      status: 'in'
-    },
-    {
-      name: 'Transport',
-      group: 'Living',
-      planned: 180,
-      actual: 142,
-      due: 'Weekly',
-      status: 'in'
-    },
-    {
-      name: 'Subscriptions',
-      group: 'Digital',
-      planned: 78,
-      actual: 78,
-      due: '18th',
-      status: 'paid'
-    },
-    {
-      name: 'Student Loan',
-      group: 'Debt',
-      planned: 310,
-      actual: 310,
-      due: '25th',
-      status: 'paid'
-    },
-    {
-      name: 'Fun + Dining',
-      group: 'Lifestyle',
-      planned: 160,
-      actual: 210,
-      due: 'Weekly',
-      status: 'over'
-    }
-  ];
+  get monthLabel(): string {
+    return this.monthFormatter.format(new Date());
+  }
+  syncLabel = 'Synced 2 hours ago';
 
   incomeStreams = [
     {
@@ -239,10 +200,19 @@ export class BudgetComponent {
   expenseSubcategories: { id: string; name: string }[] = [];
   incomeCategories: { id: string; name: string }[] = [];
   incomeSubcategories: { id: string; name: string }[] = [];
+  monthlyPlanEntries: MonthlyPlanEntry[] = [];
   expenseTransactions: ExpenseTransaction[] = [];
   incomeTransactions: IncomeTransaction[] = [];
   transferTransactions: TransferTransaction[] = [];
 
+  newMonthlyPlan: Omit<MonthlyPlanEntry, 'id'> = {
+    categoryId: '',
+    subcategoryId: '',
+    planned: 0,
+    actual: 0,
+    due: '',
+    status: 'in'
+  };
   newExpense: Omit<ExpenseTransaction, 'id'> = {
     accountId: '',
     categoryId: '',
@@ -282,11 +252,11 @@ export class BudgetComponent {
   }
 
   get totalPlanned(): number {
-    return this.categories.reduce((total, item) => total + item.planned, 0);
+    return this.monthlyPlanEntries.reduce((total, item) => total + (Number.isFinite(item.planned) ? item.planned : 0), 0);
   }
 
   get totalActual(): number {
-    return this.categories.reduce((total, item) => total + item.actual, 0);
+    return this.monthlyPlanEntries.reduce((total, item) => total + (Number.isFinite(item.actual) ? item.actual : 0), 0);
   }
 
   get cashLeft(): number {
@@ -359,12 +329,24 @@ export class BudgetComponent {
         this.expenseSubcategories = Array.isArray(data?.expenseSubcategories) ? data.expenseSubcategories : [];
         this.incomeCategories = Array.isArray(data?.incomeCategories) ? data.incomeCategories : [];
         this.incomeSubcategories = Array.isArray(data?.incomeSubcategories) ? data.incomeSubcategories : [];
+        this.monthlyPlanEntries = Array.isArray(data?.monthlyPlanEntries) ? data.monthlyPlanEntries : [];
         this.expenseTransactions = Array.isArray(data?.expenseTransactions) ? data.expenseTransactions : [];
         this.incomeTransactions = Array.isArray(data?.incomeTransactions) ? data.incomeTransactions : [];
         this.transferTransactions = Array.isArray(data?.transferTransactions) ? data.transferTransactions : [];
       },
       error: (err) => {
         console.error('Failed to load budget data', err);
+      }
+    });
+  }
+
+  private persistMonthlyPlan(): void {
+    const payload = {
+      monthlyPlanEntries: this.monthlyPlanEntries
+    };
+    this.http.put(`${this.apiBase}/budget/monthly-plan`, payload).subscribe({
+      error: (err) => {
+        console.error('Failed to save monthly plan entries', err);
       }
     });
   }
@@ -382,6 +364,60 @@ export class BudgetComponent {
         console.error('Failed to save budget accounts', err);
       }
     });
+  }
+
+  addMonthlyPlanEntry(): void {
+    if (!this.newMonthlyPlan.categoryId || !Number.isFinite(Number(this.newMonthlyPlan.planned))) {
+      return;
+    }
+
+    const entry: MonthlyPlanEntry = {
+      id: this.makeId('plan'),
+      categoryId: this.newMonthlyPlan.categoryId,
+      subcategoryId: this.newMonthlyPlan.subcategoryId || undefined,
+      planned: Number(this.newMonthlyPlan.planned) || 0,
+      actual: Number(this.newMonthlyPlan.actual) || 0,
+      due: this.newMonthlyPlan.due || undefined,
+      status: this.newMonthlyPlan.status || 'in'
+    };
+
+    this.monthlyPlanEntries = [entry, ...this.monthlyPlanEntries];
+    this.newMonthlyPlan = {
+      categoryId: '',
+      subcategoryId: '',
+      planned: 0,
+      actual: 0,
+      due: '',
+      status: 'in'
+    };
+    this.persistMonthlyPlan();
+  }
+
+  deleteMonthlyPlanEntry(entry: MonthlyPlanEntry): void {
+    this.monthlyPlanEntries = this.monthlyPlanEntries.filter((item) => item.id !== entry.id);
+    this.persistMonthlyPlan();
+  }
+
+  startEditMonthlyPlan(entry: MonthlyPlanEntry): void {
+    entry.draft = entry.actual;
+    entry.editing = true;
+  }
+
+  saveEditMonthlyPlan(entry: MonthlyPlanEntry): void {
+    const value = Number(entry.draft);
+    if (!Number.isFinite(value)) {
+      this.cancelEditMonthlyPlan(entry);
+      return;
+    }
+    entry.actual = value;
+    entry.editing = false;
+    entry.draft = undefined;
+    this.persistMonthlyPlan();
+  }
+
+  cancelEditMonthlyPlan(entry: MonthlyPlanEntry): void {
+    entry.draft = entry.actual;
+    entry.editing = false;
   }
 
   addExpenseTransaction(): void {
@@ -604,6 +640,21 @@ export class BudgetComponent {
       return '';
     }
     return this.expenseSubcategories.find((sub) => sub.id === subcategoryId)?.name || '';
+  }
+
+  getMonthlyPlanSubline(entry: MonthlyPlanEntry): string {
+    const sub = this.getExpenseSubcategoryName(entry.subcategoryId);
+    const due = entry.due ? `due ${entry.due}` : '';
+    if (sub && due) {
+      return `${sub} · ${due}`;
+    }
+    if (sub) {
+      return sub;
+    }
+    if (due) {
+      return due;
+    }
+    return 'No details';
   }
 
   getIncomeCategoryName(categoryId?: string): string {

@@ -31,7 +31,7 @@
         <div class="metric-card">
           <p>Planned spend</p>
           <h3>{{ totalPlanned | currency: 'EGP' : 'symbol' : '1.2-2' }}</h3>
-          <span class="metric-note">7 categories</span>
+          <span class="metric-note">{{ monthlyPlanEntries.length }} categories</span>
         </div>
         <div class="metric-card">
           <p>Cash left</p>
@@ -72,35 +72,105 @@
             <div>Status</div>
           </div>
 
-          <div class="table-row" *ngFor="let category of categories; trackBy: trackByName">
+          <div class="table-row form-row">
             <div class="cell primary">
               <span class="table-label">Category</span>
               <div class="cell-main">
-                <span class="cell-title">{{ category.name }}</span>
-                <span class="cell-sub">{{ category.group }} · due {{ category.due }}</span>
+                <select class="table-input" [(ngModel)]="newMonthlyPlan.categoryId">
+                  <option value="" disabled>Select category</option>
+                  <option *ngFor="let category of expenseCategories; trackBy: trackByName" [value]="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+                <select class="table-input" [(ngModel)]="newMonthlyPlan.subcategoryId">
+                  <option value="">No subcategory</option>
+                  <option *ngFor="let subcategory of expenseSubcategories; trackBy: trackByName" [value]="subcategory.id">
+                    {{ subcategory.name }}
+                  </option>
+                </select>
+                <input class="table-input" type="text" placeholder="Due (e.g., 12th)" [(ngModel)]="newMonthlyPlan.due" />
               </div>
             </div>
             <div class="cell">
               <span class="table-label">Planned</span>
-              <span>{{ category.planned | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
+              <input class="table-input" type="number" inputmode="decimal" [(ngModel)]="newMonthlyPlan.planned" />
             </div>
             <div class="cell">
               <span class="table-label">Actual</span>
-              <span>{{ category.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
+              <input class="table-input" type="number" inputmode="decimal" [(ngModel)]="newMonthlyPlan.actual" />
+            </div>
+            <div class="cell">
+              <span class="table-label">Variance</span>
+              <span class="table-muted">Auto</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Status</span>
+              <div class="status-stack">
+                <select class="table-input" [(ngModel)]="newMonthlyPlan.status">
+                  <option value="paid">paid</option>
+                  <option value="in">in</option>
+                  <option value="over">over</option>
+                  <option value="scheduled">scheduled</option>
+                  <option value="due">due</option>
+                </select>
+                <button class="text-link" type="button" (click)="addMonthlyPlanEntry()">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-empty" *ngIf="!monthlyPlanEntries.length">
+            Add your first category budget entry from the form above.
+          </div>
+
+          <div class="table-row" *ngFor="let entry of monthlyPlanEntries; trackBy: trackById">
+            <div class="cell primary">
+              <span class="table-label">Category</span>
+              <div class="cell-main">
+                <span class="cell-title">{{ getExpenseCategoryName(entry.categoryId) }}</span>
+                <span class="cell-sub">{{ getMonthlyPlanSubline(entry) }}</span>
+              </div>
+            </div>
+            <div class="cell">
+              <span class="table-label">Planned</span>
+              <span>{{ entry.planned | currency: 'EGP' : 'symbol' : '1.2-2' }}</span>
+            </div>
+            <div class="cell">
+              <span class="table-label">Actual</span>
+              <span
+                class="table-value editable"
+                *ngIf="!entry.editing"
+                (click)="startEditMonthlyPlan(entry)"
+              >
+                {{ entry.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}
+              </span>
+              <input
+                *ngIf="entry.editing"
+                class="table-input"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                [(ngModel)]="entry.draft"
+                (blur)="saveEditMonthlyPlan(entry)"
+                (keydown.enter)="saveEditMonthlyPlan(entry)"
+                (keydown.escape)="cancelEditMonthlyPlan(entry)"
+              />
             </div>
             <div class="cell">
               <span class="table-label">Variance</span>
               <span
                 class="variance"
-                [class.negative]="category.actual > category.planned"
-                [class.positive]="category.actual <= category.planned"
+                [class.negative]="entry.actual > entry.planned"
+                [class.positive]="entry.actual <= entry.planned"
               >
-                {{ category.planned - category.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}
+                {{ entry.planned - entry.actual | currency: 'EGP' : 'symbol' : '1.2-2' }}
               </span>
             </div>
             <div class="cell">
               <span class="table-label">Status</span>
-              <span class="status-chip" [ngClass]="category.status">{{ category.status }}</span>
+              <div class="status-stack">
+                <span class="status-chip" [ngClass]="entry.status">{{ entry.status }}</span>
+                <button class="text-link danger" type="button" (click)="deleteMonthlyPlanEntry(entry)">Delete</button>
+              </div>
             </div>
           </div>
         </div>

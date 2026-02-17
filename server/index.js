@@ -31,6 +31,7 @@ async function ensureDataFile() {
             expenseSubcategories: [],
             incomeCategories: [],
             incomeSubcategories: [],
+            monthlyPlanEntries: [],
             expenseTransactions: [],
             incomeTransactions: [],
             transferTransactions: []
@@ -47,10 +48,10 @@ async function ensureDataFile() {
 async function readData() {
   await ensureDataFile();
   const raw = await fs.readFile(DATA_PATH, 'utf8');
-  const parsed = JSON.parse(
-    raw.toString() ||
-      '{"slots":[],"tasks":[],"savedSlotLists":[],"noTimeTasks":[],"moneyChallenge":{"selected":[]},"budget":{"accounts":[],"expenseCategories":[],"expenseSubcategories":[],"incomeCategories":[],"incomeSubcategories":[],"expenseTransactions":[],"incomeTransactions":[],"transferTransactions":[]}}'
-  );
+  if (!raw || raw.trim().length === 0) {
+    throw new Error('Data file is empty. Refusing to overwrite with defaults.');
+  }
+  const parsed = JSON.parse(raw.toString());
   return {
     slots: parsed.slots || [],
     tasks: parsed.tasks || [],
@@ -63,6 +64,7 @@ async function readData() {
       expenseSubcategories: [],
       incomeCategories: [],
       incomeSubcategories: [],
+      monthlyPlanEntries: [],
       expenseTransactions: [],
       incomeTransactions: [],
       transferTransactions: []
@@ -72,6 +74,11 @@ async function readData() {
 
 async function writeData(data) {
   await ensureDataFile();
+  try {
+    await fs.copyFile(DATA_PATH, `${DATA_PATH}.backup`);
+  } catch {
+    // Ignore backup failures to avoid blocking writes.
+  }
   await fs.writeFile(
     DATA_PATH,
     JSON.stringify(
@@ -87,6 +94,7 @@ async function writeData(data) {
           expenseSubcategories: [],
           incomeCategories: [],
           incomeSubcategories: [],
+          monthlyPlanEntries: [],
           expenseTransactions: [],
           incomeTransactions: [],
           transferTransactions: []
@@ -151,6 +159,7 @@ app.get('/api/budget', async (_req, res) => {
       expenseSubcategories: [],
       incomeCategories: [],
       incomeSubcategories: [],
+      monthlyPlanEntries: [],
       expenseTransactions: [],
       incomeTransactions: [],
       transferTransactions: []
@@ -184,6 +193,7 @@ app.put('/api/budget/accounts', async (req, res) => {
       expenseSubcategories: [],
       incomeCategories: [],
       incomeSubcategories: [],
+      monthlyPlanEntries: [],
       expenseTransactions: [],
       incomeTransactions: [],
       transferTransactions: []
@@ -199,6 +209,55 @@ app.put('/api/budget/accounts', async (req, res) => {
   } catch (err) {
     console.error('Failed to save budget accounts', err);
     res.status(500).json({ message: 'Failed to save budget accounts' });
+  }
+});
+
+app.put('/api/budget/monthly-plan', async (req, res) => {
+  const { monthlyPlanEntries } = req.body || {};
+  if (!Array.isArray(monthlyPlanEntries)) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  const sanitizeAmount = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
+  const sanitizeText = (value) => (typeof value === 'string' ? value.trim() : '');
+
+  const sanitized = monthlyPlanEntries
+    .filter((entry) => entry && typeof entry.id === 'string' && typeof entry.categoryId === 'string')
+    .map((entry) => ({
+      id: entry.id.trim(),
+      categoryId: entry.categoryId.trim(),
+      subcategoryId: sanitizeText(entry.subcategoryId) || undefined,
+      planned: sanitizeAmount(entry.planned),
+      actual: sanitizeAmount(entry.actual),
+      due: sanitizeText(entry.due) || undefined,
+      status: sanitizeText(entry.status) || 'in'
+    }))
+    .filter((entry) => entry.id && entry.categoryId);
+
+  try {
+    const data = await readData();
+    const budget = data.budget || {
+      accounts: [],
+      expenseCategories: [],
+      expenseSubcategories: [],
+      incomeCategories: [],
+      incomeSubcategories: [],
+      monthlyPlanEntries: [],
+      expenseTransactions: [],
+      incomeTransactions: [],
+      transferTransactions: []
+    };
+    await writeData({
+      ...data,
+      budget: {
+        ...budget,
+        monthlyPlanEntries: sanitized
+      }
+    });
+    res.json({ monthlyPlanEntries: sanitized });
+  } catch (err) {
+    console.error('Failed to save monthly plan entries', err);
+    res.status(500).json({ message: 'Failed to save monthly plan entries' });
   }
 });
 
@@ -259,6 +318,7 @@ app.put('/api/budget/transactions', async (req, res) => {
       expenseSubcategories: [],
       incomeCategories: [],
       incomeSubcategories: [],
+      monthlyPlanEntries: [],
       expenseTransactions: [],
       incomeTransactions: [],
       transferTransactions: []
