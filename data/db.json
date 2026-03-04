@@ -1,6 +1,17 @@
 {
   "slots": [],
-  "tasks": [],
+  "tasks": [
+    {
+      "id": "task-s3ha1q6",
+      "name": "tasks",
+      "tags": [
+        "__pending_cleanup__"
+      ],
+      "duration": 1,
+      "assignedSlotId": null,
+      "postponed": false
+    }
+  ],
   "savedSlotLists": [],
   "noTimeTasks": [],
   "moneyChallenge": {
@@ -24,6 +35,8 @@
       18,
       23,
       29,
+      32,
+      38,
       62,
       72,
       80
