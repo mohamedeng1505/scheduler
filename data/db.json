@@ -1,17 +1,112 @@
 {
-  "slots": [],
-  "tasks": [
+  "slots": [
     {
-      "id": "task-s3ha1q6",
-      "name": "tasks",
-      "tags": [
-        "__pending_cleanup__"
-      ],
-      "duration": 1,
-      "assignedSlotId": null,
-      "postponed": false
+      "id": "slot-areufb7",
+      "day": "Tuesday",
+      "start": "19:00",
+      "end": "19:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-qzvkanj",
+      "day": "Wednesday",
+      "start": "19:00",
+      "end": "19:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-6qgt9ur",
+      "day": "Thursday",
+      "start": "19:00",
+      "end": "19:30",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-qctdga2",
+      "day": "Tuesday",
+      "start": "20:15",
+      "end": "20:45",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-ryq3wol",
+      "day": "Wednesday",
+      "start": "20:15",
+      "end": "20:45",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-lwm3tsh",
+      "day": "Thursday",
+      "start": "20:15",
+      "end": "20:45",
+      "hours": 0.5
+    },
+    {
+      "id": "slot-49wu80s",
+      "day": "Tuesday",
+      "start": "21:30",
+      "end": "22:30",
+      "hours": 1
+    },
+    {
+      "id": "slot-fjompwu",
+      "day": "Wednesday",
+      "start": "21:30",
+      "end": "22:30",
+      "hours": 1
+    },
+    {
+      "id": "slot-ibiolfj",
+      "day": "Thursday",
+      "start": "21:30",
+      "end": "22:30",
+      "hours": 1
+    },
+    {
+      "id": "slot-au3kn1x",
+      "day": "Wednesday",
+      "start": "13:00",
+      "end": "14:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-2lot9mt",
+      "day": "Thursday",
+      "start": "13:00",
+      "end": "14:30",
+      "hours": 1.5
+    },
+    {
+      "id": "slot-yruvpr1",
+      "day": "Wednesday",
+      "start": "09:00",
+      "end": "10:00",
+      "hours": 1
+    },
+    {
+      "id": "slot-mzlvdyw",
+      "day": "Thursday",
+      "start": "09:00",
+      "end": "10:00",
+      "hours": 1
+    },
+    {
+      "id": "slot-9vqf0cf",
+      "day": "Wednesday",
+      "start": "11:00",
+      "end": "12:00",
+      "hours": 1
+    },
+    {
+      "id": "slot-eyay0e7",
+      "day": "Thursday",
+      "start": "11:00",
+      "end": "12:00",
+      "hours": 1
     }
   ],
+  "tasks": [],
   "savedSlotLists": [],
   "noTimeTasks": [],
   "moneyChallenge": {
