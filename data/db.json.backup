@@ -97,6 +97,13 @@
       "start": "11:00",
       "end": "12:00",
       "hours": 1
+    },
+    {
+      "id": "slot-eyay0e7",
+      "day": "Thursday",
+      "start": "11:00",
+      "end": "12:00",
+      "hours": 1
     }
   ],
   "tasks": [],
