@@ -222,6 +222,7 @@
       [tasks]="tasks"
       [selectedSlotIds]="selectedSlotIds"
       [tasksComponent]="tasksComponent"
+      (dayDuplicate)="duplicateDay($event)"
       (slotEdit)="startEdit($event)"
       (slotDuplicate)="duplicateSlot($event)"
       (slotDelete)="deleteSlot($event)"

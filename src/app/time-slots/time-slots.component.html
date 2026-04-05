@@ -11,7 +11,11 @@
     <div class="slot-day-group" *ngFor="let group of groupedSlots; trackBy: trackByDay">
       <div class="slot-day-header">
         <h3>{{ group.day }}</h3>
-        <span class="badge badge-soft">{{ group.slots.length }} slot{{ group.slots.length === 1 ? '' : 's' }}</span>
+        <div class="slot-actions">
+          <span class="badge badge-soft">{{ group.slots.length }} slot{{ group.slots.length === 1 ? '' : 's' }}</span>
+          <span class="badge badge-soft">{{ group.totalHours | number: '1.0-2' }} hrs</span>
+          <button type="button" class="link-button" (click)="dayDuplicate.emit(group.day)">Duplicate day</button>
+        </div>
       </div>
       <ul class="slot-list">
         <li

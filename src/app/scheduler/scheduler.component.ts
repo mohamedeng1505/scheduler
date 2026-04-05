@@ -63,9 +63,6 @@ export class SchedulerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadData();
     this.loadSavedSlotLists();
-    this.cleanupTimerId = window.setInterval(() => {
-      this.cleanupPassedSlots();
-    }, 60_000);
   }
 
   ngOnDestroy(): void {
@@ -158,6 +155,57 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
     const copy: Slot = { ...slot, id: this.generateId('slot') };
     this.slots = [...this.slots, copy];
+    this.persistState();
+  }
+
+  protected duplicateDay(sourceDay: string): void {
+    const daySlots = this.slots.filter((slot) => slot.day === sourceDay);
+    if (!daySlots.length) {
+      window.alert(`No slots found for ${sourceDay}.`);
+      return;
+    }
+
+    const targetInput = window.prompt(
+      `Duplicate ${sourceDay} to which day?\nAvailable days: ${this.days.join(', ')}`,
+      this.getNextDay(sourceDay)
+    );
+
+    if (targetInput === null) {
+      return;
+    }
+
+    const normalizedTarget = this.matchDayName(targetInput);
+    if (!normalizedTarget) {
+      window.alert('Choose a valid day name from the list.');
+      return;
+    }
+
+    if (normalizedTarget === sourceDay) {
+      window.alert('Choose a different day.');
+      return;
+    }
+
+    const slotIdMap = new Map<string, string>();
+    const duplicatedSlots = daySlots.map((slot) => {
+      const nextId = this.generateId('slot');
+      slotIdMap.set(slot.id, nextId);
+      return {
+        ...slot,
+        id: nextId,
+        day: normalizedTarget
+      };
+    });
+
+    const duplicatedTasks = this.tasks
+      .filter((task) => task.assignedSlotId && slotIdMap.has(task.assignedSlotId))
+      .map((task) => ({
+        ...task,
+        id: this.generateId('task'),
+        assignedSlotId: slotIdMap.get(task.assignedSlotId!) ?? null
+      }));
+
+    this.slots = [...this.slots, ...duplicatedSlots];
+    this.tasks = [...this.tasks, ...duplicatedTasks];
     this.persistState();
   }
 
@@ -342,7 +390,6 @@ export class SchedulerComponent implements OnInit, OnDestroy {
           this.normalizeTasks();
           this.updateDerivedState();
           this.clearSlotSelection();
-          this.cleanupPassedSlots();
           this.cdr.markForCheck();
         },
         error: (err) => {
@@ -470,49 +517,6 @@ export class SchedulerComponent implements OnInit, OnDestroy {
     return h * 60 + m;
   }
 
-  private cleanupPassedSlots(now: Date = new Date()): void {
-    if (!this.slots.length) return;
-    const passedIds = this.slots
-      .filter((slot) => this.isSlotPassed(slot, now))
-      .map((slot) => slot.id);
-    if (!passedIds.length) return;
-
-    const passedIdSet = new Set(passedIds);
-    const tasksAssignedToRemoved = this.tasks.filter(
-      (t) => t.assignedSlotId && passedIdSet.has(t.assignedSlotId)
-    );
-    if (tasksAssignedToRemoved.length) {
-      this.tasks = this.tasks.map((task) =>
-        task.assignedSlotId && passedIdSet.has(task.assignedSlotId)
-          ? this.markTaskPendingCleanup(task)
-          : task
-      );
-    }
-
-    const removed = this.removeSlotsByIds(passedIds, true);
-    if (removed) {
-      if (tasksAssignedToRemoved.length) {
-        this.cleanupModalOpen = true;
-      }
-      this.persistState();
-    }
-  }
-
-  private isSlotPassed(slot: Slot, now: Date): boolean {
-    const dayIndex = this.days.indexOf(slot.day);
-    if (dayIndex < 0) return false;
-    const endMin = this.toMinutes(slot.end);
-    if (endMin === null) return false;
-
-    const nowDayIndex = now.getDay();
-    const dayDelta = dayIndex - nowDayIndex;
-    const endDate = new Date(now);
-    endDate.setDate(now.getDate() + dayDelta);
-    endDate.setHours(Math.floor(endMin / 60), endMin % 60, 0, 0);
-
-    return endDate <= now;
-  }
-
   private generateId(prefix: string): string {
     return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
   }
@@ -632,6 +636,22 @@ export class SchedulerComponent implements OnInit, OnDestroy {
 
   private createDefaultTaskDraft(): { name: string; duration: number } {
     return { name: '', duration: 1 };
+  }
+
+  private getNextDay(day: string): string {
+    const index = this.days.indexOf(day);
+    if (index < 0) {
+      return this.days[0];
+    }
+    return this.days[(index + 1) % this.days.length];
+  }
+
+  private matchDayName(input: string): string | null {
+    const trimmed = input.trim().toLowerCase();
+    if (!trimmed) {
+      return null;
+    }
+    return this.days.find((day) => day.toLowerCase() === trimmed) ?? null;
   }
 
   private removeSlotsByIds(ids: string[], deleteAssignedTasks: boolean = true): boolean {

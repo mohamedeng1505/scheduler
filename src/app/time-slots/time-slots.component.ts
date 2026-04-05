@@ -32,9 +32,10 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
   @Output() slotDuplicate = new EventEmitter<string>();
   @Output() slotDelete = new EventEmitter<string>();
   @Output() slotSelectionToggle = new EventEmitter<string>();
+  @Output() dayDuplicate = new EventEmitter<string>();
 
   protected sortedSlots: Slot[] = [];
-  protected groupedSlots: { day: string; slots: Slot[] }[] = [];
+  protected groupedSlots: { day: string; slots: Slot[]; totalHours: number }[] = [];
   protected totalHours = 0;
   protected unassignedHours = 0;
   protected nearestSlotId: string | null = null;
@@ -115,12 +116,13 @@ export class TimeSlotsComponent implements OnChanges, OnInit, OnDestroy {
     this.tasksBySlotId = tasksBySlotId;
     this.remainingBySlotId = remainingBySlotId;
     this.unassignedHours = Array.from(remainingBySlotId.values()).reduce((sum, value) => sum + value, 0);
-    this.groupedSlots = this.sortedSlots.reduce<{ day: string; slots: Slot[] }[]>((groups, slot) => {
+    this.groupedSlots = this.sortedSlots.reduce<{ day: string; slots: Slot[]; totalHours: number }[]>((groups, slot) => {
       const last = groups[groups.length - 1];
       if (!last || last.day !== slot.day) {
-        groups.push({ day: slot.day, slots: [slot] });
+        groups.push({ day: slot.day, slots: [slot], totalHours: slot.hours });
       } else {
         last.slots.push(slot);
+        last.totalHours += slot.hours;
       }
       return groups;
     }, []);
